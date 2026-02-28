@@ -607,6 +607,194 @@
     .framework-selector { flex-wrap: wrap; }
     .fw-selector-btn { flex: 1 1 45%; }
   }
+
+  /* ── Dark mode ──────────────────────────────── */
+  [data-theme="dark"] {
+    --blue-primary: #4D8FDD;
+    --blue-secondary: #60ABEF;
+    --purple-accent: #7C6FC1;
+    --gray-50: #0F1117;
+    --gray-100: #1A1D27;
+    --gray-200: #252836;
+    --gray-300: #363A4F;
+    --gray-400: #6B7280;
+    --gray-600: #9CA3AF;
+    --gray-800: #D1D5DB;
+    --gray-900: #F3F4F6;
+    --white: #1E2030;
+    --risk-red: #F87171;
+    --risk-red-bg: #2D1A1A;
+    --risk-red-border: #5C2424;
+    --ok-green: #4ADE80;
+    --ok-green-bg: #0F2D1A;
+    --ok-green-border: #1A5C34;
+    --warning-amber: #FCD34D;
+    --warning-amber-bg: #2D2208;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,.3);
+    --shadow-md: 0 4px 12px rgba(0,0,0,.4);
+  }
+  [data-theme="dark"] .header { background: #0B1929; }
+  [data-theme="dark"] .score-btn { color: var(--gray-600); }
+  [data-theme="dark"] .modal { background: #1A1D27; }
+  [data-theme="dark"] .search-input::placeholder { color: var(--gray-400); }
+
+  /* ── Header actions ──────────────────────────── */
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+  .header-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    border-radius: var(--radius);
+    border: 1px solid rgba(255,255,255,.28);
+    background: rgba(255,255,255,.1);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .15s;
+    white-space: nowrap;
+  }
+  .header-btn:hover { background: rgba(255,255,255,.22); border-color: rgba(255,255,255,.5); }
+  .header-btn svg { flex-shrink: 0; }
+  .save-indicator {
+    font-size: 11px;
+    color: rgba(255,255,255,.55);
+    opacity: 0;
+    transition: opacity .3s;
+    white-space: nowrap;
+    font-weight: 600;
+  }
+  .save-indicator.visible { opacity: 1; }
+
+  /* ── Maturity level badge ────────────────────── */
+  .maturity-level {
+    font-size: 12px;
+    font-weight: 700;
+    padding: 4px 14px;
+    border-radius: 20px;
+    display: inline-block;
+    margin-top: 8px;
+    letter-spacing: .3px;
+  }
+  .maturity-level.risk { background: var(--risk-red-bg); color: var(--risk-red); }
+  .maturity-level.warning { background: var(--warning-amber-bg); color: var(--warning-amber); }
+  .maturity-level.ok { background: var(--ok-green-bg); color: var(--ok-green); }
+
+  /* ── Toolbar ─────────────────────────────────── */
+  .toolbar {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  .search-wrap {
+    position: relative;
+    flex: 1;
+    min-width: 180px;
+  }
+  .search-input {
+    width: 100%;
+    padding: 9px 12px 9px 36px;
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius);
+    background: var(--white);
+    color: var(--gray-900);
+    font-size: 13px;
+    outline: none;
+    transition: border-color .15s;
+    font-family: inherit;
+  }
+  .search-input:focus { border-color: var(--blue-secondary); }
+  .search-icon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--gray-400);
+    pointer-events: none;
+  }
+  .filter-btn {
+    padding: 9px 14px;
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius);
+    background: var(--white);
+    color: var(--gray-600);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .15s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+    box-shadow: var(--shadow-sm);
+    font-family: inherit;
+  }
+  .filter-btn:hover { border-color: var(--risk-red); color: var(--risk-red); }
+  .filter-btn.active { background: var(--risk-red); border-color: var(--risk-red); color: #fff; box-shadow: 0 2px 8px rgba(199,37,78,.3); }
+
+  /* ── Notes ───────────────────────────────────── */
+  .notes-toggle {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 10px;
+    font-size: 12px;
+    color: var(--gray-400);
+    cursor: pointer;
+    border: none;
+    background: none;
+    padding: 0;
+    font-family: inherit;
+    transition: color .15s;
+    text-align: left;
+  }
+  .notes-toggle:hover { color: var(--blue-secondary); }
+  .notes-toggle.has-note { color: var(--blue-secondary); font-weight: 600; }
+  .notes-area { margin-top: 8px; display: none; }
+  .notes-area.open { display: block; }
+  .notes-textarea {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius);
+    background: var(--gray-50);
+    color: var(--gray-800);
+    font-size: 12px;
+    font-family: inherit;
+    resize: vertical;
+    min-height: 64px;
+    outline: none;
+    transition: border-color .15s;
+  }
+  .notes-textarea:focus { border-color: var(--blue-secondary); background: var(--white); }
+
+  /* ── Empty state ─────────────────────────────── */
+  .empty-state {
+    text-align: center;
+    padding: 48px 20px;
+    color: var(--gray-400);
+  }
+  .empty-state svg { margin-bottom: 12px; opacity: .5; }
+  .empty-state p { font-size: 14px; }
+
+  /* ── Print ───────────────────────────────────── */
+  @media print {
+    .header-actions, .toolbar, .article-tabs, .framework-selector,
+    .score-group, .score-label, .notes-toggle, .notes-area { display: none !important; }
+    .dashboard { grid-template-columns: 1fr !important; padding: 0 !important; }
+    .header { padding: 12px 20px !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .clause-card { break-inside: avoid; page-break-inside: avoid; }
+    .col-right { position: static !important; }
+    body { background: white !important; }
+  }
 </style>
 </head>
 <body>
@@ -620,9 +808,20 @@
       <p>Strategy &amp; Risk Consulting — Framework Cross-Mapping</p>
     </div>
   </div>
-  <div class="header-meta">
-    Assessment Date: <span id="assessmentDate"></span><br>
-    Frameworks: ISO 27001 · DORA · NIS2 · ISF SOGP
+  <div class="header-actions">
+    <span class="save-indicator" id="saveIndicator">✓ Saved</span>
+    <button class="header-btn" id="exportBtn">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Export CSV
+    </button>
+    <button class="header-btn" id="darkModeBtn">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+      Dark
+    </button>
+    <div class="header-meta" style="border-left:1px solid rgba(255,255,255,.15);padding-left:16px">
+      Assessment Date: <span id="assessmentDate"></span><br>
+      Frameworks: ISO 27001 · DORA · NIS2 · ISF SOGP
+    </div>
   </div>
 </header>
 
@@ -633,6 +832,16 @@
   <div class="col-left">
     <div class="framework-selector" id="frameworkSelector"></div>
     <div class="section-title" id="sectionTitle"></div>
+    <div class="toolbar">
+      <div class="search-wrap">
+        <svg class="search-icon" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input class="search-input" id="searchInput" type="text" placeholder="Search controls…">
+      </div>
+      <button class="filter-btn" id="riskFilterBtn">
+        <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+        At-risk only
+      </button>
+    </div>
     <div class="article-tabs" id="articleTabs"></div>
     <div id="assessmentContainer"></div>
   </div>
@@ -647,6 +856,7 @@
       <div class="overall-score">
         <div class="overall-number" id="overallScore">0.0</div>
         <div class="overall-label">out of 5.0</div>
+        <div class="maturity-level" id="maturityLevel">—</div>
         <div class="overall-bar-track">
           <div class="overall-bar-fill" id="overallBar" style="width:0%"></div>
         </div>
@@ -859,6 +1069,86 @@ let selectedFramework = 'ISO 27001';
 let selectedArticle = null;
 
 // ═══════════════════════════════════════════════════════════════════════
+// PERSISTENCE & NOTES
+// ═══════════════════════════════════════════════════════════════════════
+
+const NOTES = {};
+const openNotes = new Set();
+
+function getNote(groupId) { return NOTES[groupId] || ''; }
+
+function saveNote(groupId, text) {
+  NOTES[groupId] = text.trim();
+  persistState();
+  const toggle = document.querySelector(`.notes-toggle[data-group="${groupId}"]`);
+  if (toggle) {
+    const note = NOTES[groupId];
+    const icon = '<svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>';
+    toggle.innerHTML = icon + ' ' + (note ? note.slice(0, 45) + (note.length > 45 ? '…' : '') : 'Add note…');
+    toggle.classList.toggle('has-note', !!note);
+  }
+}
+
+function persistState() {
+  const state = {
+    scores: Object.fromEntries(CROSS_MAP_GROUPS.map(g => [g.id, g.score])),
+    notes: { ...NOTES }
+  };
+  try { localStorage.setItem('cyberMaturityV1', JSON.stringify(state)); } catch(e) {}
+  flashSaved();
+}
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem('cyberMaturityV1');
+    if (!raw) return;
+    const state = JSON.parse(raw);
+    if (state.scores) {
+      CROSS_MAP_GROUPS.forEach(g => {
+        if (state.scores[g.id] !== undefined) g.score = Number(state.scores[g.id]);
+      });
+    }
+    if (state.notes) Object.assign(NOTES, state.notes);
+  } catch(e) {}
+}
+
+function flashSaved() {
+  const el = document.getElementById('saveIndicator');
+  if (!el) return;
+  el.classList.add('visible');
+  clearTimeout(el._t);
+  el._t = setTimeout(() => el.classList.remove('visible'), 2000);
+}
+
+function escapeHtml(str) {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// DARK MODE
+// ═══════════════════════════════════════════════════════════════════════
+
+let darkMode = localStorage.getItem('cyberDark') === '1';
+
+function applyDarkMode() {
+  document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : '');
+  const btn = document.getElementById('darkModeBtn');
+  if (!btn) return;
+  if (darkMode) {
+    btn.innerHTML = '<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg> Light';
+  } else {
+    btn.innerHTML = '<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg> Dark';
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// SEARCH & FILTER STATE
+// ═══════════════════════════════════════════════════════════════════════
+
+let searchQuery = '';
+let showRiskOnly = false;
+
+// ═══════════════════════════════════════════════════════════════════════
 // RENDERING
 // ═══════════════════════════════════════════════════════════════════════
 
@@ -920,11 +1210,23 @@ function renderAssessmentCards() {
   const article = FRAMEWORK_DATA[selectedFramework].articles.find(a => a.id === selectedArticle);
   if (!article) { container.innerHTML = ''; return; }
 
-  container.innerHTML = article.subClauses.map(sc => {
+  const q = searchQuery.toLowerCase();
+  let totalVisible = 0;
+
+  const cardsHtml = article.subClauses.map(sc => {
     const clauseEntry = CLAUSE_DB[selectedFramework + '||' + sc.clauseId];
     const clauseTitle = clauseEntry ? clauseEntry.title : sc.clauseId;
 
-    // Average score for this clause
+    const filteredItems = sc.assessmentItems.filter(item => {
+      if (showRiskOnly && getGroupScore(item.groupId) >= 3) return false;
+      if (q && !item.label.toLowerCase().includes(q)) return false;
+      return true;
+    });
+
+    if (filteredItems.length === 0) return '';
+    totalVisible += filteredItems.length;
+
+    // Average score for this clause (always over all items, not just filtered)
     const scores = sc.assessmentItems.map(item => getGroupScore(item.groupId));
     const avg = scores.reduce((a, b) => a + b, 0) / scores.length;
     const isClauseRisk = avg < 3;
@@ -935,9 +1237,19 @@ function renderAssessmentCards() {
         <span class="clause-title">${clauseTitle}</span>
         <span class="clause-avg ${isClauseRisk ? 'risk' : 'ok'}">${avg.toFixed(1)} / 5</span>
       </div>
-      ${sc.assessmentItems.map(item => renderAssessmentItem(item)).join('')}
+      ${filteredItems.map(item => renderAssessmentItem(item)).join('')}
     </div>`;
   }).join('');
+
+  if (totalVisible === 0) {
+    container.innerHTML = `<div class="empty-state">
+      <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <p>No controls match your filter.</p>
+    </div>`;
+    return;
+  }
+
+  container.innerHTML = cardsHtml;
 
   // Wire score buttons
   container.querySelectorAll('.score-btn').forEach(btn => {
@@ -946,11 +1258,42 @@ function renderAssessmentCards() {
       setScore(btn.dataset.group, parseInt(btn.dataset.score));
     });
   });
+
+  // Wire notes toggles
+  container.querySelectorAll('.notes-toggle').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const groupId = btn.dataset.group;
+      const area = document.getElementById('notes-area-' + groupId);
+      if (area) {
+        area.classList.toggle('open');
+        if (area.classList.contains('open')) {
+          openNotes.add(groupId);
+          area.querySelector('textarea').focus();
+        } else {
+          openNotes.delete(groupId);
+        }
+      }
+    });
+  });
+
+  // Wire notes textareas (auto-save on input)
+  container.querySelectorAll('.notes-textarea').forEach(ta => {
+    ta.addEventListener('input', () => saveNote(ta.dataset.group, ta.value));
+  });
+
+  // Restore previously open note areas
+  openNotes.forEach(groupId => {
+    const area = document.getElementById('notes-area-' + groupId);
+    if (area) area.classList.add('open');
+  });
 }
 
 function renderAssessmentItem(item) {
   const score = getGroupScore(item.groupId);
   const isRisk = score < 3;
+  const note = getNote(item.groupId);
+  const notePreview = note ? note.slice(0, 45) + (note.length > 45 ? '…' : '') : 'Add note…';
+  const noteIcon = '<svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>';
   return `<div class="assessment-item">
     <div class="control-top">
       <div class="control-label">${item.label}</div>
@@ -970,6 +1313,10 @@ function renderAssessmentItem(item) {
         <span class="tag ${isRisk ? 'risk' : 'ok'}" data-fw="${m.fw}" data-clause="${m.clause}" data-score="${score}">${m.fw} ${m.clause}</span>
       `).join('')}
     </div>
+    <button class="notes-toggle ${note ? 'has-note' : ''}" data-group="${item.groupId}">${noteIcon} ${notePreview}</button>
+    <div class="notes-area" id="notes-area-${item.groupId}">
+      <textarea class="notes-textarea" data-group="${item.groupId}" placeholder="Evidence, action owner, target date…">${escapeHtml(note)}</textarea>
+    </div>
   </div>`;
 }
 
@@ -985,6 +1332,7 @@ function setScore(groupId, score) {
   updateChart();
   updateOverall();
   updateRiskSummary();
+  persistState();
 }
 
 // ─── Overall score ─────────────────────────────────────────────────────
@@ -992,6 +1340,17 @@ function updateOverall() {
   const avg = CROSS_MAP_GROUPS.reduce((sum, g) => sum + g.score, 0) / CROSS_MAP_GROUPS.length;
   document.getElementById('overallScore').textContent = avg.toFixed(1);
   document.getElementById('overallBar').style.width = `${(avg / 5) * 100}%`;
+  const lvl = document.getElementById('maturityLevel');
+  if (lvl) {
+    let text, cls;
+    if (avg < 1.5)      { text = 'Not Implemented'; cls = 'risk'; }
+    else if (avg < 2.5) { text = 'Initial / Ad-hoc'; cls = 'risk'; }
+    else if (avg < 3.5) { text = 'Developing';       cls = 'warning'; }
+    else if (avg < 4.5) { text = 'Managed';          cls = 'ok'; }
+    else                { text = 'Optimised';         cls = 'ok'; }
+    lvl.textContent = text;
+    lvl.className = 'maturity-level ' + cls;
+  }
 }
 
 // ─── Radar chart ───────────────────────────────────────────────────────
@@ -1584,6 +1943,9 @@ document.addEventListener('click', (e) => {
 // INIT
 // ═══════════════════════════════════════════════════════════════════════
 
+// Load persisted scores and notes before any rendering
+loadState();
+
 buildFrameworkData();
 
 // Set initial state
@@ -1596,6 +1958,55 @@ renderAssessmentCards();
 initChart();
 updateOverall();
 updateRiskSummary();
+
+// ─── Dark mode ──────────────────────────────────────────────────────────
+document.getElementById('darkModeBtn').addEventListener('click', () => {
+  darkMode = !darkMode;
+  localStorage.setItem('cyberDark', darkMode ? '1' : '0');
+  applyDarkMode();
+});
+applyDarkMode();
+
+// ─── Export CSV ─────────────────────────────────────────────────────────
+document.getElementById('exportBtn').addEventListener('click', () => {
+  const rows = [['Framework','Article','Clause','Control','Score','Maturity Level','Status','Notes']];
+  FRAMEWORKS.forEach(fw => {
+    FRAMEWORK_DATA[fw].articles.forEach(art => {
+      art.subClauses.forEach(sc => {
+        sc.assessmentItems.forEach(item => {
+          const score = getGroupScore(item.groupId);
+          rows.push([
+            fw, art.id, sc.clauseId, item.label, score,
+            SCORE_LABELS[score], score < 3 ? 'At Risk' : 'Compliant',
+            getNote(item.groupId)
+          ]);
+        });
+      });
+    });
+  });
+  const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `cyber-maturity-${new Date().toISOString().slice(0,10)}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+});
+
+// ─── Search & filter ────────────────────────────────────────────────────
+document.getElementById('searchInput').addEventListener('input', e => {
+  searchQuery = e.target.value.toLowerCase();
+  renderAssessmentCards();
+});
+
+document.getElementById('riskFilterBtn').addEventListener('click', () => {
+  showRiskOnly = !showRiskOnly;
+  document.getElementById('riskFilterBtn').classList.toggle('active', showRiskOnly);
+  renderAssessmentCards();
+});
 </script>
 </body>
 </html>
