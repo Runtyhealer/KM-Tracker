@@ -1798,8 +1798,75 @@ let selectedArticle = null;
 // ═══════════════════════════════════════════════════════════════════════
 
 const NOTES = {};
+const DEMO_NOTES = {
+  tp3: 'Exit strategy project initiated Q4 2025 — target completion Q3 2026. Owner: Vendor Risk team.',
+  bc3: 'TLPT not yet scoped. Regulatory requirement under DORA — planning phase starts Q2 2026.',
+  d08g: 'Legacy core banking system (CBS v4.2) identified. Annual risk assessment overdue — scheduled March 2026.',
+  d26a: 'First TLPT cycle not yet started. External provider shortlisted, awaiting board approval for budget.',
+  d28h: 'Exit plan exists for primary cloud provider (AWS). Three secondary providers lack formal exit strategy.',
+  d13a: 'CTI feed (FS-ISAC) subscribed but not integrated into SIEM. Integration project backlogged.',
+  ac3: 'Last access recertification: June 2025. Next cycle due Q2 2026 — process being automated via IGA tool.',
+};
 const openNotes = new Set();
-const META = { org: '', assessor: '', version: '' };
+const META = { org: 'Meridian Bank NV', assessor: 'Information Security Dept.', version: 'Q1 2026' };
+
+// ─── Demo scores (applied on first load when no saved state exists) ────
+const DEMO_SCORES = {
+  // ── Cross-framework items ──────────────────────────────────────────
+  ac1:4, ac2:3, ac3:2,                          // Access Control
+  im1:3, im2:3, im3:2,                          // Incident Management
+  tp1:2, tp2:3, tp3:1,                          // Third-Party
+  bc1:4, bc2:3, bc3:1,                          // Business Continuity
+  dp1:3, dp2:4, dp3:2,                          // Data Protection
+  gv1:4, gv2:3, gv3:3,                          // Governance
+  ns1:4, ns2:3, ns3:3,                          // Network Security
+  // ── DORA Art. 5 — Governance and Organisation ─────────────────────
+  d05a:3, d05b:3, d05c:4, d05d:3, d05e:2, d05f:3, d05g:2,
+  // ── DORA Art. 6 — ICT Risk Management Framework ───────────────────
+  d06a:3, d06b:3, d06c:2, d06d:3, d06e:3, d06f:2, d06g:2,
+  // ── DORA Art. 7 — ICT Systems, Protocols and Tools ────────────────
+  d07a:4, d07b:4, d07c:4, d07d:3,
+  // ── DORA Art. 8 — Identification ─────────────────────────────────
+  d08a:3, d08b:2, d08c:2, d08d:3, d08e:2, d08f:3, d08g:1,
+  // ── DORA Art. 9 — Protection and Prevention ──────────────────────
+  d09a:3, d09b:4, d09c:4, d09d:4, d09e:3, d09f:3, d09g:3, d09h:3,
+  // ── DORA Art. 10 — Detection ─────────────────────────────────────
+  d10a:3, d10b:2, d10c:2,
+  // ── DORA Art. 11 — Response and Recovery ─────────────────────────
+  d11a:4, d11b:3, d11c:2, d11d:3, d11e:3, d11f:3, d11g:2, d11h:2,
+  // ── DORA Art. 12 — Backup, Restoration and Recovery ──────────────
+  d12a:4, d12b:4, d12c:3, d12d:3, d12e:3, d12f:2,
+  // ── DORA Art. 13 — Learning and Evolving ─────────────────────────
+  d13a:2, d13b:2, d13c:2, d13d:2, d13e:3, d13f:3, d13g:2,
+  // ── DORA Art. 14 — Communication ─────────────────────────────────
+  d14a:2, d14b:2, d14c:3,
+  // ── DORA Art. 17 — Incident Management Process ───────────────────
+  d17a:3, d17b:3, d17c:2, d17d:3, d17e:3, d17f:2, d17g:3, d17h:3,
+  // ── DORA Art. 18 — Classification of Incidents ───────────────────
+  d18a:2, d18b:2,
+  // ── DORA Art. 19 — Reporting of Major Incidents ──────────────────
+  d19a:2, d19b:2, d19c:2,
+  // ── DORA Art. 20 — Harmonisation of Reporting ────────────────────
+  d20a:2,
+  // ── DORA Art. 24 — General Testing Requirements ──────────────────
+  d24a:2, d24b:2, d24c:2, d24d:2, d24e:2,
+  // ── DORA Art. 25 — Testing of ICT Tools and Systems ──────────────
+  d25a:3, d25b:2,
+  // ── DORA Art. 26 — Advanced Testing (TLPT) ───────────────────────
+  d26a:1, d26b:1, d26c:1, d26d:1,
+  // ── DORA Art. 27 — Requirements for TLPT Testers ─────────────────
+  d27a:1, d27b:2,
+  // ── DORA Art. 28 — Third-Party Risk — General Principles ─────────
+  d28a:3, d28b:2, d28c:2, d28d:2, d28e:3, d28f:2, d28g:3, d28h:1,
+  // ── DORA Art. 29 — ICT Concentration Risk ────────────────────────
+  d29a:2, d29b:1,
+  // ── DORA Art. 30 — Key Contractual Provisions ────────────────────
+  d30a:3, d30b:3, d30c:2,
+  // ── DORA Art. 31 — Critical ICT Provider Designation ─────────────
+  d31a:2,
+  // ── DORA Art. 45 — Information Sharing Arrangements ──────────────
+  d45a:1, d45b:1, d45c:2,
+};
 const undoStack = [];
 const redoStack = [];
 const MAX_UNDO = 50;
@@ -1827,14 +1894,21 @@ function persistState() {
     notes: { ...NOTES },
     meta: { ...META }
   };
-  try { localStorage.setItem('cyberMaturityV1', JSON.stringify(state)); } catch(e) {}
+  try { localStorage.setItem('cyberMaturityV2', JSON.stringify(state)); } catch(e) {}
   flashSaved();
 }
 
 function loadState() {
   try {
-    const raw = localStorage.getItem('cyberMaturityV1');
-    if (!raw) return;
+    const raw = localStorage.getItem('cyberMaturityV2');
+    if (!raw) {
+      // First visit — apply demo scores, notes and meta
+      CROSS_MAP_GROUPS.forEach(g => {
+        if (DEMO_SCORES[g.id] !== undefined) g.score = DEMO_SCORES[g.id];
+      });
+      Object.assign(NOTES, DEMO_NOTES);
+      return;
+    }
     const state = JSON.parse(raw);
     if (state.scores) {
       CROSS_MAP_GROUPS.forEach(g => {
