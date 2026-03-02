@@ -1154,18 +1154,189 @@
     border: 1px solid var(--gray-200);
   }
 
+  /* ── Report overlay ─────────────────────────── */
+  .report-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.55);
+    z-index: 300;
+    padding: 20px;
+    overflow-y: auto;
+  }
+  .report-overlay.open { display: flex; align-items: flex-start; justify-content: center; }
+  .report-modal {
+    background: var(--white);
+    border-radius: 10px;
+    width: 100%;
+    max-width: 860px;
+    box-shadow: 0 20px 60px rgba(0,0,0,.25);
+    overflow: hidden;
+    margin: auto;
+  }
+  .report-modal-header {
+    background: var(--blue-primary);
+    color: var(--white);
+    padding: 20px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .report-modal-header h2 { font-size: 17px; font-weight: 700; margin: 0; }
+  .report-modal-header p { font-size: 12px; opacity: .7; margin: 2px 0 0; }
+  .report-modal-close {
+    background: rgba(255,255,255,.15);
+    border: none;
+    color: var(--white);
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .report-modal-close:hover { background: rgba(255,255,255,.3); }
+  .report-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--gray-200);
+    background: var(--gray-50);
+    overflow-x: auto;
+    padding: 0 12px;
+    gap: 4px;
+  }
+  .report-tab {
+    padding: 12px 16px;
+    border: none;
+    background: none;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--gray-600);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    transition: all .15s;
+  }
+  .report-tab:hover { color: var(--blue-primary); }
+  .report-tab.active { color: var(--blue-primary); border-bottom-color: var(--blue-primary); }
+  .report-pane { display: none; padding: 24px 28px; }
+  .report-pane.active { display: block; }
+  .report-section-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--gray-600);
+    margin-bottom: 10px;
+    margin-top: 20px;
+  }
+  .report-section-label:first-child { margin-top: 0; }
+  .report-copybox {
+    background: var(--gray-50);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    font-size: 13px;
+    line-height: 1.65;
+    color: var(--gray-800);
+    white-space: pre-wrap;
+    word-break: break-word;
+    position: relative;
+    max-height: 280px;
+    overflow-y: auto;
+  }
+  .copy-btn {
+    position: absolute;
+    top: 8px; right: 8px;
+    background: var(--white);
+    border: 1px solid var(--gray-300);
+    border-radius: 4px;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--gray-600);
+    cursor: pointer;
+    transition: all .15s;
+    z-index: 1;
+  }
+  .copy-btn:hover { background: var(--blue-primary); color: var(--white); border-color: var(--blue-primary); }
+  .copy-btn.copied { background: var(--ok-green); color: var(--white); border-color: var(--ok-green); }
+  .report-copybox-wrap { position: relative; }
+  .report-actions {
+    display: flex;
+    gap: 10px;
+    padding: 16px 28px;
+    border-top: 1px solid var(--gray-200);
+    background: var(--gray-50);
+    justify-content: flex-end;
+  }
+  .report-action-btn {
+    padding: 9px 18px;
+    border-radius: var(--radius);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    transition: all .15s;
+  }
+  .report-action-btn.primary {
+    background: var(--blue-primary);
+    color: var(--white);
+    border: none;
+  }
+  .report-action-btn.primary:hover { background: #002a73; }
+  .report-action-btn.secondary {
+    background: var(--white);
+    color: var(--gray-800);
+    border: 1px solid var(--gray-300);
+  }
+  .report-action-btn.secondary:hover { border-color: var(--blue-primary); color: var(--blue-primary); }
+  .rag-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .rag-table th {
+    background: var(--gray-100);
+    padding: 8px 12px;
+    text-align: left;
+    font-weight: 700;
+    color: var(--gray-600);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    border-bottom: 2px solid var(--gray-200);
+  }
+  .rag-table td { padding: 7px 12px; border-bottom: 1px solid var(--gray-100); color: var(--gray-800); }
+  .rag-table tr:last-child td { border-bottom: none; }
+  .rag-dot {
+    display: inline-block;
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    margin-right: 6px;
+    flex-shrink: 0;
+  }
+  .rag-cell { display: flex; align-items: center; }
+
   /* ── Print ───────────────────────────────────── */
   @media print {
     .header-actions, .toolbar, .article-tabs, .framework-selector,
     .score-group, .score-label, .notes-toggle, .notes-area,
     .meta-bar, .status-bar, .undo-redo, .view-toggle,
-    .kbd-hint, .kbd-overlay, .save-snap-btn, .snap-btn { display: none !important; }
+    .kbd-hint, .kbd-overlay, .save-snap-btn, .snap-btn,
+    .report-overlay, .col-right { display: none !important; }
     .dashboard { grid-template-columns: 1fr !important; padding: 0 !important; }
     .header { padding: 12px 20px !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     .clause-card { break-inside: avoid; page-break-inside: avoid; }
-    .col-right { position: static !important; }
     body { background: white !important; }
   }
+  @media print {
+    .print-report-body { display: block !important; }
+  }
+  .print-report-body { display: none; }
+  .print-cover { page-break-after: always; }
+  .print-section { page-break-inside: avoid; margin-bottom: 28px; }
+  .print-h2 { font-size: 16px; font-weight: 700; color: var(--blue-primary); border-bottom: 2px solid var(--blue-primary); padding-bottom: 6px; margin-bottom: 14px; }
+  .print-table { width: 100%; border-collapse: collapse; font-size: 11px; margin-bottom: 12px; }
+  .print-table th { background: var(--gray-100); padding: 6px 10px; text-align: left; font-weight: 700; border: 1px solid var(--gray-200); }
+  .print-table td { padding: 6px 10px; border: 1px solid var(--gray-200); vertical-align: top; }
 </style>
 </head>
 <body>
@@ -1181,6 +1352,10 @@
   </div>
   <div class="header-actions">
     <span class="save-indicator" id="saveIndicator">✓ Saved</span>
+    <button class="header-btn" id="reportBtn" style="background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.3)">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      Generate Report
+    </button>
     <button class="header-btn" id="exportBtn">
       <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
       Export CSV
@@ -1325,6 +1500,93 @@
         <ul class="snapshot-list" id="snapshotList"></ul>
         <button class="save-snap-btn" id="saveSnapshotBtn">+ Save Current Snapshot</button>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Report overlay ──────────────────────────────────────── -->
+<div class="report-overlay" id="reportOverlay">
+  <div class="report-modal">
+    <div class="report-modal-header">
+      <div>
+        <h2>Assessment Report</h2>
+        <p id="reportModalMeta"></p>
+      </div>
+      <button class="report-modal-close" id="reportModalClose">&times;</button>
+    </div>
+    <div class="report-tabs">
+      <button class="report-tab active" data-pane="paneExec">Executive Summary</button>
+      <button class="report-tab" data-pane="paneMgmt">Management Bullets</button>
+      <button class="report-tab" data-pane="paneScorecard">Maturity Scorecard</button>
+      <button class="report-tab" data-pane="paneFindings">Findings Register</button>
+      <button class="report-tab" data-pane="paneActionPlan">Action Plan</button>
+    </div>
+
+    <!-- Executive Summary -->
+    <div class="report-pane active" id="paneExec">
+      <div class="report-section-label">Executive Summary Paragraph</div>
+      <div class="report-copybox-wrap">
+        <button class="copy-btn" data-target="copyExecSummary">Copy</button>
+        <div class="report-copybox" id="copyExecSummary"></div>
+      </div>
+      <div class="report-section-label">Key Findings by Domain</div>
+      <div class="report-copybox-wrap">
+        <button class="copy-btn" data-target="copyKeyFindings">Copy</button>
+        <div class="report-copybox" id="copyKeyFindings"></div>
+      </div>
+    </div>
+
+    <!-- Management Bullets -->
+    <div class="report-pane" id="paneMgmt">
+      <div class="report-section-label">Management Summary — Top Findings (non-technical)</div>
+      <div class="report-copybox-wrap">
+        <button class="copy-btn" data-target="copyMgmtBullets">Copy</button>
+        <div class="report-copybox" id="copyMgmtBullets"></div>
+      </div>
+      <div class="report-section-label">Strengths to Highlight</div>
+      <div class="report-copybox-wrap">
+        <button class="copy-btn" data-target="copyStrengths">Copy</button>
+        <div class="report-copybox" id="copyStrengths"></div>
+      </div>
+    </div>
+
+    <!-- Maturity Scorecard -->
+    <div class="report-pane" id="paneScorecard">
+      <div class="report-section-label">Maturity Scorecard — Current Framework: <span id="scorecardFwLabel"></span></div>
+      <div class="report-copybox-wrap">
+        <button class="copy-btn" data-target="copyScorecardText">Copy as text</button>
+        <div class="report-copybox" id="copyScorecardText" style="max-height:340px"></div>
+      </div>
+      <div class="report-section-label">Interactive Table</div>
+      <div id="scorecardTableWrap" style="overflow-x:auto;max-height:300px;overflow-y:auto"></div>
+    </div>
+
+    <!-- Findings Register -->
+    <div class="report-pane" id="paneFindings">
+      <div class="report-section-label">All At-Risk Controls (score 1–2) — <span id="findingsCount"></span></div>
+      <div class="report-copybox-wrap">
+        <button class="copy-btn" data-target="copyFindingsText">Copy as text</button>
+        <div class="report-copybox" id="copyFindingsText" style="max-height:340px"></div>
+      </div>
+      <div class="report-section-label">Table View</div>
+      <div id="findingsTableWrap" style="overflow-x:auto;max-height:300px;overflow-y:auto"></div>
+    </div>
+
+    <!-- Action Plan -->
+    <div class="report-pane" id="paneActionPlan">
+      <div class="report-section-label">Prioritised Remediation Action Plan</div>
+      <div class="report-copybox-wrap">
+        <button class="copy-btn" data-target="copyActionPlan">Copy</button>
+        <div class="report-copybox" id="copyActionPlan" style="max-height:380px"></div>
+      </div>
+    </div>
+
+    <div class="report-actions">
+      <button class="report-action-btn secondary" id="reportPrintBtn">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+        Print / Save as PDF
+      </button>
+      <button class="report-action-btn primary" id="reportModalClose2">Close</button>
     </div>
   </div>
 </div>
@@ -3619,6 +3881,394 @@ document.addEventListener('click', (e) => {
   if (header) {
     openClauseModal(header.dataset.fw, header.dataset.clause, parseFloat(header.dataset.score));
   }
+});
+
+// ═══════════════════════════════════════════════════════════════════════
+// REPORT GENERATOR
+// ═══════════════════════════════════════════════════════════════════════
+
+function ragColor(avg) {
+  if (avg >= 4) return '#198754';
+  if (avg >= 3) return '#B45309';
+  return '#C7254E';
+}
+function ragLabel(avg) {
+  if (avg >= 4) return 'Mature';
+  if (avg >= 3) return 'Developing';
+  return 'At Risk';
+}
+
+function getArticleScores(fw) {
+  return FRAMEWORK_DATA[fw].articles.map(art => {
+    const scores = [];
+    art.subClauses.forEach(sc => sc.assessmentItems.forEach(item => scores.push(getGroupScore(item.groupId))));
+    const avg = scores.length ? scores.reduce((a,b) => a+b,0)/scores.length : 0;
+    return { id: art.id, name: art.name, avg, count: scores.length };
+  });
+}
+
+function getAtRiskItems(fw) {
+  const results = [];
+  FRAMEWORK_DATA[fw].articles.forEach(art => {
+    art.subClauses.forEach(sc => {
+      sc.assessmentItems.forEach(item => {
+        const score = getGroupScore(item.groupId);
+        if (score < 3) results.push({ artId: art.id, artName: art.name, clauseId: sc.clauseId, label: item.label, score });
+      });
+    });
+  });
+  return results.sort((a,b) => a.score - b.score);
+}
+
+function maturityText(avg) {
+  if (avg < 1.5) return 'Initial / Ad-hoc';
+  if (avg < 2.5) return 'Repeatable';
+  if (avg < 3.5) return 'Defined';
+  if (avg < 4.5) return 'Managed';
+  return 'Optimised';
+}
+
+function generateExecSummary() {
+  const fw = selectedFramework;
+  const total = CROSS_MAP_GROUPS.length;
+  const avg = CROSS_MAP_GROUPS.reduce((s,g) => s+g.score,0)/total;
+  const atRisk = CROSS_MAP_GROUPS.filter(g => g.score < 3);
+  const strong = CROSS_MAP_GROUPS.filter(g => g.score >= 4);
+  const orgName = META.org || 'the organisation';
+  const assessor = META.assessor || 'the assessment team';
+  const version = META.version || new Date().toLocaleDateString('en-GB', {month:'long', year:'numeric'});
+  const artScores = getArticleScores(fw);
+  const worstArts = [...artScores].sort((a,b)=>a.avg-b.avg).slice(0,3);
+  const bestArts  = [...artScores].sort((a,b)=>b.avg-a.avg).slice(0,2);
+
+  const para1 = `This report presents the results of a cyber maturity assessment conducted for ${orgName} by ${assessor} (${version}). The assessment evaluated ${total} controls across four regulatory frameworks: ISO 27001, DORA, NIS2, and ISF SOGP. Scores were assigned on a 1–5 scale reflecting the maturity of implementation from Initial/Ad-hoc (1) through to Optimised (5).`;
+
+  const para2 = `The overall cyber maturity score is ${avg.toFixed(1)} out of 5.0, corresponding to a maturity level of "${maturityText(avg)}". Of the ${total} controls assessed, ${atRisk.length} (${Math.round(atRisk.length/total*100)}%) are rated At Risk (score 1–2) and require prioritised remediation. ${strong.length} controls (${Math.round(strong.length/total*100)}%) demonstrate strong performance with scores of 4 or above.`;
+
+  const para3 = `Under the ${fw} framework specifically, the areas requiring most urgent attention are: ${worstArts.map(a=>`${a.id} — ${a.name} (avg. ${a.avg.toFixed(1)}/5)`).join('; ')}. Conversely, the strongest performing areas are ${bestArts.map(a=>`${a.id} — ${a.name} (avg. ${a.avg.toFixed(1)}/5)`).join(' and ')}, demonstrating established capability.`;
+
+  const para4 = `It is recommended that ${orgName} establishes a structured remediation programme targeting the At Risk controls as a priority, with particular focus on the domains identified above. This report should be reviewed by senior management and used as the basis for an ICT risk treatment plan aligned with applicable regulatory requirements.`;
+
+  document.getElementById('copyExecSummary').textContent = [para1, para2, para3, para4].join('\n\n');
+}
+
+function generateKeyFindings() {
+  const fw = selectedFramework;
+  const artScores = getArticleScores(fw);
+  let lines = [];
+  artScores.forEach(art => {
+    const label = ragLabel(art.avg);
+    const indicator = art.avg >= 4 ? '✔' : art.avg >= 3 ? '◑' : '✘';
+    lines.push(`${indicator}  ${art.id} — ${art.name}`);
+    lines.push(`   Score: ${art.avg.toFixed(1)}/5  |  Status: ${label}  |  Controls assessed: ${art.count}`);
+    if (art.avg < 3) {
+      lines.push(`   Finding: This area is rated At Risk and requires immediate remediation action.`);
+    } else if (art.avg < 4) {
+      lines.push(`   Finding: Controls are partially implemented. Further maturation is recommended.`);
+    } else {
+      lines.push(`   Finding: Controls are well-established. Maintain through regular review cycles.`);
+    }
+    lines.push('');
+  });
+  document.getElementById('copyKeyFindings').textContent = lines.join('\n');
+}
+
+function generateMgmtBullets() {
+  const fw = selectedFramework;
+  const total = CROSS_MAP_GROUPS.length;
+  const avg = CROSS_MAP_GROUPS.reduce((s,g)=>s+g.score,0)/total;
+  const atRiskItems = getAtRiskItems(fw);
+  const artScores = getArticleScores(fw);
+  const worstArts = [...artScores].sort((a,b)=>a.avg-b.avg).slice(0,5);
+  const orgName = META.org || 'the organisation';
+
+  const bullets = [
+    `• ${orgName} achieved an overall cyber maturity score of ${avg.toFixed(1)}/5, indicating a "${maturityText(avg)}" level of digital operational resilience.`,
+    `• ${atRiskItems.length} of ${total} assessed controls are rated At Risk (score 1–2) and require a formal remediation plan with assigned ownership and target dates.`,
+    `• The five areas with the lowest maturity scores under ${fw} are: ${worstArts.map(a=>`${a.id} (${a.avg.toFixed(1)}/5)`).join(', ')}. These represent the highest-priority gaps for investment and management attention.`,
+  ];
+
+  const criticals = atRiskItems.filter(i => i.score === 1);
+  if (criticals.length > 0) {
+    bullets.push(`• ${criticals.length} control${criticals.length>1?'s are':' is'} rated at the lowest score of 1 (Initial/Ad-hoc), indicating that no formal process exists. These require immediate action: ${criticals.slice(0,3).map(i=>i.label).join('; ')}${criticals.length>3?' and others':''}.`);
+  }
+
+  bullets.push(`• Governance, policy, and strategy controls generally perform better than technical and operational controls, suggesting that management intent exists but execution and operationalisation require strengthening.`);
+  bullets.push(`• A formal remediation roadmap aligned with ${fw} requirements should be developed and presented to the management body within 30 days of this assessment.`);
+  bullets.push(`• Progress against this assessment should be reviewed quarterly, with a full re-assessment recommended within 12 months.`);
+
+  document.getElementById('copyMgmtBullets').textContent = bullets.join('\n\n');
+}
+
+function generateStrengths() {
+  const strong = CROSS_MAP_GROUPS.filter(g => g.score >= 4).slice(0, 8);
+  if (strong.length === 0) {
+    document.getElementById('copyStrengths').textContent = 'No controls currently score 4 or above.';
+    return;
+  }
+  const lines = strong.map(g => `✔  ${g.label}\n   Score: ${g.score}/5 — ${SCORE_LABELS[g.score]}`);
+  document.getElementById('copyStrengths').textContent = lines.join('\n\n');
+}
+
+function generateScorecard() {
+  const fw = selectedFramework;
+  document.getElementById('scorecardFwLabel').textContent = fw;
+  const artScores = getArticleScores(fw);
+
+  // Plain text version
+  const headerLine = `${'Article'.padEnd(12)} ${'Name'.padEnd(42)} ${'Score'.padEnd(7)} ${'Status'}`;
+  const separator  = '-'.repeat(80);
+  const rows = artScores.map(a =>
+    `${a.id.padEnd(12)} ${a.name.slice(0,40).padEnd(42)} ${a.avg.toFixed(1).padEnd(7)} ${ragLabel(a.avg)}`
+  );
+  document.getElementById('copyScorecardText').textContent = [headerLine, separator, ...rows].join('\n');
+
+  // HTML table version
+  let html = `<table class="rag-table"><thead><tr><th>Article</th><th>Name</th><th>Avg Score</th><th>Controls</th><th>Status</th></tr></thead><tbody>`;
+  artScores.forEach(a => {
+    const color = ragColor(a.avg);
+    html += `<tr>
+      <td><strong>${a.id}</strong></td>
+      <td>${a.name}</td>
+      <td><strong>${a.avg.toFixed(1)}/5</strong></td>
+      <td>${a.count}</td>
+      <td><span class="rag-cell"><span class="rag-dot" style="background:${color}"></span>${ragLabel(a.avg)}</span></td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+  document.getElementById('scorecardTableWrap').innerHTML = html;
+}
+
+function generateFindingsRegister() {
+  const fw = selectedFramework;
+  const items = getAtRiskItems(fw);
+  document.getElementById('findingsCount').textContent = items.length + ' findings';
+
+  // Plain text
+  const lines = items.map((item, i) => {
+    const guidance = CLAUSE_DB[fw+'||'+item.clauseId];
+    const rec = guidance ? guidance.guidance.replace(/<[^>]+>/g,'').trim().slice(0,180) + '…' : 'Refer to framework guidance.';
+    return `[F${String(i+1).padStart(2,'0')}] ${item.clauseId} — ${item.artName}\n     Control: ${item.label}\n     Score:   ${item.score}/5 (${SCORE_LABELS[item.score]})\n     Guidance: ${rec}`;
+  });
+  document.getElementById('copyFindingsText').textContent = lines.join('\n\n');
+
+  // HTML table
+  let html = `<table class="rag-table"><thead><tr><th>#</th><th>Article</th><th>Clause</th><th>Control</th><th>Score</th></tr></thead><tbody>`;
+  items.forEach((item, i) => {
+    const color = item.score === 1 ? '#C7254E' : '#E85D75';
+    html += `<tr>
+      <td>F${String(i+1).padStart(2,'0')}</td>
+      <td>${item.artId}</td>
+      <td>${item.clauseId}</td>
+      <td style="max-width:280px">${item.label}</td>
+      <td><span class="rag-cell"><span class="rag-dot" style="background:${color}"></span>${item.score}/5</span></td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+  document.getElementById('findingsTableWrap').innerHTML = html;
+}
+
+function generateActionPlan() {
+  const fw = selectedFramework;
+  const items = getAtRiskItems(fw);
+  const orgName = META.org || 'the organisation';
+  const lines = [];
+
+  lines.push(`PRIORITISED REMEDIATION ACTION PLAN`);
+  lines.push(`Organisation: ${orgName}  |  Framework: ${fw}  |  Generated: ${new Date().toLocaleDateString('en-GB')}`);
+  lines.push('='.repeat(80));
+  lines.push('');
+
+  // Group by article
+  const byArticle = {};
+  items.forEach(item => {
+    if (!byArticle[item.artId]) byArticle[item.artId] = { name: item.artName, items: [] };
+    byArticle[item.artId].items.push(item);
+  });
+
+  let recNum = 1;
+  Object.entries(byArticle).forEach(([artId, group]) => {
+    lines.push(`── ${artId} — ${group.name} ─────────────────────────────────`);
+    group.items.forEach(item => {
+      const guidance = CLAUSE_DB[fw+'||'+item.clauseId];
+      const priority = item.score === 1 ? 'CRITICAL' : 'HIGH';
+      lines.push(`\nR${String(recNum++).padStart(2,'0')}  [${priority}]  ${item.label}`);
+      lines.push(`    Clause:   ${item.clauseId}  |  Current Score: ${item.score}/5  |  Target: 3+`);
+      if (guidance) {
+        const text = guidance.guidance.replace(/<[^>]+>/g,'').trim().slice(0,220);
+        lines.push(`    Action:   ${text}…`);
+      }
+      lines.push(`    Owner:    [ To be assigned ]`);
+      lines.push(`    Due:      [ To be defined ]`);
+    });
+    lines.push('');
+  });
+
+  document.getElementById('copyActionPlan').textContent = lines.join('\n');
+}
+
+function openReportOverlay() {
+  generateExecSummary();
+  generateKeyFindings();
+  generateMgmtBullets();
+  generateStrengths();
+  generateScorecard();
+  generateFindingsRegister();
+  generateActionPlan();
+
+  const org = META.org || 'Assessment';
+  const ver = META.version || new Date().toLocaleDateString('en-GB', {month:'short', year:'numeric'});
+  document.getElementById('reportModalMeta').textContent = `${org}  ·  ${ver}  ·  ${CROSS_MAP_GROUPS.length} controls  ·  ${FRAMEWORKS.length} frameworks`;
+
+  document.getElementById('reportOverlay').classList.add('open');
+  // Show first tab
+  document.querySelector('.report-tab[data-pane="paneExec"]').click();
+}
+
+function closeReportOverlay() {
+  document.getElementById('reportOverlay').classList.remove('open');
+}
+
+function copyReportBlock(targetId) {
+  const el = document.getElementById(targetId);
+  const text = el.textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector(`.copy-btn[data-target="${targetId}"]`);
+    if (btn) {
+      btn.textContent = 'Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+    }
+  });
+}
+
+function printReport() {
+  const fw = selectedFramework;
+  const org = META.org || 'Organisation';
+  const assessor = META.assessor || '';
+  const ver = META.version || new Date().toLocaleDateString('en-GB');
+  const avg = (CROSS_MAP_GROUPS.reduce((s,g)=>s+g.score,0)/CROSS_MAP_GROUPS.length).toFixed(1);
+  const atRisk = getAtRiskItems(fw);
+  const artScores = getArticleScores(fw);
+
+  let html = `<!DOCTYPE html><html><head><meta charset="UTF-8">
+<title>Cyber Maturity Report — ${org}</title>
+<style>
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#212529;margin:0;padding:0;font-size:12px;line-height:1.5}
+  h1{font-size:22px;font-weight:800;margin:0 0 4px}
+  h2{font-size:14px;font-weight:700;color:#00338D;border-bottom:2px solid #00338D;padding-bottom:5px;margin:24px 0 12px}
+  h3{font-size:12px;font-weight:700;margin:16px 0 6px}
+  .cover{background:#00338D;color:#fff;padding:40px;page-break-after:always}
+  .cover p{opacity:.75;margin:4px 0 0;font-size:13px}
+  .cover .score-big{font-size:56px;font-weight:800;margin:28px 0 0;line-height:1}
+  .cover .score-label{font-size:14px;opacity:.75;margin-top:4px}
+  .cover .meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:28px;font-size:11px}
+  .cover .meta-item{background:rgba(255,255,255,.1);padding:8px 12px;border-radius:4px}
+  .cover .meta-item strong{display:block;opacity:.65;font-size:10px;text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px}
+  .body{padding:32px 40px}
+  table{width:100%;border-collapse:collapse;margin-bottom:14px;font-size:11px}
+  th{background:#f0f2f5;padding:7px 10px;text-align:left;font-weight:700;border:1px solid #e2e6ea;font-size:10px;text-transform:uppercase}
+  td{padding:7px 10px;border:1px solid #e2e6ea;vertical-align:top}
+  .dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px}
+  .priority{font-size:10px;font-weight:700;padding:2px 7px;border-radius:3px;color:#fff}
+  .crit{background:#C7254E} .high{background:#E85D75}
+  p{margin:0 0 8px}
+  @page{margin:15mm}
+</style>
+</head><body>`;
+
+  // Cover page
+  html += `<div class="cover">
+  <div><span style="font-size:11px;opacity:.6;text-transform:uppercase;letter-spacing:1px">Cyber Strategy & Risk</span></div>
+  <h1>Cyber Maturity Assessment Report</h1>
+  <p>Framework Cross-Mapping — ${fw} View</p>
+  <div class="score-big">${avg}/5</div>
+  <div class="score-label">${maturityText(parseFloat(avg))} — Overall Maturity Level</div>
+  <div class="meta-grid">
+    <div class="meta-item"><strong>Organisation</strong>${org}</div>
+    <div class="meta-item"><strong>Assessor</strong>${assessor || '—'}</div>
+    <div class="meta-item"><strong>Assessment Period</strong>${ver}</div>
+    <div class="meta-item"><strong>Date Generated</strong>${new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})}</div>
+    <div class="meta-item"><strong>Total Controls</strong>${CROSS_MAP_GROUPS.length}</div>
+    <div class="meta-item"><strong>At-Risk Controls (1–2)</strong>${atRisk.length}</div>
+  </div>
+</div>`;
+
+  html += `<div class="body">`;
+
+  // Executive Summary
+  html += `<h2>1. Executive Summary</h2>`;
+  html += `<p>${document.getElementById('copyExecSummary').textContent.replace(/\n\n/g,'</p><p>').replace(/\n/g,' ')}</p>`;
+
+  // Scorecard
+  html += `<h2>2. Maturity Scorecard — ${fw}</h2>`;
+  html += `<table><thead><tr><th>Article</th><th>Name</th><th>Avg Score</th><th>Controls</th><th>Status</th></tr></thead><tbody>`;
+  artScores.forEach(a => {
+    const color = ragColor(a.avg);
+    html += `<tr><td><strong>${a.id}</strong></td><td>${a.name}</td><td><strong>${a.avg.toFixed(1)}/5</strong></td><td>${a.count}</td><td><span class="dot" style="background:${color}"></span>${ragLabel(a.avg)}</td></tr>`;
+  });
+  html += `</tbody></table>`;
+
+  // Findings register
+  html += `<h2>3. Findings Register (At-Risk Controls)</h2>`;
+  if (atRisk.length === 0) {
+    html += `<p>No at-risk controls identified.</p>`;
+  } else {
+    html += `<table><thead><tr><th>#</th><th>Clause</th><th>Control Description</th><th>Score</th><th>Priority</th></tr></thead><tbody>`;
+    atRisk.forEach((item,i) => {
+      const p = item.score === 1 ? 'CRITICAL' : 'HIGH';
+      const cls = item.score === 1 ? 'crit' : 'high';
+      html += `<tr><td>F${String(i+1).padStart(2,'0')}</td><td>${item.clauseId}</td><td>${item.label}</td><td>${item.score}/5</td><td><span class="priority ${cls}">${p}</span></td></tr>`;
+    });
+    html += `</tbody></table>`;
+  }
+
+  // Action plan (top 15)
+  html += `<h2>4. Prioritised Action Plan</h2>`;
+  html += `<table><thead><tr><th>#</th><th>Priority</th><th>Clause</th><th>Control</th><th>Recommended Action</th><th>Owner</th><th>Due</th></tr></thead><tbody>`;
+  atRisk.slice(0,20).forEach((item,i) => {
+    const p = item.score === 1 ? 'CRITICAL' : 'HIGH';
+    const cls = item.score === 1 ? 'crit' : 'high';
+    const guidance = CLAUSE_DB[fw+'||'+item.clauseId];
+    const rec = guidance ? guidance.guidance.replace(/<[^>]+>/g,'').trim().slice(0,150)+'…' : '—';
+    html += `<tr><td>R${String(i+1).padStart(2,'0')}</td><td><span class="priority ${cls}">${p}</span></td><td>${item.clauseId}</td><td>${item.label}</td><td style="font-size:10px">${rec}</td><td></td><td></td></tr>`;
+  });
+  html += `</tbody></table>`;
+
+  // Management bullets
+  html += `<h2>5. Management Summary</h2>`;
+  const bullets = document.getElementById('copyMgmtBullets').textContent.split('\n\n');
+  bullets.forEach(b => { html += `<p>${b.replace(/^• /,'<strong>·</strong> ')}</p>`; });
+
+  html += `</div></body></html>`;
+
+  const win = window.open('', '_blank');
+  win.document.write(html);
+  win.document.close();
+  win.focus();
+  setTimeout(() => win.print(), 600);
+}
+
+// ─── Report event wiring ────────────────────────────────────────────────
+document.getElementById('reportBtn').addEventListener('click', openReportOverlay);
+document.getElementById('reportModalClose').addEventListener('click', closeReportOverlay);
+document.getElementById('reportModalClose2').addEventListener('click', closeReportOverlay);
+document.getElementById('reportOverlay').addEventListener('click', (e) => {
+  if (e.target === document.getElementById('reportOverlay')) closeReportOverlay();
+});
+document.getElementById('reportPrintBtn').addEventListener('click', printReport);
+
+document.querySelectorAll('.report-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.report-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.report-pane').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById(tab.dataset.pane).classList.add('active');
+  });
+});
+
+document.querySelectorAll('.copy-btn').forEach(btn => {
+  btn.addEventListener('click', () => copyReportBlock(btn.dataset.target));
 });
 
 // ═══════════════════════════════════════════════════════════════════════
