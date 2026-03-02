@@ -785,10 +785,359 @@
   .empty-state svg { margin-bottom: 12px; opacity: .5; }
   .empty-state p { font-size: 14px; }
 
+  /* ── Metadata bar ────────────────────────────── */
+  .meta-bar {
+    background: var(--white);
+    border-bottom: 1px solid var(--gray-200);
+    padding: 10px 40px;
+    display: flex;
+    gap: 24px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .meta-field {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+  }
+  .meta-field label {
+    color: var(--gray-400);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    font-size: 10px;
+    flex-shrink: 0;
+  }
+  .meta-input {
+    border: 1px solid transparent;
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-size: 12px;
+    font-family: inherit;
+    color: var(--gray-800);
+    background: transparent;
+    transition: all .15s;
+    min-width: 120px;
+  }
+  .meta-input:hover { border-color: var(--gray-200); }
+  .meta-input:focus { border-color: var(--blue-secondary); background: var(--white); outline: none; }
+
+  /* ── Status bar ──────────────────────────────── */
+  .status-bar {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 0 10px;
+    color: var(--gray-600);
+  }
+  .status-pill {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 700;
+  }
+  .status-pill.risk { background: var(--risk-red-bg); color: var(--risk-red); }
+  .status-pill.ok { background: var(--ok-green-bg); color: var(--ok-green); }
+
+  /* ── Executive summary ───────────────────────── */
+  .exec-summary {
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--gray-800);
+  }
+  .exec-summary strong { color: var(--gray-900); }
+  .exec-summary p { margin-bottom: 8px; }
+  .exec-summary p:last-child { margin-bottom: 0; }
+  .exec-highlight {
+    display: inline-block;
+    padding: 1px 8px;
+    border-radius: 4px;
+    font-weight: 700;
+    font-size: 12px;
+  }
+  .exec-highlight.risk { background: var(--risk-red-bg); color: var(--risk-red); }
+  .exec-highlight.ok { background: var(--ok-green-bg); color: var(--ok-green); }
+  .exec-highlight.warning { background: var(--warning-amber-bg); color: var(--warning-amber); }
+
+  /* ── Score distribution ──────────────────────── */
+  .dist-chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 4px;
+    height: 60px;
+    padding: 0 4px;
+  }
+  .dist-bar-wrap {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    height: 100%;
+  }
+  .dist-bar {
+    width: 100%;
+    border-radius: 3px 3px 0 0;
+    min-height: 2px;
+    transition: height .3s ease;
+  }
+  .dist-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--gray-400);
+  }
+  .dist-count {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--gray-600);
+  }
+
+  /* ── Snapshot panel ──────────────────────────── */
+  .snapshot-list {
+    list-style: none;
+    max-height: 200px;
+    overflow-y: auto;
+  }
+  .snapshot-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--gray-100);
+    font-size: 12px;
+    gap: 8px;
+  }
+  .snapshot-item:last-child { border-bottom: none; }
+  .snapshot-name {
+    font-weight: 600;
+    color: var(--gray-800);
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .snapshot-date {
+    color: var(--gray-400);
+    font-size: 11px;
+    flex-shrink: 0;
+  }
+  .snapshot-score {
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 11px;
+    flex-shrink: 0;
+  }
+  .snapshot-actions {
+    display: flex;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+  .snap-btn {
+    padding: 3px 8px;
+    border: 1px solid var(--gray-200);
+    border-radius: 4px;
+    background: var(--white);
+    font-size: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--gray-600);
+    transition: all .15s;
+    font-family: inherit;
+  }
+  .snap-btn:hover { border-color: var(--blue-secondary); color: var(--blue-secondary); }
+  .snap-btn.active { background: var(--purple-accent); border-color: var(--purple-accent); color: #fff; }
+  .snap-btn.danger:hover { border-color: var(--risk-red); color: var(--risk-red); }
+  .save-snap-btn {
+    width: 100%;
+    padding: 8px;
+    border: 1px dashed var(--gray-300);
+    border-radius: var(--radius);
+    background: transparent;
+    color: var(--gray-600);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .15s;
+    font-family: inherit;
+    margin-top: 8px;
+  }
+  .save-snap-btn:hover { border-color: var(--blue-secondary); color: var(--blue-secondary); }
+  .no-snapshots {
+    text-align: center;
+    color: var(--gray-400);
+    font-size: 12px;
+    padding: 12px 0;
+  }
+
+  /* ── Matrix view ─────────────────────────────── */
+  .matrix-container { overflow-x: auto; margin-bottom: 24px; }
+  .matrix-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+  .matrix-table th {
+    padding: 10px 12px;
+    background: var(--gray-50);
+    border: 1px solid var(--gray-200);
+    font-weight: 700;
+    color: var(--gray-600);
+    text-align: center;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+  }
+  .matrix-table th:first-child { text-align: left; min-width: 250px; }
+  .matrix-table td {
+    padding: 8px 12px;
+    border: 1px solid var(--gray-200);
+    text-align: center;
+    background: var(--white);
+  }
+  .matrix-table td:first-child {
+    text-align: left;
+    font-weight: 500;
+    color: var(--gray-800);
+  }
+  .matrix-cell {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 26px;
+    border-radius: 4px;
+    font-weight: 700;
+    font-size: 12px;
+    color: #fff;
+  }
+  .matrix-clause {
+    display: block;
+    font-size: 10px;
+    color: var(--gray-400);
+    margin-top: 2px;
+  }
+
+  /* ── View toggle ─────────────────────────────── */
+  .view-toggle {
+    display: flex;
+    gap: 4px;
+    margin-left: auto;
+  }
+  .view-btn {
+    padding: 6px 12px;
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius);
+    background: var(--white);
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--gray-600);
+    transition: all .15s;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-family: inherit;
+  }
+  .view-btn:hover { border-color: var(--blue-secondary); color: var(--blue-secondary); }
+  .view-btn.active { background: var(--purple-accent); border-color: var(--purple-accent); color: #fff; }
+
+  /* ── Undo/redo ───────────────────────────────── */
+  .undo-redo { display: flex; gap: 2px; }
+  .undo-btn {
+    padding: 6px 8px;
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius);
+    background: var(--white);
+    cursor: pointer;
+    color: var(--gray-400);
+    transition: all .15s;
+    display: flex;
+    align-items: center;
+  }
+  .undo-btn:hover:not(:disabled) { border-color: var(--blue-secondary); color: var(--blue-secondary); }
+  .undo-btn:disabled { opacity: .3; cursor: default; }
+
+  /* ── Keyboard shortcuts ────────────────────────── */
+  .kbd-hint {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: var(--gray-900);
+    color: var(--gray-100);
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 11px;
+    opacity: .6;
+    z-index: 100;
+    pointer-events: none;
+  }
+  .kbd-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,20,60,.5);
+    backdrop-filter: blur(3px);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .2s;
+  }
+  .kbd-overlay.open { opacity: 1; pointer-events: all; }
+  .kbd-panel {
+    background: var(--white);
+    border-radius: 10px;
+    padding: 28px 32px;
+    box-shadow: 0 20px 60px rgba(0,0,0,.25);
+    max-width: 420px;
+    width: 90vw;
+  }
+  .kbd-panel h3 {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: var(--gray-900);
+  }
+  .kbd-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--gray-100);
+    font-size: 13px;
+    color: var(--gray-800);
+    align-items: center;
+  }
+  .kbd-row:last-child { border-bottom: none; }
+  .kbd-keys { display: flex; gap: 4px; align-items: center; color: var(--gray-400); font-size: 11px; }
+  .kbd-key {
+    background: var(--gray-100);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--gray-800);
+    border: 1px solid var(--gray-200);
+  }
+
   /* ── Print ───────────────────────────────────── */
   @media print {
     .header-actions, .toolbar, .article-tabs, .framework-selector,
-    .score-group, .score-label, .notes-toggle, .notes-area { display: none !important; }
+    .score-group, .score-label, .notes-toggle, .notes-area,
+    .meta-bar, .status-bar, .undo-redo, .view-toggle,
+    .kbd-hint, .kbd-overlay, .save-snap-btn, .snap-btn { display: none !important; }
     .dashboard { grid-template-columns: 1fr !important; padding: 0 !important; }
     .header { padding: 12px 20px !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     .clause-card { break-inside: avoid; page-break-inside: avoid; }
@@ -825,6 +1174,22 @@
   </div>
 </header>
 
+<!-- ── Metadata bar ────────────────────────────────────────── -->
+<div class="meta-bar" id="metaBar">
+  <div class="meta-field">
+    <label>Organisation</label>
+    <input class="meta-input" id="metaOrg" placeholder="Enter organisation name…">
+  </div>
+  <div class="meta-field">
+    <label>Assessor</label>
+    <input class="meta-input" id="metaAssessor" placeholder="Assessor name…">
+  </div>
+  <div class="meta-field">
+    <label>Version</label>
+    <input class="meta-input" id="metaVersion" placeholder="v1.0" style="min-width:60px">
+  </div>
+</div>
+
 <!-- ── Dashboard ───────────────────────────────────────────── -->
 <div class="dashboard">
 
@@ -841,9 +1206,29 @@
         <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
         At-risk only
       </button>
+      <div class="undo-redo">
+        <button class="undo-btn" id="undoBtn" disabled title="Undo (Ctrl+Z)">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
+        </button>
+        <button class="undo-btn" id="redoBtn" disabled title="Redo (Ctrl+Shift+Z)">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.13-9.36L23 10"/></svg>
+        </button>
+      </div>
+      <div class="view-toggle">
+        <button class="view-btn active" id="viewDetail" title="Detail view">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+          Detail
+        </button>
+        <button class="view-btn" id="viewMatrix" title="Cross-framework matrix">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+          Matrix
+        </button>
+      </div>
     </div>
+    <div class="status-bar" id="statusBar"></div>
     <div class="article-tabs" id="articleTabs"></div>
     <div id="assessmentContainer"></div>
+    <div id="matrixContainer" style="display:none"></div>
   </div>
 
   <!-- Right column -->
@@ -862,7 +1247,7 @@
         </div>
       </div>
       <div class="legend">
-        <div class="legend-item"><div class="legend-swatch" style="background:var(--risk-red)"></div> 0–2 At Risk</div>
+        <div class="legend-item"><div class="legend-swatch" style="background:var(--risk-red)"></div> 1–2 At Risk</div>
         <div class="legend-item"><div class="legend-swatch" style="background:var(--warning-amber)"></div> 3 Developing</div>
         <div class="legend-item"><div class="legend-swatch" style="background:var(--ok-green)"></div> 4–5 Mature</div>
       </div>
@@ -886,6 +1271,37 @@
       <div class="panel-body">
         <div class="risk-count-row" id="riskCountRow"></div>
         <ul class="risk-list" id="riskList"></ul>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="10" width="4" height="12" rx="1"/><rect x="10" y="4" width="4" height="18" rx="1"/><rect x="18" y="8" width="4" height="14" rx="1"/></svg>
+        Score Distribution
+      </div>
+      <div class="panel-body">
+        <div class="dist-chart" id="distChart"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        Executive Summary
+      </div>
+      <div class="panel-body">
+        <div class="exec-summary" id="execSummary"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Assessment Snapshots
+      </div>
+      <div class="panel-body">
+        <ul class="snapshot-list" id="snapshotList"></ul>
+        <button class="save-snap-btn" id="saveSnapshotBtn">+ Save Current Snapshot</button>
       </div>
     </div>
   </div>
@@ -919,6 +1335,22 @@
   </div>
 </div>
 
+<!-- ── Keyboard shortcuts overlay ──────────────────────────── -->
+<div class="kbd-overlay" id="kbdOverlay">
+  <div class="kbd-panel">
+    <h3>Keyboard Shortcuts</h3>
+    <div class="kbd-row"><span>Score focused control</span><span class="kbd-keys"><span class="kbd-key">1</span>–<span class="kbd-key">5</span></span></div>
+    <div class="kbd-row"><span>Undo last change</span><span class="kbd-keys"><span class="kbd-key">Ctrl</span>+<span class="kbd-key">Z</span></span></div>
+    <div class="kbd-row"><span>Redo</span><span class="kbd-keys"><span class="kbd-key">Ctrl</span>+<span class="kbd-key">Shift</span>+<span class="kbd-key">Z</span></span></div>
+    <div class="kbd-row"><span>Export CSV</span><span class="kbd-keys"><span class="kbd-key">Ctrl</span>+<span class="kbd-key">E</span></span></div>
+    <div class="kbd-row"><span>Toggle dark mode</span><span class="kbd-keys"><span class="kbd-key">Ctrl</span>+<span class="kbd-key">D</span></span></div>
+    <div class="kbd-row"><span>Focus search</span><span class="kbd-keys"><span class="kbd-key">/</span></span></div>
+    <div class="kbd-row"><span>Show shortcuts</span><span class="kbd-keys"><span class="kbd-key">?</span></span></div>
+    <div class="kbd-row"><span>Close overlay</span><span class="kbd-keys"><span class="kbd-key">Esc</span></span></div>
+  </div>
+</div>
+<div class="kbd-hint">Press <span class="kbd-key">?</span> for shortcuts</div>
+
 <script>
 // ═══════════════════════════════════════════════════════════════════════
 // DATA MODEL
@@ -931,52 +1363,327 @@ const FW_COLORS = {
   'NIS2': '#483698',
   'ISF SOGP': '#6C757D',
 };
-const SCORE_LABELS = ['Not implemented','Initial / Ad-hoc','Repeatable','Defined','Managed','Optimised'];
+const SCORE_LABELS = {1:'Initial / Ad-hoc',2:'Repeatable',3:'Defined',4:'Managed',5:'Optimised'};
 
 // ─── Cross-mapping groups (source of truth for scores) ─────────────────
 const CROSS_MAP_GROUPS = [
+  // ── Access Control ──
   { id:'ac1', label:'Role-based access control (RBAC) enforcement across critical systems', score:4,
     clauses:{'ISO 27001':'A.9.2','DORA':'Art. 9(4)','NIS2':'Art. 21(2)(i)','ISF SOGP':'CF2.1'} },
   { id:'ac2', label:'Multi-factor authentication for privileged accounts', score:3,
     clauses:{'ISO 27001':'A.9.4','DORA':'Art. 9(3)','NIS2':'Art. 21(2)(j)','ISF SOGP':'CF2.3'} },
   { id:'ac3', label:'Periodic access reviews and recertification processes', score:2,
     clauses:{'ISO 27001':'A.9.2','DORA':'Art. 9(4)','NIS2':'Art. 21(2)(i)','ISF SOGP':'CF2.2'} },
+  // ── Incident Management ──
   { id:'im1', label:'Defined incident response plan with clear escalation paths', score:3,
-    clauses:{'ISO 27001':'A.16.1','DORA':'Art. 17','NIS2':'Art. 23','ISF SOGP':'SM2.1'} },
+    clauses:{'ISO 27001':'A.16.1','DORA':'Art. 17(1)','NIS2':'Art. 23','ISF SOGP':'SM2.1'} },
   { id:'im2', label:'Incident detection and SIEM monitoring capabilities', score:2,
-    clauses:{'ISO 27001':'A.16.1','DORA':'Art. 10','NIS2':'Art. 21(2)(b)','ISF SOGP':'SM2.2'} },
+    clauses:{'ISO 27001':'A.16.1','DORA':'Art. 10(1)','NIS2':'Art. 21(2)(b)','ISF SOGP':'SM2.2'} },
   { id:'im3', label:'Post-incident review and lessons-learned integration', score:1,
-    clauses:{'ISO 27001':'A.16.1','DORA':'Art. 17(3)','NIS2':'Art. 23(4)','ISF SOGP':'SM2.3'} },
+    clauses:{'ISO 27001':'A.16.1','DORA':'Art. 13(2)','NIS2':'Art. 23(4)','ISF SOGP':'SM2.3'} },
+  // ── Third-Party Risk ──
   { id:'tp1', label:'Vendor security assessment and due diligence programme', score:2,
-    clauses:{'ISO 27001':'A.15.1','DORA':'Art. 28','NIS2':'Art. 21(2)(d)','ISF SOGP':'SY1.2'} },
+    clauses:{'ISO 27001':'A.15.1','DORA':'Art. 28(4)','NIS2':'Art. 21(2)(d)','ISF SOGP':'SY1.2'} },
   { id:'tp2', label:'Contractual security requirements for ICT service providers', score:3,
-    clauses:{'ISO 27001':'A.15.1','DORA':'Art. 30','NIS2':'Art. 21(2)(d)','ISF SOGP':'SY1.3'} },
+    clauses:{'ISO 27001':'A.15.1','DORA':'Art. 30(2)','NIS2':'Art. 21(2)(d)','ISF SOGP':'SY1.3'} },
   { id:'tp3', label:'Ongoing monitoring and exit strategy for critical vendors', score:1,
     clauses:{'ISO 27001':'A.15.2','DORA':'Art. 28(8)','NIS2':'Art. 21(3)','ISF SOGP':'SY1.4'} },
+  // ── Business Continuity ──
   { id:'bc1', label:'Business continuity plan covering critical ICT services', score:4,
-    clauses:{'ISO 27001':'A.17.1','DORA':'Art. 11','NIS2':'Art. 21(2)(c)','ISF SOGP':'BC1.1'} },
+    clauses:{'ISO 27001':'A.17.1','DORA':'Art. 11(1)','NIS2':'Art. 21(2)(c)','ISF SOGP':'BC1.1'} },
   { id:'bc2', label:'Disaster recovery testing with defined RTOs and RPOs', score:2,
     clauses:{'ISO 27001':'A.17.1','DORA':'Art. 11(6)','NIS2':'Art. 21(2)(c)','ISF SOGP':'BC1.3'} },
   { id:'bc3', label:'Digital operational resilience testing (TLPT-style)', score:1,
-    clauses:{'ISO 27001':'A.17.2','DORA':'Art. 26','NIS2':'Art. 21(2)(e)','ISF SOGP':'BC1.4'} },
+    clauses:{'ISO 27001':'A.17.2','DORA':'Art. 26(1)','NIS2':'Art. 21(2)(e)','ISF SOGP':'BC1.4'} },
+  // ── Data Protection ──
   { id:'dp1', label:'Data classification policy and handling procedures', score:3,
     clauses:{'ISO 27001':'A.8.2','DORA':'Art. 9(2)','NIS2':'Art. 21(2)(h)','ISF SOGP':'IR1.1'} },
   { id:'dp2', label:'Encryption of data at rest and in transit', score:4,
     clauses:{'ISO 27001':'A.10.1','DORA':'Art. 9(2)','NIS2':'Art. 21(2)(h)','ISF SOGP':'IR1.3'} },
   { id:'dp3', label:'Cryptographic key management lifecycle', score:2,
-    clauses:{'ISO 27001':'A.10.1','DORA':'Art. 9(2)','NIS2':'Art. 21(2)(h)','ISF SOGP':'IR1.4'} },
+    clauses:{'ISO 27001':'A.10.1','DORA':'Art. 9(3)','NIS2':'Art. 21(2)(h)','ISF SOGP':'IR1.4'} },
+  // ── Governance ──
   { id:'gv1', label:'Information security policy approved by senior management', score:5,
-    clauses:{'ISO 27001':'A.5.1','DORA':'Art. 5','NIS2':'Art. 20','ISF SOGP':'SG1.1'} },
+    clauses:{'ISO 27001':'A.5.1','DORA':'Art. 5(2)','NIS2':'Art. 20','ISF SOGP':'SG1.1'} },
   { id:'gv2', label:'ICT risk management framework aligned with enterprise risk', score:3,
-    clauses:{'ISO 27001':'A.6.1','DORA':'Art. 6','NIS2':'Art. 21(1)','ISF SOGP':'SG1.2'} },
+    clauses:{'ISO 27001':'A.6.1','DORA':'Art. 6(1)','NIS2':'Art. 21(1)','ISF SOGP':'SG1.2'} },
   { id:'gv3', label:'Security awareness training and competence programme', score:2,
-    clauses:{'ISO 27001':'A.7.2','DORA':'Art. 13','NIS2':'Art. 20(2)','ISF SOGP':'SG2.1'} },
+    clauses:{'ISO 27001':'A.7.2','DORA':'Art. 13(6)','NIS2':'Art. 20(2)','ISF SOGP':'SG2.1'} },
+  // ── Network Security ──
   { id:'ns1', label:'Network segmentation and firewall rule management', score:4,
-    clauses:{'ISO 27001':'A.13.1','DORA':'Art. 9(1)','NIS2':'Art. 21(2)(a)','ISF SOGP':'NW1.1'} },
+    clauses:{'ISO 27001':'A.13.1','DORA':'Art. 9(4)','NIS2':'Art. 21(2)(a)','ISF SOGP':'NW1.1'} },
   { id:'ns2', label:'Vulnerability management and patch cycles', score:2,
-    clauses:{'ISO 27001':'A.12.6','DORA':'Art. 9(1)','NIS2':'Art. 21(2)(e)','ISF SOGP':'NW1.3'} },
+    clauses:{'ISO 27001':'A.12.6','DORA':'Art. 9(4)','NIS2':'Art. 21(2)(e)','ISF SOGP':'NW1.3'} },
   { id:'ns3', label:'Secure configuration baselines and hardening standards', score:3,
-    clauses:{'ISO 27001':'A.12.1','DORA':'Art. 9(1)','NIS2':'Art. 21(2)(e)','ISF SOGP':'NW1.2'} },
+    clauses:{'ISO 27001':'A.12.1','DORA':'Art. 9(4)','NIS2':'Art. 21(2)(e)','ISF SOGP':'NW1.2'} },
+
+  // ══════════════════════════════════════════════════════════════════════
+  // DORA Chapter II — ICT Risk Management (Art. 5–16)
+  // ══════════════════════════════════════════════════════════════════════
+  // Art. 5 — Governance and Organisation
+  { id:'d05a', label:'Management body ultimate responsibility for ICT risk defined and documented', score:1,
+    clauses:{'ISO 27001':'A.5.1','DORA':'Art. 5(1)','NIS2':'Art. 20(1)','ISF SOGP':'SG1.1'} },
+  { id:'d05b', label:'Digital operational resilience strategy approved by management body', score:1,
+    clauses:{'ISO 27001':'A.5.1','DORA':'Art. 5(2)(d)','NIS2':'Art. 20(1)','ISF SOGP':'SG1.1'} },
+  { id:'d05c', label:'Dedicated budget allocation for ICT security and resilience needs', score:1,
+    clauses:{'ISO 27001':'A.6.1','DORA':'Art. 5(2)(g)','NIS2':'Art. 20(1)','ISF SOGP':'SG1.2'} },
+  { id:'d05d', label:'Policies on ICT third-party service provider arrangements approved', score:1,
+    clauses:{'ISO 27001':'A.15.1','DORA':'Art. 5(2)(h)','NIS2':'Art. 21(2)(d)','ISF SOGP':'SY1.1'} },
+  { id:'d05e', label:'Reporting channels for third-party arrangements and major incidents established', score:1,
+    clauses:{'ISO 27001':'A.16.1','DORA':'Art. 5(2)(i)','NIS2':'Art. 23(1)','ISF SOGP':'SM2.1'} },
+  { id:'d05f', label:'Senior management role designated for ICT third-party oversight', score:1,
+    clauses:{'ISO 27001':'A.6.1','DORA':'Art. 5(3)','NIS2':'Art. 20(1)','ISF SOGP':'SG1.2'} },
+  { id:'d05g', label:'Management body ICT risk training programme in place', score:1,
+    clauses:{'ISO 27001':'A.7.2','DORA':'Art. 5(4)','NIS2':'Art. 20(2)','ISF SOGP':'SG2.1'} },
+
+  // Art. 6 — ICT Risk Management Framework
+  { id:'d06a', label:'Comprehensive ICT risk management framework documented', score:1,
+    clauses:{'ISO 27001':'A.6.1','DORA':'Art. 6(1)','NIS2':'Art. 21(1)','ISF SOGP':'SG1.2'} },
+  { id:'d06b', label:'Strategies, policies and tools to protect information and ICT assets defined', score:1,
+    clauses:{'ISO 27001':'A.8.1','DORA':'Art. 6(2)','NIS2':'Art. 21(2)(a)','ISF SOGP':'IR1.1'} },
+  { id:'d06c', label:'ICT risk management responsibility assigned to independent control function', score:1,
+    clauses:{'ISO 27001':'A.6.1','DORA':'Art. 6(4)','NIS2':'Art. 21(1)','ISF SOGP':'SG1.2'} },
+  { id:'d06d', label:'Annual documentation and review of ICT risk management framework', score:1,
+    clauses:{'ISO 27001':'A.6.1','DORA':'Art. 6(5)','NIS2':'Art. 21(1)','ISF SOGP':'SG1.2'} },
+  { id:'d06e', label:'Regular internal ICT audits performed by independent auditors', score:1,
+    clauses:{'ISO 27001':'A.12.7','DORA':'Art. 6(6)','NIS2':'Art. 21(2)(f)','ISF SOGP':'SG1.3'} },
+  { id:'d06f', label:'Formal follow-up process for critical audit findings', score:1,
+    clauses:{'ISO 27001':'A.12.7','DORA':'Art. 6(7)','NIS2':'Art. 21(2)(f)','ISF SOGP':'SG1.3'} },
+  { id:'d06g', label:'Digital operational resilience strategy addressing 8 required elements', score:1,
+    clauses:{'ISO 27001':'A.5.1','DORA':'Art. 6(8)','NIS2':'Art. 21(1)','ISF SOGP':'SG1.1'} },
+
+  // Art. 7 — ICT Systems, Protocols and Tools
+  { id:'d07a', label:'ICT systems appropriate to magnitude and complexity of operations', score:1,
+    clauses:{'ISO 27001':'A.12.1','DORA':'Art. 7(1)','NIS2':'Art. 21(2)(a)','ISF SOGP':'NW1.1'} },
+  { id:'d07b', label:'ICT infrastructure reliability and consistent functionality assured', score:1,
+    clauses:{'ISO 27001':'A.12.1','DORA':'Art. 7(2)','NIS2':'Art. 21(2)(a)','ISF SOGP':'NW1.1'} },
+  { id:'d07c', label:'Sufficient processing capacity for peak volumes and timely service delivery', score:1,
+    clauses:{'ISO 27001':'A.12.1','DORA':'Art. 7(3)','NIS2':'Art. 21(2)(a)','ISF SOGP':'NW1.1'} },
+  { id:'d07d', label:'Technological resilience under market stress and adverse conditions', score:1,
+    clauses:{'ISO 27001':'A.17.1','DORA':'Art. 7(4)','NIS2':'Art. 21(2)(c)','ISF SOGP':'BC1.1'} },
+
+  // Art. 8 — Identification
+  { id:'d08a', label:'All ICT-supported business functions, assets and roles identified and classified', score:1,
+    clauses:{'ISO 27001':'A.8.1','DORA':'Art. 8(1)','NIS2':'Art. 21(2)(a)','ISF SOGP':'IR1.1'} },
+  { id:'d08b', label:'Continuous ICT risk source identification including cyber threats and vulnerabilities', score:1,
+    clauses:{'ISO 27001':'A.12.6','DORA':'Art. 8(2)','NIS2':'Art. 21(2)(e)','ISF SOGP':'NW1.3'} },
+  { id:'d08c', label:'Risk assessments performed upon major ICT infrastructure changes', score:1,
+    clauses:{'ISO 27001':'A.6.1','DORA':'Art. 8(3)','NIS2':'Art. 21(1)','ISF SOGP':'SG1.2'} },
+  { id:'d08d', label:'Critical ICT assets mapped with configurations and interdependencies', score:1,
+    clauses:{'ISO 27001':'A.8.1','DORA':'Art. 8(4)','NIS2':'Art. 21(2)(a)','ISF SOGP':'IR1.1'} },
+  { id:'d08e', label:'ICT third-party dependencies identified and interconnections mapped', score:1,
+    clauses:{'ISO 27001':'A.15.1','DORA':'Art. 8(5)','NIS2':'Art. 21(2)(d)','ISF SOGP':'SY1.2'} },
+  { id:'d08f', label:'Asset and dependency inventories maintained and periodically updated', score:1,
+    clauses:{'ISO 27001':'A.8.1','DORA':'Art. 8(6)','NIS2':'Art. 21(2)(a)','ISF SOGP':'IR1.1'} },
+  { id:'d08g', label:'Legacy ICT system risk assessments conducted at least yearly', score:1,
+    clauses:{'ISO 27001':'A.12.6','DORA':'Art. 8(7)','NIS2':'Art. 21(2)(e)','ISF SOGP':'NW1.3'} },
+
+  // Art. 9 — Protection and Prevention
+  { id:'d09a', label:'Continuous monitoring and control of ICT system security and functioning', score:1,
+    clauses:{'ISO 27001':'A.12.4','DORA':'Art. 9(1)','NIS2':'Art. 21(2)(a)','ISF SOGP':'SM2.2'} },
+  { id:'d09b', label:'ICT security policies for resilience, continuity and data availability', score:1,
+    clauses:{'ISO 27001':'A.5.1','DORA':'Art. 9(2)','NIS2':'Art. 21(2)(a)','ISF SOGP':'SG1.1'} },
+  { id:'d09c', label:'Documented information security policies covering all required areas', score:1,
+    clauses:{'ISO 27001':'A.5.1','DORA':'Art. 9(4)(a)','NIS2':'Art. 21(2)(a)','ISF SOGP':'SG1.1'} },
+  { id:'d09d', label:'Network infrastructure management with cyber-attack isolation mechanisms', score:1,
+    clauses:{'ISO 27001':'A.13.1','DORA':'Art. 9(4)(b)','NIS2':'Art. 21(2)(a)','ISF SOGP':'NW1.1'} },
+  { id:'d09e', label:'Access control policies limiting logical and physical access appropriately', score:1,
+    clauses:{'ISO 27001':'A.9.1','DORA':'Art. 9(4)(c)','NIS2':'Art. 21(2)(i)','ISF SOGP':'CF2.1'} },
+  { id:'d09f', label:'Strong authentication and encryption mechanisms deployed based on risk', score:1,
+    clauses:{'ISO 27001':'A.10.1','DORA':'Art. 9(4)(d)','NIS2':'Art. 21(2)(j)','ISF SOGP':'CF2.3'} },
+  { id:'d09g', label:'Documented ICT change management procedures with management approval', score:1,
+    clauses:{'ISO 27001':'A.12.1','DORA':'Art. 9(4)(e)','NIS2':'Art. 21(2)(a)','ISF SOGP':'NW1.2'} },
+  { id:'d09h', label:'Comprehensive patching and update policies established', score:1,
+    clauses:{'ISO 27001':'A.12.6','DORA':'Art. 9(4)(f)','NIS2':'Art. 21(2)(e)','ISF SOGP':'NW1.3'} },
+
+  // Art. 10 — Detection
+  { id:'d10a', label:'Mechanisms to detect anomalous activities and ICT-related incidents', score:1,
+    clauses:{'ISO 27001':'A.16.1','DORA':'Art. 10(1)','NIS2':'Art. 21(2)(b)','ISF SOGP':'SM2.2'} },
+  { id:'d10b', label:'Layered detection controls with alert thresholds and automated notifications', score:1,
+    clauses:{'ISO 27001':'A.16.1','DORA':'Art. 10(2)','NIS2':'Art. 21(2)(b)','ISF SOGP':'SM2.2'} },
+  { id:'d10c', label:'Adequate resources for monitoring user behaviour and ICT anomalies', score:1,
+    clauses:{'ISO 27001':'A.12.4','DORA':'Art. 10(3)','NIS2':'Art. 21(2)(b)','ISF SOGP':'SM2.2'} },
+
+  // Art. 11 — Response and Recovery
+  { id:'d11a', label:'Comprehensive ICT business continuity policy established', score:1,
+    clauses:{'ISO 27001':'A.17.1','DORA':'Art. 11(1)','NIS2':'Art. 21(2)(c)','ISF SOGP':'BC1.1'} },
+  { id:'d11b', label:'Documented response and recovery arrangements and procedures', score:1,
+    clauses:{'ISO 27001':'A.17.1','DORA':'Art. 11(2)','NIS2':'Art. 21(2)(c)','ISF SOGP':'BC1.1'} },
+  { id:'d11c', label:'Response and recovery plans subject to independent internal audit reviews', score:1,
+    clauses:{'ISO 27001':'A.17.1','DORA':'Art. 11(3)','NIS2':'Art. 21(2)(c)','ISF SOGP':'BC1.1'} },
+  { id:'d11d', label:'Business continuity plans tested periodically including third-party scenarios', score:1,
+    clauses:{'ISO 27001':'A.17.1','DORA':'Art. 11(4)','NIS2':'Art. 21(2)(c)','ISF SOGP':'BC1.3'} },
+  { id:'d11e', label:'Business impact analysis (BIA) assessing exposure to severe disruptions', score:1,
+    clauses:{'ISO 27001':'A.17.1','DORA':'Art. 11(5)','NIS2':'Art. 21(2)(c)','ISF SOGP':'BC1.1'} },
+  { id:'d11f', label:'Annual testing of continuity plans including cyber-attack scenarios', score:1,
+    clauses:{'ISO 27001':'A.17.2','DORA':'Art. 11(6)','NIS2':'Art. 21(2)(c)','ISF SOGP':'BC1.3'} },
+  { id:'d11g', label:'Crisis management function with internal and external communication procedures', score:1,
+    clauses:{'ISO 27001':'A.16.1','DORA':'Art. 11(7)','NIS2':'Art. 23(1)','ISF SOGP':'SM2.1'} },
+  { id:'d11h', label:'Accessible records maintained for activities during disruption events', score:1,
+    clauses:{'ISO 27001':'A.16.1','DORA':'Art. 11(8)','NIS2':'Art. 21(2)(c)','ISF SOGP':'BC1.1'} },
+
+  // Art. 12 — Backup, Restoration and Recovery
+  { id:'d12a', label:'Documented backup policies with scope and minimum frequency defined', score:1,
+    clauses:{'ISO 27001':'A.12.3','DORA':'Art. 12(1)','NIS2':'Art. 21(2)(c)','ISF SOGP':'BC1.2'} },
+  { id:'d12b', label:'Backup systems activated with periodic testing of restoration procedures', score:1,
+    clauses:{'ISO 27001':'A.12.3','DORA':'Art. 12(2)','NIS2':'Art. 21(2)(c)','ISF SOGP':'BC1.2'} },
+  { id:'d12c', label:'Backup restoration systems physically and logically segregated from sources', score:1,
+    clauses:{'ISO 27001':'A.12.3','DORA':'Art. 12(3)','NIS2':'Art. 21(2)(c)','ISF SOGP':'BC1.2'} },
+  { id:'d12d', label:'Redundant ICT capacities with adequate resources for critical functions', score:1,
+    clauses:{'ISO 27001':'A.17.2','DORA':'Art. 12(4)','NIS2':'Art. 21(2)(c)','ISF SOGP':'BC1.4'} },
+  { id:'d12e', label:'Recovery time and recovery point objectives defined per function criticality', score:1,
+    clauses:{'ISO 27001':'A.17.1','DORA':'Art. 12(6)','NIS2':'Art. 21(2)(c)','ISF SOGP':'BC1.1'} },
+  { id:'d12f', label:'Post-incident data integrity checks and reconciliations performed', score:1,
+    clauses:{'ISO 27001':'A.12.3','DORA':'Art. 12(7)','NIS2':'Art. 21(2)(c)','ISF SOGP':'BC1.2'} },
+
+  // Art. 13 — Learning and Evolving
+  { id:'d13a', label:'Capabilities to gather and analyse vulnerability and threat information', score:1,
+    clauses:{'ISO 27001':'A.12.6','DORA':'Art. 13(1)','NIS2':'Art. 21(2)(e)','ISF SOGP':'NW1.3'} },
+  { id:'d13b', label:'Post-incident reviews conducted after major ICT incidents with root cause analysis', score:1,
+    clauses:{'ISO 27001':'A.16.1','DORA':'Art. 13(2)','NIS2':'Art. 23(4)','ISF SOGP':'SM2.3'} },
+  { id:'d13c', label:'Lessons learned continuously incorporated into risk assessment and framework', score:1,
+    clauses:{'ISO 27001':'A.16.1','DORA':'Art. 13(3)','NIS2':'Art. 21(1)','ISF SOGP':'SM2.3'} },
+  { id:'d13d', label:'Digital operational resilience strategy effectiveness monitored and mapped', score:1,
+    clauses:{'ISO 27001':'A.5.1','DORA':'Art. 13(4)','NIS2':'Art. 21(1)','ISF SOGP':'SG1.1'} },
+  { id:'d13e', label:'Annual ICT risk reporting by senior ICT staff to management body', score:1,
+    clauses:{'ISO 27001':'A.6.1','DORA':'Art. 13(5)','NIS2':'Art. 20(1)','ISF SOGP':'SG1.2'} },
+  { id:'d13f', label:'Mandatory ICT security awareness and resilience training for all staff', score:1,
+    clauses:{'ISO 27001':'A.7.2','DORA':'Art. 13(6)','NIS2':'Art. 20(2)','ISF SOGP':'SG2.1'} },
+  { id:'d13g', label:'Continuous monitoring of technological developments and evolving cyber threats', score:1,
+    clauses:{'ISO 27001':'A.12.6','DORA':'Art. 13(7)','NIS2':'Art. 21(2)(e)','ISF SOGP':'NW1.3'} },
+
+  // Art. 14 — Communication
+  { id:'d14a', label:'Crisis communication plans for responsible disclosure of incidents', score:1,
+    clauses:{'ISO 27001':'A.16.1','DORA':'Art. 14(1)','NIS2':'Art. 23(1)','ISF SOGP':'SM2.1'} },
+  { id:'d14b', label:'Communication policies differentiated for internal and external stakeholders', score:1,
+    clauses:{'ISO 27001':'A.16.1','DORA':'Art. 14(2)','NIS2':'Art. 23(1)','ISF SOGP':'SM2.1'} },
+  { id:'d14c', label:'Designated person responsible for ICT incident communication strategy', score:1,
+    clauses:{'ISO 27001':'A.16.1','DORA':'Art. 14(3)','NIS2':'Art. 23(1)','ISF SOGP':'SM2.1'} },
+
+  // ══════════════════════════════════════════════════════════════════════
+  // DORA Chapter III — ICT-Related Incident Management (Art. 17–23)
+  // ══════════════════════════════════════════════════════════════════════
+  // Art. 17 — Incident Management Process
+  { id:'d17a', label:'Processes to identify, handle and report ICT incidents established', score:1,
+    clauses:{'ISO 27001':'A.16.1','DORA':'Art. 17(1)','NIS2':'Art. 23(1)','ISF SOGP':'SM2.1'} },
+  { id:'d17b', label:'All incidents and significant cyber threats documented and monitored', score:1,
+    clauses:{'ISO 27001':'A.16.1','DORA':'Art. 17(2)','NIS2':'Art. 23(1)','ISF SOGP':'SM2.1'} },
+  { id:'d17c', label:'Early warning systems for emerging threats implemented', score:1,
+    clauses:{'ISO 27001':'A.16.1','DORA':'Art. 17(3)(a)','NIS2':'Art. 21(2)(b)','ISF SOGP':'SM2.2'} },
+  { id:'d17d', label:'Incident identification, monitoring and categorization by severity', score:1,
+    clauses:{'ISO 27001':'A.16.1','DORA':'Art. 17(3)(b)','NIS2':'Art. 23(1)','ISF SOGP':'SM2.1'} },
+  { id:'d17e', label:'Clear roles and responsibilities assigned for incident types and scenarios', score:1,
+    clauses:{'ISO 27001':'A.16.1','DORA':'Art. 17(3)(c)','NIS2':'Art. 23(1)','ISF SOGP':'SM2.1'} },
+  { id:'d17f', label:'Incident communication and internal escalation protocols defined', score:1,
+    clauses:{'ISO 27001':'A.16.1','DORA':'Art. 17(3)(d)','NIS2':'Art. 23(1)','ISF SOGP':'SM2.1'} },
+  { id:'d17g', label:'Major incident escalation to senior management with impact assessments', score:1,
+    clauses:{'ISO 27001':'A.16.1','DORA':'Art. 17(3)(e)','NIS2':'Art. 23(1)','ISF SOGP':'SM2.1'} },
+  { id:'d17h', label:'Response procedures to minimise disruption and restore secure operations', score:1,
+    clauses:{'ISO 27001':'A.16.1','DORA':'Art. 17(3)(f)','NIS2':'Art. 21(2)(b)','ISF SOGP':'SM2.1'} },
+
+  // Art. 18 — Classification of Incidents and Cyber Threats
+  { id:'d18a', label:'Incident classification criteria covering all six DORA impact dimensions', score:1,
+    clauses:{'ISO 27001':'A.16.1','DORA':'Art. 18(1)','NIS2':'Art. 23(3)','ISF SOGP':'SM2.1'} },
+  { id:'d18b', label:'Significant cyber threat categorization based on criticality and scope', score:1,
+    clauses:{'ISO 27001':'A.16.1','DORA':'Art. 18(2)','NIS2':'Art. 21(2)(b)','ISF SOGP':'SM2.2'} },
+
+  // Art. 19 — Reporting of Major Incidents
+  { id:'d19a', label:'Major ICT incident reporting process to competent authorities established', score:1,
+    clauses:{'ISO 27001':'A.16.1','DORA':'Art. 19(1)','NIS2':'Art. 23(1)','ISF SOGP':'SM2.1'} },
+  { id:'d19b', label:'Client notification procedures for incidents affecting financial interests', score:1,
+    clauses:{'ISO 27001':'A.16.1','DORA':'Art. 19(3)','NIS2':'Art. 23(1)','ISF SOGP':'SM2.1'} },
+  { id:'d19c', label:'Initial, intermediate and final incident reports submitted within defined timelines', score:1,
+    clauses:{'ISO 27001':'A.16.1','DORA':'Art. 19(4)','NIS2':'Art. 23(4)','ISF SOGP':'SM2.1'} },
+
+  // Art. 20 — Harmonisation of Reporting Content and Templates
+  { id:'d20a', label:'Standardised incident report content and templates aligned with regulatory requirements', score:1,
+    clauses:{'ISO 27001':'A.16.1','DORA':'Art. 20(1)','NIS2':'Art. 23(4)','ISF SOGP':'SM2.1'} },
+
+  // ══════════════════════════════════════════════════════════════════════
+  // DORA Chapter IV — Digital Operational Resilience Testing (Art. 24–27)
+  // ══════════════════════════════════════════════════════════════════════
+  // Art. 24 — General Testing Requirements
+  { id:'d24a', label:'Comprehensive digital operational resilience testing programme established', score:1,
+    clauses:{'ISO 27001':'A.17.2','DORA':'Art. 24(1)','NIS2':'Art. 21(2)(e)','ISF SOGP':'BC1.4'} },
+  { id:'d24b', label:'Risk-based approach applied to resilience testing considering evolving ICT risks', score:1,
+    clauses:{'ISO 27001':'A.17.2','DORA':'Art. 24(3)','NIS2':'Art. 21(2)(e)','ISF SOGP':'BC1.4'} },
+  { id:'d24c', label:'Tests performed by independent parties with conflict-of-interest safeguards', score:1,
+    clauses:{'ISO 27001':'A.12.7','DORA':'Art. 24(4)','NIS2':'Art. 21(2)(f)','ISF SOGP':'SG1.3'} },
+  { id:'d24d', label:'Procedures to prioritize, classify and remedy testing-identified issues', score:1,
+    clauses:{'ISO 27001':'A.12.6','DORA':'Art. 24(5)','NIS2':'Art. 21(2)(e)','ISF SOGP':'NW1.3'} },
+  { id:'d24e', label:'Annual testing of all ICT systems supporting critical functions', score:1,
+    clauses:{'ISO 27001':'A.17.2','DORA':'Art. 24(6)','NIS2':'Art. 21(2)(e)','ISF SOGP':'BC1.4'} },
+
+  // Art. 25 — Testing of ICT Tools and Systems
+  { id:'d25a', label:'Testing programme covering vulnerability assessments, penetration tests and scenario testing', score:1,
+    clauses:{'ISO 27001':'A.12.6','DORA':'Art. 25(1)','NIS2':'Art. 21(2)(e)','ISF SOGP':'NW1.3'} },
+  { id:'d25b', label:'Vulnerability assessments before deploying new applications for critical functions', score:1,
+    clauses:{'ISO 27001':'A.12.6','DORA':'Art. 25(2)','NIS2':'Art. 21(2)(e)','ISF SOGP':'NW1.3'} },
+
+  // Art. 26 — Advanced Testing (TLPT)
+  { id:'d26a', label:'Threat-led penetration testing (TLPT) conducted at least every 3 years', score:1,
+    clauses:{'ISO 27001':'A.17.2','DORA':'Art. 26(1)','NIS2':'Art. 21(2)(e)','ISF SOGP':'BC1.4'} },
+  { id:'d26b', label:'TLPT covers critical functions on live production systems', score:1,
+    clauses:{'ISO 27001':'A.17.2','DORA':'Art. 26(2)','NIS2':'Art. 21(2)(e)','ISF SOGP':'BC1.4'} },
+  { id:'d26c', label:'Third-party TLPT participation managed with risk controls and safeguards', score:1,
+    clauses:{'ISO 27001':'A.15.2','DORA':'Art. 26(4)','NIS2':'Art. 21(2)(d)','ISF SOGP':'SY1.4'} },
+  { id:'d26d', label:'TLPT findings, remediation plans and compliance documentation provided to authorities', score:1,
+    clauses:{'ISO 27001':'A.12.7','DORA':'Art. 26(7)','NIS2':'Art. 21(2)(f)','ISF SOGP':'SG1.3'} },
+
+  // Art. 27 — Requirements for TLPT Testers
+  { id:'d27a', label:'TLPT testers meet suitability, expertise and certification requirements', score:1,
+    clauses:{'ISO 27001':'A.12.7','DORA':'Art. 27(1)','NIS2':'Art. 21(2)(f)','ISF SOGP':'SG1.3'} },
+  { id:'d27b', label:'Secure management of TLPT test results and data processing', score:1,
+    clauses:{'ISO 27001':'A.12.7','DORA':'Art. 27(3)','NIS2':'Art. 21(2)(f)','ISF SOGP':'SG1.3'} },
+
+  // ══════════════════════════════════════════════════════════════════════
+  // DORA Chapter V — Managing ICT Third-Party Risk (Art. 28–44)
+  // ══════════════════════════════════════════════════════════════════════
+  // Art. 28 — General Principles
+  { id:'d28a', label:'ICT third-party risk management integrated into overall ICT risk framework', score:1,
+    clauses:{'ISO 27001':'A.15.1','DORA':'Art. 28(1)','NIS2':'Art. 21(2)(d)','ISF SOGP':'SY1.1'} },
+  { id:'d28b', label:'Strategy on ICT third-party risk adopted and regularly reviewed', score:1,
+    clauses:{'ISO 27001':'A.15.1','DORA':'Art. 28(2)','NIS2':'Art. 21(2)(d)','ISF SOGP':'SY1.1'} },
+  { id:'d28c', label:'Updated register of all ICT service arrangements maintained', score:1,
+    clauses:{'ISO 27001':'A.15.1','DORA':'Art. 28(3)','NIS2':'Art. 21(2)(d)','ISF SOGP':'SY1.2'} },
+  { id:'d28d', label:'Pre-contract risk assessment including concentration risk and due diligence', score:1,
+    clauses:{'ISO 27001':'A.15.1','DORA':'Art. 28(4)','NIS2':'Art. 21(2)(d)','ISF SOGP':'SY1.2'} },
+  { id:'d28e', label:'Providers meeting appropriate security standards for critical functions', score:1,
+    clauses:{'ISO 27001':'A.15.1','DORA':'Art. 28(5)','NIS2':'Art. 21(2)(d)','ISF SOGP':'SY1.2'} },
+  { id:'d28f', label:'Risk-based audit frequency and areas predetermined for third-party providers', score:1,
+    clauses:{'ISO 27001':'A.15.2','DORA':'Art. 28(6)','NIS2':'Art. 21(2)(d)','ISF SOGP':'SY1.4'} },
+  { id:'d28g', label:'Contract termination rights defined for breaches, risk changes and ICT weaknesses', score:1,
+    clauses:{'ISO 27001':'A.15.1','DORA':'Art. 28(7)','NIS2':'Art. 21(2)(d)','ISF SOGP':'SY1.3'} },
+  { id:'d28h', label:'Comprehensive exit strategies for critical third-party functions', score:1,
+    clauses:{'ISO 27001':'A.15.1','DORA':'Art. 28(8)','NIS2':'Art. 21(3)','ISF SOGP':'SY1.4'} },
+
+  // Art. 29 — ICT Concentration Risk Assessment
+  { id:'d29a', label:'Concentration risk assessed for non-easily substitutable ICT providers', score:1,
+    clauses:{'ISO 27001':'A.15.1','DORA':'Art. 29(1)','NIS2':'Art. 21(2)(d)','ISF SOGP':'SY1.2'} },
+  { id:'d29b', label:'Subcontracting risks evaluated including third-country and insolvency considerations', score:1,
+    clauses:{'ISO 27001':'A.15.1','DORA':'Art. 29(2)','NIS2':'Art. 21(2)(d)','ISF SOGP':'SY1.2'} },
+
+  // Art. 30 — Key Contractual Provisions
+  { id:'d30a', label:'ICT service rights and obligations clearly documented in written contracts', score:1,
+    clauses:{'ISO 27001':'A.15.1','DORA':'Art. 30(1)','NIS2':'Art. 21(2)(d)','ISF SOGP':'SY1.3'} },
+  { id:'d30b', label:'Contracts include SLAs, incident assistance, data protection and termination rights', score:1,
+    clauses:{'ISO 27001':'A.15.1','DORA':'Art. 30(2)','NIS2':'Art. 21(2)(d)','ISF SOGP':'SY1.3'} },
+  { id:'d30c', label:'Critical function contracts include performance targets, notification and audit rights', score:1,
+    clauses:{'ISO 27001':'A.15.2','DORA':'Art. 30(3)','NIS2':'Art. 21(2)(d)','ISF SOGP':'SY1.4'} },
+
+  // Art. 31 — Designation of Critical ICT Third-Party Providers
+  { id:'d31a', label:'Awareness of and alignment with critical ICT provider designation criteria', score:1,
+    clauses:{'ISO 27001':'A.15.1','DORA':'Art. 31(1)','NIS2':'Art. 21(2)(d)','ISF SOGP':'SY1.2'} },
+
+  // ══════════════════════════════════════════════════════════════════════
+  // DORA Chapter VI — Information Sharing (Art. 45)
+  // ══════════════════════════════════════════════════════════════════════
+  { id:'d45a', label:'Participation in cyber threat intelligence sharing arrangements', score:1,
+    clauses:{'ISO 27001':'A.16.1','DORA':'Art. 45(1)','NIS2':'Art. 29','ISF SOGP':'SM2.3'} },
+  { id:'d45b', label:'Information-sharing governance with participation conditions and confidentiality', score:1,
+    clauses:{'ISO 27001':'A.16.1','DORA':'Art. 45(2)','NIS2':'Art. 29','ISF SOGP':'SM2.3'} },
+  { id:'d45c', label:'Competent authority notifications for sharing arrangement membership changes', score:1,
+    clauses:{'ISO 27001':'A.16.1','DORA':'Art. 45(3)','NIS2':'Art. 29','ISF SOGP':'SM2.3'} },
 ];
 
 // ─── Article names per framework ───────────────────────────────────────
@@ -988,11 +1695,29 @@ const ARTICLE_NAMES = {
     'A.15':'Supplier Relationships','A.16':'Incident Management','A.17':'Business Continuity'
   },
   'DORA': {
-    'Art. 5':'Governance and Organisation','Art. 6':'ICT Risk Management Framework',
-    'Art. 9':'Protection and Prevention','Art. 10':'Detection',
-    'Art. 11':'Response and Recovery','Art. 13':'Learning and Evolving',
-    'Art. 17':'Incident Management Process','Art. 26':'Advanced Testing (TLPT)',
-    'Art. 28':'Third-Party Risk Management','Art. 30':'Key Contractual Provisions'
+    'Art. 5':'Governance and Organisation',
+    'Art. 6':'ICT Risk Management Framework',
+    'Art. 7':'ICT Systems, Protocols and Tools',
+    'Art. 8':'Identification',
+    'Art. 9':'Protection and Prevention',
+    'Art. 10':'Detection',
+    'Art. 11':'Response and Recovery',
+    'Art. 12':'Backup, Restoration and Recovery',
+    'Art. 13':'Learning and Evolving',
+    'Art. 14':'Communication',
+    'Art. 17':'Incident Management Process',
+    'Art. 18':'Classification of Incidents and Cyber Threats',
+    'Art. 19':'Reporting of Major Incidents',
+    'Art. 20':'Harmonisation of Reporting',
+    'Art. 24':'General Testing Requirements',
+    'Art. 25':'Testing of ICT Tools and Systems',
+    'Art. 26':'Advanced Testing (TLPT)',
+    'Art. 27':'Requirements for TLPT Testers',
+    'Art. 28':'Third-Party Risk — General Principles',
+    'Art. 29':'ICT Concentration Risk',
+    'Art. 30':'Key Contractual Provisions',
+    'Art. 31':'Critical ICT Provider Designation',
+    'Art. 45':'Information Sharing Arrangements'
   },
   'NIS2': {
     'Art. 20':'Governance','Art. 21':'Cybersecurity Risk-Management Measures',
@@ -1036,8 +1761,8 @@ function buildFrameworkData() {
 
     // Convert to sorted arrays
     const articleIds = Object.keys(articlesMap).sort((a, b) => {
-      const na = parseFloat(a.replace(/[^0-9.]/g, '')) || 0;
-      const nb = parseFloat(b.replace(/[^0-9.]/g, '')) || 0;
+      const na = parseInt(a.match(/\d+/)?.[0] || '0', 10);
+      const nb = parseInt(b.match(/\d+/)?.[0] || '0', 10);
       if (na !== nb) return na - nb;
       return a.localeCompare(b);
     });
@@ -1074,6 +1799,13 @@ let selectedArticle = null;
 
 const NOTES = {};
 const openNotes = new Set();
+const META = { org: '', assessor: '', version: '' };
+const undoStack = [];
+const redoStack = [];
+const MAX_UNDO = 50;
+let SNAPSHOTS = [];
+let compareSnapshot = null;
+let currentView = 'detail';
 
 function getNote(groupId) { return NOTES[groupId] || ''; }
 
@@ -1092,7 +1824,8 @@ function saveNote(groupId, text) {
 function persistState() {
   const state = {
     scores: Object.fromEntries(CROSS_MAP_GROUPS.map(g => [g.id, g.score])),
-    notes: { ...NOTES }
+    notes: { ...NOTES },
+    meta: { ...META }
   };
   try { localStorage.setItem('cyberMaturityV1', JSON.stringify(state)); } catch(e) {}
   flashSaved();
@@ -1105,12 +1838,271 @@ function loadState() {
     const state = JSON.parse(raw);
     if (state.scores) {
       CROSS_MAP_GROUPS.forEach(g => {
-        if (state.scores[g.id] !== undefined) g.score = Number(state.scores[g.id]);
+        if (state.scores[g.id] !== undefined) g.score = Math.max(1, Number(state.scores[g.id]));
       });
     }
     if (state.notes) Object.assign(NOTES, state.notes);
+    if (state.meta) Object.assign(META, state.meta);
   } catch(e) {}
 }
+
+function applyMeta() {
+  document.getElementById('metaOrg').value = META.org;
+  document.getElementById('metaAssessor').value = META.assessor;
+  document.getElementById('metaVersion').value = META.version;
+}
+
+function saveMeta() {
+  META.org = document.getElementById('metaOrg').value.trim();
+  META.assessor = document.getElementById('metaAssessor').value.trim();
+  META.version = document.getElementById('metaVersion').value.trim();
+  persistState();
+}
+
+// ─── Undo / Redo ──────────────────────────────────────────────────────
+function pushUndo() {
+  undoStack.push(CROSS_MAP_GROUPS.map(g => ({ id: g.id, score: g.score })));
+  if (undoStack.length > MAX_UNDO) undoStack.shift();
+  redoStack.length = 0;
+  updateUndoRedoButtons();
+}
+
+function undo() {
+  if (undoStack.length === 0) return;
+  redoStack.push(CROSS_MAP_GROUPS.map(g => ({ id: g.id, score: g.score })));
+  const prev = undoStack.pop();
+  prev.forEach(({ id, score }) => {
+    const g = CROSS_MAP_GROUPS.find(g => g.id === id);
+    if (g) g.score = score;
+  });
+  afterScoreChange();
+  updateUndoRedoButtons();
+}
+
+function redo() {
+  if (redoStack.length === 0) return;
+  undoStack.push(CROSS_MAP_GROUPS.map(g => ({ id: g.id, score: g.score })));
+  const next = redoStack.pop();
+  next.forEach(({ id, score }) => {
+    const g = CROSS_MAP_GROUPS.find(g => g.id === id);
+    if (g) g.score = score;
+  });
+  afterScoreChange();
+  updateUndoRedoButtons();
+}
+
+function updateUndoRedoButtons() {
+  const u = document.getElementById('undoBtn');
+  const r = document.getElementById('redoBtn');
+  if (u) u.disabled = undoStack.length === 0;
+  if (r) r.disabled = redoStack.length === 0;
+}
+
+function afterScoreChange() {
+  renderAssessmentCards();
+  updateChart();
+  updateOverall();
+  updateRiskSummary();
+  updateStatusBar();
+  updateDistChart();
+  updateExecSummary();
+  persistState();
+  if (currentView === 'matrix') renderMatrix();
+}
+
+// ─── Snapshots ────────────────────────────────────────────────────────
+function loadSnapshots() {
+  try {
+    const raw = localStorage.getItem('cyberSnapshots');
+    if (raw) SNAPSHOTS = JSON.parse(raw);
+  } catch(e) {}
+}
+
+function saveSnapshots() {
+  try { localStorage.setItem('cyberSnapshots', JSON.stringify(SNAPSHOTS)); } catch(e) {}
+}
+
+function createSnapshot() {
+  const name = prompt('Snapshot name:', 'Assessment ' + new Date().toLocaleDateString('en-GB'));
+  if (!name) return;
+  const scores = Object.fromEntries(CROSS_MAP_GROUPS.map(g => [g.id, g.score]));
+  const avg = (CROSS_MAP_GROUPS.reduce((s, g) => s + g.score, 0) / CROSS_MAP_GROUPS.length).toFixed(1);
+  SNAPSHOTS.push({ id: Date.now().toString(36), name, date: new Date().toISOString().slice(0, 10), avg: parseFloat(avg), scores });
+  saveSnapshots();
+  renderSnapshots();
+}
+
+function deleteSnapshot(id) {
+  SNAPSHOTS = SNAPSHOTS.filter(s => s.id !== id);
+  if (compareSnapshot && compareSnapshot.id === id) { compareSnapshot = null; updateChart(); }
+  saveSnapshots();
+  renderSnapshots();
+}
+
+function toggleCompare(id) {
+  if (compareSnapshot && compareSnapshot.id === id) {
+    compareSnapshot = null;
+  } else {
+    compareSnapshot = SNAPSHOTS.find(s => s.id === id);
+  }
+  updateChart();
+  renderSnapshots();
+}
+
+function renderSnapshots() {
+  const list = document.getElementById('snapshotList');
+  if (!list) return;
+  if (SNAPSHOTS.length === 0) {
+    list.innerHTML = '<li class="no-snapshots">No snapshots saved yet</li>';
+    return;
+  }
+  list.innerHTML = SNAPSHOTS.slice().reverse().map(s => {
+    const isComparing = compareSnapshot && compareSnapshot.id === s.id;
+    const cls = s.avg < 2.5 ? 'risk-red' : s.avg < 3.5 ? 'warning-amber' : 'ok-green';
+    return `<li class="snapshot-item">
+      <span class="snapshot-name">${escapeHtml(s.name)}</span>
+      <span class="snapshot-date">${s.date}</span>
+      <span class="snapshot-score" style="background:var(--${cls}-bg,var(--warning-amber-bg));color:var(--${cls},var(--warning-amber))">${s.avg}</span>
+      <div class="snapshot-actions">
+        <button class="snap-btn ${isComparing ? 'active' : ''}" data-snap-compare="${s.id}">Compare</button>
+        <button class="snap-btn danger" data-snap-delete="${s.id}">&times;</button>
+      </div>
+    </li>`;
+  }).join('');
+  list.querySelectorAll('[data-snap-compare]').forEach(btn => {
+    btn.addEventListener('click', () => toggleCompare(btn.dataset.snapCompare));
+  });
+  list.querySelectorAll('[data-snap-delete]').forEach(btn => {
+    btn.addEventListener('click', () => deleteSnapshot(btn.dataset.snapDelete));
+  });
+}
+
+// ─── Status bar ───────────────────────────────────────────────────────
+function updateStatusBar() {
+  const el = document.getElementById('statusBar');
+  if (!el) return;
+  const total = CROSS_MAP_GROUPS.length;
+  const atRisk = CROSS_MAP_GROUPS.filter(g => g.score < 3).length;
+  const compliant = total - atRisk;
+  const avg = (CROSS_MAP_GROUPS.reduce((s, g) => s + g.score, 0) / total).toFixed(1);
+  el.innerHTML = `
+    <span class="status-pill risk">${atRisk} at risk</span>
+    <span class="status-pill ok">${compliant} compliant</span>
+    <span style="color:var(--gray-400)">&middot;</span>
+    <span>Avg ${avg}/5</span>
+    <span style="color:var(--gray-400)">&middot;</span>
+    <span>${total} controls &middot; ${FRAMEWORKS.length} frameworks</span>
+  `;
+}
+
+// ─── Score distribution ───────────────────────────────────────────────
+function updateDistChart() {
+  const el = document.getElementById('distChart');
+  if (!el) return;
+  const counts = [0, 0, 0, 0, 0]; // index 0 = score 1, index 4 = score 5
+  CROSS_MAP_GROUPS.forEach(g => { if (g.score >= 1 && g.score <= 5) counts[g.score - 1]++; });
+  const max = Math.max(...counts, 1);
+  const colors = ['#C7254E', '#E85D75', '#B45309', '#198754', '#0D6E3F'];
+  el.innerHTML = counts.map((c, i) => `
+    <div class="dist-bar-wrap">
+      <div class="dist-count">${c || ''}</div>
+      <div style="flex:1;display:flex;align-items:flex-end;width:100%">
+        <div class="dist-bar" style="height:${c ? Math.max((c / max) * 100, 8) : 0}%;width:100%;background:${colors[i]}${c ? '' : ';opacity:.15'}"></div>
+      </div>
+      <div class="dist-label">${i + 1}</div>
+    </div>
+  `).join('');
+}
+
+// ─── Executive summary ────────────────────────────────────────────────
+function updateExecSummary() {
+  const el = document.getElementById('execSummary');
+  if (!el) return;
+  const total = CROSS_MAP_GROUPS.length;
+  const avg = CROSS_MAP_GROUPS.reduce((s, g) => s + g.score, 0) / total;
+  const atRisk = CROSS_MAP_GROUPS.filter(g => g.score < 3);
+  const strong = CROSS_MAP_GROUPS.filter(g => g.score >= 4);
+
+  let lvlText, lvlCls;
+  if (avg < 1.5)      { lvlText = 'Initial / Ad-hoc'; lvlCls = 'risk'; }
+  else if (avg < 2.5) { lvlText = 'Repeatable'; lvlCls = 'risk'; }
+  else if (avg < 3.5) { lvlText = 'Defined'; lvlCls = 'warning'; }
+  else if (avg < 4.5) { lvlText = 'Managed'; lvlCls = 'ok'; }
+  else                { lvlText = 'Optimised'; lvlCls = 'ok'; }
+
+  const areaScores = {};
+  CROSS_MAP_GROUPS.forEach(g => {
+    const prefix = g.id.replace(/[0-9]/g, '');
+    if (!areaScores[prefix]) areaScores[prefix] = [];
+    areaScores[prefix].push(g.score);
+  });
+  const areaAvgs = Object.entries(areaScores).map(([k, v]) => ({
+    area: k, avg: v.reduce((a, b) => a + b, 0) / v.length
+  })).sort((a, b) => a.avg - b.avg);
+  const areaNames = { ac: 'Access Control', im: 'Incident Management', tp: 'Third-Party Risk', bc: 'Business Continuity', dp: 'Data Protection', gv: 'Governance', ns: 'Network Security' };
+
+  const weakest = areaAvgs[0];
+  const strongest = areaAvgs[areaAvgs.length - 1];
+
+  let html = `<p>Overall cyber maturity: <strong>${avg.toFixed(1)}/5.0</strong> &mdash; <span class="exec-highlight ${lvlCls}">${lvlText}</span>.</p>`;
+  html += `<p><span class="exec-highlight risk">${atRisk.length}</span> of ${total} controls at risk (score&nbsp;&lt;&nbsp;3), <span class="exec-highlight ok">${strong.length}</span> demonstrate mature practices (score&nbsp;&ge;&nbsp;4).</p>`;
+  if (weakest) {
+    html += `<p><strong>Priority area:</strong> ${areaNames[weakest.area] || weakest.area} (${weakest.avg.toFixed(1)}/5).`;
+    if (strongest && strongest.area !== weakest.area) {
+      html += ` <strong>Strongest:</strong> ${areaNames[strongest.area] || strongest.area} (${strongest.avg.toFixed(1)}/5).`;
+    }
+    html += '</p>';
+  }
+  if (atRisk.length > 0) {
+    const topRisks = atRisk.sort((a, b) => a.score - b.score).slice(0, 3);
+    html += '<p><strong>Critical gaps:</strong> ' + topRisks.map(r => truncate(r.label, 40)).join('; ') + '.</p>';
+  }
+  el.innerHTML = html;
+}
+
+// ─── Matrix view ──────────────────────────────────────────────────────
+function toggleView(view) {
+  currentView = view;
+  document.getElementById('viewDetail').classList.toggle('active', view === 'detail');
+  document.getElementById('viewMatrix').classList.toggle('active', view === 'matrix');
+  const detailEls = ['articleTabs', 'assessmentContainer'];
+  const matrixEl = document.getElementById('matrixContainer');
+  if (view === 'matrix') {
+    detailEls.forEach(id => document.getElementById(id).style.display = 'none');
+    matrixEl.style.display = 'block';
+    renderMatrix();
+  } else {
+    detailEls.forEach(id => document.getElementById(id).style.display = '');
+    matrixEl.style.display = 'none';
+  }
+}
+
+function renderMatrix() {
+  const container = document.getElementById('matrixContainer');
+  const scoreColor = s => {
+    if (s <= 1) return '#C7254E';
+    if (s === 2) return '#E85D75';
+    if (s === 3) return '#B45309';
+    if (s === 4) return '#198754';
+    return '#0D6E3F';
+  };
+  let html = '<div class="matrix-container"><table class="matrix-table"><thead><tr>';
+  html += '<th>Control</th>';
+  FRAMEWORKS.forEach(fw => { html += `<th style="color:${FW_COLORS[fw]}">${fw}</th>`; });
+  html += '</tr></thead><tbody>';
+  CROSS_MAP_GROUPS.forEach(g => {
+    html += '<tr>';
+    html += `<td>${truncate(g.label, 55)}</td>`;
+    FRAMEWORKS.forEach(fw => {
+      const clause = g.clauses[fw];
+      html += `<td><span class="matrix-cell" style="background:${scoreColor(g.score)}">${g.score}</span><span class="matrix-clause">${clause}</span></td>`;
+    });
+    html += '</tr>';
+  });
+  html += '</tbody></table></div>';
+  container.innerHTML = html;
+}
+
 
 function flashSaved() {
   const el = document.getElementById('saveIndicator');
@@ -1300,7 +2292,7 @@ function renderAssessmentItem(item) {
       <div>
         <div class="score-label">${SCORE_LABELS[score]}</div>
         <div class="score-group">
-          ${[0,1,2,3,4,5].map(s => `
+          ${[1,2,3,4,5].map(s => `
             <button class="score-btn ${score === s ? 'active' : ''} ${score === s && isRisk ? 'risk-active' : ''}"
                     data-group="${item.groupId}" data-score="${s}"
                     title="${SCORE_LABELS[s]}">${s}</button>
@@ -1322,17 +2314,14 @@ function renderAssessmentItem(item) {
 
 function getGroupScore(groupId) {
   const g = CROSS_MAP_GROUPS.find(g => g.id === groupId);
-  return g ? g.score : 0;
+  return g ? g.score : 1;
 }
 
 function setScore(groupId, score) {
+  pushUndo();
   const g = CROSS_MAP_GROUPS.find(g => g.id === groupId);
   if (g) g.score = score;
-  renderAssessmentCards();
-  updateChart();
-  updateOverall();
-  updateRiskSummary();
-  persistState();
+  afterScoreChange();
 }
 
 // ─── Overall score ─────────────────────────────────────────────────────
@@ -1343,9 +2332,9 @@ function updateOverall() {
   const lvl = document.getElementById('maturityLevel');
   if (lvl) {
     let text, cls;
-    if (avg < 1.5)      { text = 'Not Implemented'; cls = 'risk'; }
-    else if (avg < 2.5) { text = 'Initial / Ad-hoc'; cls = 'risk'; }
-    else if (avg < 3.5) { text = 'Developing';       cls = 'warning'; }
+    if (avg < 1.5)      { text = 'Initial / Ad-hoc'; cls = 'risk'; }
+    else if (avg < 2.5) { text = 'Repeatable';       cls = 'risk'; }
+    else if (avg < 3.5) { text = 'Defined';          cls = 'warning'; }
     else if (avg < 4.5) { text = 'Managed';          cls = 'ok'; }
     else                { text = 'Optimised';         cls = 'ok'; }
     lvl.textContent = text;
@@ -1363,18 +2352,34 @@ function initChart() {
     type: 'radar',
     data: {
       labels,
-      datasets: [{
-        label: 'Maturity Score',
-        data,
-        backgroundColor: 'rgba(0, 51, 141, 0.12)',
-        borderColor: '#00338D',
-        borderWidth: 2,
-        pointBackgroundColor: '#00338D',
-        pointBorderColor: '#fff',
-        pointBorderWidth: 2,
-        pointRadius: 5,
-        pointHoverRadius: 7,
-      }]
+      datasets: [
+        {
+          label: 'Current Score',
+          data,
+          backgroundColor: 'rgba(0, 51, 141, 0.12)',
+          borderColor: '#00338D',
+          borderWidth: 2,
+          pointBackgroundColor: '#00338D',
+          pointBorderColor: '#fff',
+          pointBorderWidth: 2,
+          pointRadius: 5,
+          pointHoverRadius: 7,
+        },
+        {
+          label: 'Snapshot',
+          data: data.map(() => null),
+          backgroundColor: 'rgba(72, 54, 152, 0.08)',
+          borderColor: '#483698',
+          borderWidth: 2,
+          borderDash: [6, 4],
+          pointBackgroundColor: '#483698',
+          pointBorderColor: '#fff',
+          pointBorderWidth: 2,
+          pointRadius: 4,
+          pointHoverRadius: 6,
+          hidden: true,
+        }
+      ]
     },
     options: {
       responsive: true,
@@ -1395,7 +2400,7 @@ function initChart() {
           titleFont: { size: 12, weight: '600' },
           bodyFont: { size: 12 },
           padding: 10, cornerRadius: 4,
-          callbacks: { label: ctx => ` ${ctx.parsed.r.toFixed(1)} / 5.0` }
+          callbacks: { label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.r.toFixed(1)} / 5.0` }
         }
       },
       animation: { duration: 300 },
@@ -1422,6 +2427,28 @@ function updateChart() {
   const { labels, data } = getChartData();
   radarChart.data.labels = labels;
   radarChart.data.datasets[0].data = data;
+
+  // Snapshot comparison overlay
+  if (compareSnapshot) {
+    const compData = labels.map(artId => {
+      const article = FRAMEWORK_DATA[selectedFramework].articles.find(a => a.id === artId);
+      if (!article) return 0;
+      const scores = [];
+      article.subClauses.forEach(sc => {
+        sc.assessmentItems.forEach(item => {
+          scores.push(compareSnapshot.scores[item.groupId] !== undefined ? compareSnapshot.scores[item.groupId] : 0);
+        });
+      });
+      return scores.length ? scores.reduce((a, b) => a + b, 0) / scores.length : 0;
+    });
+    radarChart.data.datasets[1].data = compData;
+    radarChart.data.datasets[1].hidden = false;
+    radarChart.data.datasets[1].label = compareSnapshot.name;
+  } else {
+    radarChart.data.datasets[1].data = data.map(() => null);
+    radarChart.data.datasets[1].hidden = true;
+  }
+
   radarChart.update();
 }
 
@@ -1575,102 +2602,651 @@ const CLAUSE_DB = {
     source: 'ISO/IEC 27001:2022, Annex A Control 17.2'
   },
 
-  // ── DORA ───────────────────────────────────────────────────────────
-  'DORA||Art. 5': {
-    title: 'Governance and Organisation',
-    text: '<p>The management body of the financial entity shall define, approve, oversee and be accountable for the implementation of all arrangements related to the ICT risk management framework. The management body shall bear the ultimate responsibility for managing the financial entity\'s ICT risk.</p>',
-    guidance: '<p>Ensure that the board or equivalent governing body formally approves the ICT risk management framework. Allocate a dedicated budget for ICT security and resilience. Establish a CISO or equivalent role reporting to senior management. Provide regular ICT risk reporting to the board (at minimum quarterly).</p>',
-    source: 'DORA (EU) 2022/2554, Article 5'
+  // ── DORA Chapter II: ICT Risk Management ─────────────────────────
+  'DORA||Art. 5(1)': {
+    title: 'Governance — Internal Governance and ICT Risk',
+    text: '<p>Financial entities must establish an internal governance framework ensuring effective management of ICT risk to achieve a high level of digital operational resilience.</p>',
+    guidance: '<p>Ensure a formally documented governance structure assigning ICT risk management responsibilities. Include digital operational resilience as a standing board agenda item. Align governance with the three-lines-of-defence model.</p>',
+    source: 'DORA (EU) 2022/2554, Article 5(1)'
   },
-  'DORA||Art. 6': {
-    title: 'ICT Risk Management Framework',
-    text: '<p>Financial entities shall have a sound, comprehensive and well-documented ICT risk management framework as part of their overall risk management system, which enables them to address ICT risk quickly, efficiently and comprehensively.</p>',
-    guidance: '<p>Integrate ICT risk management into the enterprise risk management framework. Define risk appetite statements specific to ICT and cyber risk. Implement a risk assessment methodology covering threat identification, vulnerability assessment, and impact analysis. Maintain and regularly update the ICT risk register.</p>',
-    source: 'DORA (EU) 2022/2554, Article 6'
+  'DORA||Art. 5(2)': {
+    title: 'Governance — Management Body Responsibilities',
+    text: '<p>The management body shall define, approve, oversee and be accountable for implementing all ICT risk management arrangements, including policies on data standards, risk tolerance, resilience strategy, business continuity, audit plans, budgets, and third-party arrangements.</p>',
+    guidance: '<p>Document board-level approval for each required area (a–i). Establish a formal approval calendar. Create reporting dashboards for ICT risk KPIs. Ensure minutes record all ICT risk decisions.</p>',
+    source: 'DORA (EU) 2022/2554, Article 5(2)'
+  },
+  'DORA||Art. 5(2)(d)': {
+    title: 'Governance — Digital Operational Resilience Strategy',
+    text: '<p>The management body shall set and approve the digital operational resilience strategy, including determining the appropriate ICT risk tolerance level of the financial entity.</p>',
+    guidance: '<p>Develop a multi-year resilience strategy with measurable objectives. Define risk appetite statements for ICT and cyber risk. Review and update the strategy at least annually or after significant incidents.</p>',
+    source: 'DORA (EU) 2022/2554, Article 5(2)(d)'
+  },
+  'DORA||Art. 5(2)(g)': {
+    title: 'Governance — ICT Budget Allocation',
+    text: '<p>The management body shall allocate and periodically review the appropriate budget to fulfil the financial entity\'s digital operational resilience needs in respect of all types of resources, including relevant ICT security awareness programmes and training.</p>',
+    guidance: '<p>Establish a dedicated ICT resilience budget line with annual review. Benchmark spending against industry peers. Ensure budget covers security tools, training, testing and incident response capabilities.</p>',
+    source: 'DORA (EU) 2022/2554, Article 5(2)(g)'
+  },
+  'DORA||Art. 5(2)(h)': {
+    title: 'Governance — Third-Party Arrangement Policies',
+    text: '<p>The management body shall approve and periodically review the entity\'s policy on arrangements regarding the use of ICT services provided by ICT third-party service providers.</p>',
+    guidance: '<p>Maintain a board-approved third-party ICT policy. Review at least annually. Include criteria for provider selection, risk assessment, and ongoing monitoring requirements.</p>',
+    source: 'DORA (EU) 2022/2554, Article 5(2)(h)'
+  },
+  'DORA||Art. 5(2)(i)': {
+    title: 'Governance — Reporting Channels',
+    text: '<p>The management body shall establish reporting channels for third-party arrangements, material changes, impact assessments on critical functions, and major incidents.</p>',
+    guidance: '<p>Define formal reporting lines from ICT risk function to board. Implement automated dashboards for third-party risk. Establish escalation triggers for material changes and incidents.</p>',
+    source: 'DORA (EU) 2022/2554, Article 5(2)(i)'
+  },
+  'DORA||Art. 5(3)': {
+    title: 'Governance — ICT Third-Party Monitoring Role',
+    text: '<p>Financial entities shall establish a dedicated role or designate senior management to monitor ICT third-party service provider arrangements and risk exposure.</p>',
+    guidance: '<p>Assign a named senior individual responsible for ICT third-party oversight. Define clear mandate, authority and reporting requirements. Ensure access to all third-party risk information.</p>',
+    source: 'DORA (EU) 2022/2554, Article 5(3)'
+  },
+  'DORA||Art. 5(4)': {
+    title: 'Governance — Management Body ICT Training',
+    text: '<p>Management body members must maintain sufficient knowledge and skills to understand and assess ICT risk through regular, commensurate training.</p>',
+    guidance: '<p>Establish a tailored training programme for board members covering ICT risk fundamentals, emerging threats, and regulatory requirements. Deliver training at least annually. Track completion and competency.</p>',
+    source: 'DORA (EU) 2022/2554, Article 5(4)'
+  },
+  'DORA||Art. 6(1)': {
+    title: 'ICT Risk Management Framework — Establishment',
+    text: '<p>Financial entities shall have a sound, comprehensive and well-documented ICT risk management framework as part of their overall risk management system, enabling them to address ICT risk quickly, efficiently and comprehensively.</p>',
+    guidance: '<p>Integrate ICT risk management into the enterprise risk framework. Define risk appetite statements specific to ICT. Implement a methodology covering threat identification, vulnerability assessment, and impact analysis. Maintain and regularly update the ICT risk register.</p>',
+    source: 'DORA (EU) 2022/2554, Article 6(1)'
+  },
+  'DORA||Art. 6(2)': {
+    title: 'ICT Risk Management Framework — Asset Protection',
+    text: '<p>The framework must include strategies, policies, procedures and tools to protect information and ICT assets, including software, hardware, servers, physical components and sensitive areas.</p>',
+    guidance: '<p>Maintain a comprehensive ICT asset inventory. Classify assets by criticality. Implement controls proportionate to asset classification. Include physical security measures for data centres and sensitive areas.</p>',
+    source: 'DORA (EU) 2022/2554, Article 6(2)'
+  },
+  'DORA||Art. 6(4)': {
+    title: 'ICT Risk Management Framework — Independent Control Function',
+    text: '<p>Non-microenterprises must assign ICT risk management responsibility to an independent control function following a three-lines-of-defence model to avoid conflicts of interest.</p>',
+    guidance: '<p>Establish the ICT risk management function independently from ICT operations. Ensure no conflicts of interest. Follow the three-lines-of-defence model with clear separation between operations, risk management, and audit.</p>',
+    source: 'DORA (EU) 2022/2554, Article 6(4)'
+  },
+  'DORA||Art. 6(5)': {
+    title: 'ICT Risk Management Framework — Annual Review',
+    text: '<p>The framework requires annual documentation and review, especially following major incidents. Reports must be submitted to competent authorities upon request.</p>',
+    guidance: '<p>Schedule annual framework reviews. Trigger ad-hoc reviews after major incidents. Document all changes and maintain version history. Prepare reports for regulatory submission.</p>',
+    source: 'DORA (EU) 2022/2554, Article 6(5)'
+  },
+  'DORA||Art. 6(6)': {
+    title: 'ICT Risk Management Framework — Internal Audits',
+    text: '<p>Non-microenterprises must undergo regular internal ICT audits by knowledgeable, independent auditors with audit frequency matching the entity\'s ICT risk profile.</p>',
+    guidance: '<p>Develop a risk-based ICT audit plan. Ensure auditors have relevant ICT expertise and certifications. Align audit frequency with the entity\'s risk profile. Report findings to management body.</p>',
+    source: 'DORA (EU) 2022/2554, Article 6(6)'
+  },
+  'DORA||Art. 6(7)': {
+    title: 'ICT Risk Management Framework — Audit Follow-Up',
+    text: '<p>Entities shall establish formal follow-up processes for timely verification and remediation of critical audit findings.</p>',
+    guidance: '<p>Implement a findings tracking system with defined remediation timelines. Assign ownership for each finding. Conduct verification testing after remediation. Escalate overdue findings to management.</p>',
+    source: 'DORA (EU) 2022/2554, Article 6(7)'
+  },
+  'DORA||Art. 6(8)': {
+    title: 'ICT Risk Management Framework — Resilience Strategy Elements',
+    text: '<p>The framework must include a digital operational resilience strategy addressing eight specific elements: business alignment, risk tolerance, security objectives, ICT architecture, incident detection, current resilience status, testing implementation, and incident communication.</p>',
+    guidance: '<p>Map each of the eight required strategy elements to documented policies and procedures. Ensure the strategy is coherent and comprehensive. Review alignment at least annually.</p>',
+    source: 'DORA (EU) 2022/2554, Article 6(8)'
+  },
+  'DORA||Art. 7(1)': {
+    title: 'ICT Systems — Proportionality',
+    text: '<p>Financial entities must use ICT systems, protocols and tools appropriate to the magnitude of operations supporting their activities.</p>',
+    guidance: '<p>Assess system adequacy against business requirements. Ensure systems scale with business growth. Document the rationale for technology choices against operational needs.</p>',
+    source: 'DORA (EU) 2022/2554, Article 7(1)'
+  },
+  'DORA||Art. 7(2)': {
+    title: 'ICT Systems — Reliability',
+    text: '<p>The ICT infrastructure must demonstrate dependable performance and consistent functionality.</p>',
+    guidance: '<p>Implement SLA monitoring and uptime tracking. Deploy infrastructure monitoring tools. Establish performance baselines and alerting thresholds. Conduct regular reliability testing.</p>',
+    source: 'DORA (EU) 2022/2554, Article 7(2)'
+  },
+  'DORA||Art. 7(3)': {
+    title: 'ICT Systems — Processing Capacity',
+    text: '<p>Systems must have sufficient capacity to accurately process data and provide timely services, including handling transaction volume spikes and technological upgrades.</p>',
+    guidance: '<p>Perform capacity planning exercises regularly. Implement auto-scaling where appropriate. Conduct load testing to validate peak capacity handling. Plan for technology refreshes.</p>',
+    source: 'DORA (EU) 2022/2554, Article 7(3)'
+  },
+  'DORA||Art. 7(4)': {
+    title: 'ICT Systems — Technological Resilience',
+    text: '<p>Infrastructure must possess technologically resilient characteristics to manage elevated processing demands during market stress or other adverse operational circumstances.</p>',
+    guidance: '<p>Design systems for degraded-mode operation. Implement circuit breakers and rate limiting. Test system behaviour under stress conditions. Maintain spare capacity for adverse scenarios.</p>',
+    source: 'DORA (EU) 2022/2554, Article 7(4)'
+  },
+  'DORA||Art. 8(1)': {
+    title: 'Identification — Business Functions and Assets',
+    text: '<p>Financial entities must identify, classify and document all ICT-supported business functions, roles, responsibilities, information assets and ICT assets, reviewing classification at least yearly.</p>',
+    guidance: '<p>Maintain a comprehensive register of all ICT-dependent business functions. Map each function to supporting ICT assets. Classify assets by criticality. Conduct annual reviews and update documentation.</p>',
+    source: 'DORA (EU) 2022/2554, Article 8(1)'
+  },
+  'DORA||Art. 8(2)': {
+    title: 'Identification — Risk Sources',
+    text: '<p>Entities must continuously identify all ICT risk sources, including exposure to other financial entities, and assess relevant cyber threats and vulnerabilities. Risk scenarios require annual review.</p>',
+    guidance: '<p>Implement continuous threat and vulnerability monitoring. Subscribe to threat intelligence feeds relevant to the financial sector. Maintain a risk scenario library with annual review cycles.</p>',
+    source: 'DORA (EU) 2022/2554, Article 8(2)'
+  },
+  'DORA||Art. 8(3)': {
+    title: 'Identification — Change-Triggered Risk Assessment',
+    text: '<p>Entities must perform risk assessments whenever major changes occur in their network infrastructure, processes or procedures affecting ICT business functions and assets.</p>',
+    guidance: '<p>Integrate risk assessment triggers into change management processes. Define thresholds for what constitutes a "major change." Document risk assessment results as part of change approval.</p>',
+    source: 'DORA (EU) 2022/2554, Article 8(3)'
+  },
+  'DORA||Art. 8(4)': {
+    title: 'Identification — Asset Mapping',
+    text: '<p>Entities must identify all information and ICT assets including those at remote sites, map critical ones, and document their configurations, links and interdependencies.</p>',
+    guidance: '<p>Deploy automated asset discovery tools. Maintain configuration management databases (CMDB). Map dependencies between assets. Include remote and cloud-hosted assets in the inventory.</p>',
+    source: 'DORA (EU) 2022/2554, Article 8(4)'
+  },
+  'DORA||Art. 8(5)': {
+    title: 'Identification — Third-Party Dependencies',
+    text: '<p>Entities must identify and document all processes dependent on ICT third-party service providers and map interconnections with providers offering critical or important functions.</p>',
+    guidance: '<p>Map all business processes to their third-party ICT dependencies. Identify single points of failure. Document data flows between the entity and providers. Assess criticality of each dependency.</p>',
+    source: 'DORA (EU) 2022/2554, Article 8(5)'
+  },
+  'DORA||Art. 8(6)': {
+    title: 'Identification — Inventory Maintenance',
+    text: '<p>Entities must maintain and periodically update inventories of business functions, ICT assets and third-party dependencies, with updates triggered by major changes.</p>',
+    guidance: '<p>Establish a regular update cycle for all inventories. Automate inventory updates where possible. Trigger reviews upon major changes. Assign inventory ownership to responsible teams.</p>',
+    source: 'DORA (EU) 2022/2554, Article 8(6)'
+  },
+  'DORA||Art. 8(7)': {
+    title: 'Identification — Legacy System Risk Assessment',
+    text: '<p>Entities must conduct specific risk assessments on legacy ICT systems at least yearly, and before/after connecting new technologies or systems.</p>',
+    guidance: '<p>Maintain a legacy system register. Conduct annual risk assessments for each legacy system. Evaluate migration or decommissioning options. Implement compensating controls where modernisation is not feasible.</p>',
+    source: 'DORA (EU) 2022/2554, Article 8(7)'
   },
   'DORA||Art. 9(1)': {
-    title: 'Protection and Prevention — Network Security',
-    text: '<p>For the purposes of adequately protecting ICT systems and with a view to organising response measures, financial entities shall continuously monitor and control the security and functioning of ICT systems and tools and shall minimise the impact of ICT risk through the deployment of appropriate ICT security tools, policies and procedures.</p>',
-    guidance: '<p>Implement layered security controls including firewalls, IDS/IPS, endpoint protection, and network segmentation. Deploy SIEM systems. Establish patch management processes with defined timelines. Implement secure configuration baselines. Conduct regular penetration testing and vulnerability assessments.</p>',
+    title: 'Protection and Prevention — Monitoring',
+    text: '<p>Financial entities shall continuously monitor and control the security and functioning of ICT systems and tools and shall minimise the impact of ICT risk through the deployment of appropriate ICT security tools, policies and procedures.</p>',
+    guidance: '<p>Deploy continuous security monitoring tools (SIEM, EDR, NDR). Establish security operations procedures. Implement automated response capabilities. Define KPIs for monitoring effectiveness.</p>',
     source: 'DORA (EU) 2022/2554, Article 9(1)'
   },
   'DORA||Art. 9(2)': {
     title: 'Protection and Prevention — Data Protection',
-    text: '<p>Financial entities shall design and implement ICT security policies, procedures, protocols and tools that aim to ensure the resilience, continuity and availability of ICT systems, and maintain high standards of availability, authenticity, integrity and confidentiality of data.</p>',
-    guidance: '<p>Implement data classification schemes aligned with regulatory requirements. Deploy encryption for data at rest and in transit using industry-standard algorithms. Establish data loss prevention (DLP) capabilities. Implement key management procedures with secure key storage (HSMs where appropriate).</p>',
+    text: '<p>Financial entities shall design and implement ICT security policies that aim to ensure resilience, continuity and availability of ICT systems, maintaining high standards of availability, authenticity, integrity and confidentiality of data.</p>',
+    guidance: '<p>Implement data classification schemes. Deploy encryption for data at rest and in transit. Establish data loss prevention (DLP) capabilities. Implement key management procedures with secure key storage.</p>',
     source: 'DORA (EU) 2022/2554, Article 9(2)'
   },
   'DORA||Art. 9(3)': {
-    title: 'Protection and Prevention — Authentication Mechanisms',
-    text: '<p>Financial entities shall implement strong authentication mechanisms, based on relevant standards and dedicated control systems, and protection measures for cryptographic keys whereby data is encrypted based on results of approved data classification and ICT risk assessment processes.</p>',
-    guidance: '<p>Deploy multi-factor authentication for all users accessing critical systems. Implement phishing-resistant MFA methods (FIDO2, hardware tokens) for privileged accounts. Use adaptive authentication based on contextual risk signals. Maintain a cryptographic key management policy covering the full key lifecycle.</p>',
+    title: 'Protection and Prevention — Authentication and Encryption',
+    text: '<p>Financial entities shall implement strong authentication mechanisms based on relevant standards and protection measures for cryptographic keys.</p>',
+    guidance: '<p>Deploy multi-factor authentication for all critical systems. Implement phishing-resistant MFA (FIDO2, hardware tokens) for privileged accounts. Maintain cryptographic key management covering the full key lifecycle.</p>',
     source: 'DORA (EU) 2022/2554, Article 9(3)'
   },
   'DORA||Art. 9(4)': {
-    title: 'Protection and Prevention — Access Control Policies',
-    text: '<p>Financial entities shall implement policies that limit the physical and logical access to ICT systems and information assets to what is required for legitimate and approved functions and activities only, and shall establish a set of policies, procedures and controls that address access rights.</p>',
-    guidance: '<p>Implement the principle of least privilege across all systems. Establish formal access provisioning and de-provisioning procedures. Conduct regular access recertification reviews. Implement privileged access management (PAM) solutions. Maintain segregation of duties controls. Log and monitor all access events for critical systems.</p>',
+    title: 'Protection and Prevention — Access Control and Policies',
+    text: '<p>Financial entities shall implement policies limiting physical and logical access to ICT systems and establish documented information security policies, network infrastructure management, access control policies, authentication mechanisms, change management and patching policies.</p>',
+    guidance: '<p>Implement least privilege across all systems. Establish formal access provisioning/de-provisioning. Deploy PAM solutions. Maintain secure configuration baselines. Document ICT change management with management approval. Establish comprehensive patch and update policies.</p>',
     source: 'DORA (EU) 2022/2554, Article 9(4)'
   },
-  'DORA||Art. 10': {
-    title: 'Detection',
-    text: '<p>Financial entities shall have in place mechanisms to promptly detect anomalous activities, including ICT network performance issues and ICT-related incidents, and to identify potential material single points of failure. All detection mechanisms shall be regularly tested.</p>',
-    guidance: '<p>Deploy a 24/7 security monitoring capability (SOC). Implement SIEM with correlation rules tuned to financial sector threats. Deploy network traffic analysis (NTA) and user/entity behaviour analytics (UEBA). Define detection KPIs (mean time to detect, false positive rate). Test detection mechanisms through red team exercises.</p>',
-    source: 'DORA (EU) 2022/2554, Article 10'
+  'DORA||Art. 9(4)(a)': {
+    title: 'Protection — Information Security Policies',
+    text: '<p>Entities shall develop and maintain documented information security policies.</p>',
+    guidance: '<p>Maintain a comprehensive information security policy set covering all required domains. Review and update policies annually. Ensure policies are communicated to all relevant staff.</p>',
+    source: 'DORA (EU) 2022/2554, Article 9(4)(a)'
   },
-  'DORA||Art. 11': {
+  'DORA||Art. 9(4)(b)': {
+    title: 'Protection — Network Security Management',
+    text: '<p>Entities shall establish network infrastructure management with mechanisms to isolate during cyber-attacks and allow instantaneous severance/segmentation.</p>',
+    guidance: '<p>Implement network segmentation with micro-segmentation for critical assets. Deploy network isolation capabilities (kill switches). Design networks to prevent lateral movement. Test isolation mechanisms regularly.</p>',
+    source: 'DORA (EU) 2022/2554, Article 9(4)(b)'
+  },
+  'DORA||Art. 9(4)(c)': {
+    title: 'Protection — Logical and Physical Access',
+    text: '<p>Entities shall implement access control policies limiting logical and physical access to what is required for legitimate functions.</p>',
+    guidance: '<p>Enforce principle of least privilege. Implement role-based access control. Conduct regular access reviews. Secure physical access to data centres and sensitive areas with appropriate controls.</p>',
+    source: 'DORA (EU) 2022/2554, Article 9(4)(c)'
+  },
+  'DORA||Art. 9(4)(d)': {
+    title: 'Protection — Strong Authentication and Encryption',
+    text: '<p>Entities shall deploy strong authentication mechanisms and encryption measures based on risk assessments.</p>',
+    guidance: '<p>Deploy MFA for all system access. Use risk-based authentication. Implement TLS 1.3 or equivalent for data in transit. Use AES-256 or equivalent for data at rest. Manage cryptographic keys according to policy.</p>',
+    source: 'DORA (EU) 2022/2554, Article 9(4)(d)'
+  },
+  'DORA||Art. 9(4)(e)': {
+    title: 'Protection — ICT Change Management',
+    text: '<p>Entities shall maintain documented ICT change management procedures with appropriate management approval and specific protocols.</p>',
+    guidance: '<p>Implement a formal change management process with CAB approval. Document all changes with risk assessment. Maintain rollback procedures. Test changes in non-production environments first.</p>',
+    source: 'DORA (EU) 2022/2554, Article 9(4)(e)'
+  },
+  'DORA||Art. 9(4)(f)': {
+    title: 'Protection — Patching and Updates',
+    text: '<p>Entities shall establish comprehensive patching and update policies.</p>',
+    guidance: '<p>Implement risk-based patch management. Define SLAs for critical, high, medium and low severity patches. Automate patching where possible. Track patch compliance rates. Establish emergency patching procedures.</p>',
+    source: 'DORA (EU) 2022/2554, Article 9(4)(f)'
+  },
+  'DORA||Art. 10(1)': {
+    title: 'Detection — Mechanisms',
+    text: '<p>Financial entities shall have mechanisms to promptly detect anomalous activities, ICT network performance issues and ICT-related incidents, and identify potential material single points of failure.</p>',
+    guidance: '<p>Deploy SIEM with correlation rules. Implement anomaly detection systems. Deploy network monitoring and traffic analysis. Regularly test detection mechanisms through exercises.</p>',
+    source: 'DORA (EU) 2022/2554, Article 10(1)'
+  },
+  'DORA||Art. 10(2)': {
+    title: 'Detection — Layered Controls',
+    text: '<p>Detection systems should feature layered controls, establish alert thresholds to activate incident response, and include automated notifications for incident handlers.</p>',
+    guidance: '<p>Implement defence-in-depth detection. Define and tune alert thresholds. Automate incident notification and initial triage. Integrate detection with SOAR platforms for automated response.</p>',
+    source: 'DORA (EU) 2022/2554, Article 10(2)'
+  },
+  'DORA||Art. 10(3)': {
+    title: 'Detection — Monitoring Resources',
+    text: '<p>Organizations must allocate adequate resources and capabilities to supervise user behaviour, ICT anomalies and incidents, with particular attention to cyber-attacks.</p>',
+    guidance: '<p>Staff a security operations capability (internal SOC or managed service). Deploy UEBA tools. Monitor privileged user activity. Ensure 24/7 coverage for critical systems.</p>',
+    source: 'DORA (EU) 2022/2554, Article 10(3)'
+  },
+  'DORA||Art. 11(1)': {
     title: 'Response and Recovery — Business Continuity Policy',
-    text: '<p>As part of the ICT risk management framework, financial entities shall put in place a comprehensive ICT business continuity policy, forming an integral part of the overall business continuity policy of the financial entity.</p>',
-    guidance: '<p>Develop an ICT-specific business continuity policy covering all critical or important functions. Define RTOs and RPOs based on business impact analysis. Maintain and test ICT disaster recovery plans at least annually. Ensure backup strategies include immutable backups and geographically separated storage.</p>',
-    source: 'DORA (EU) 2022/2554, Article 11'
+    text: '<p>Financial entities shall put in place a comprehensive ICT business continuity policy forming an integral part of the overall business continuity policy.</p>',
+    guidance: '<p>Develop an ICT-specific BCP covering all critical functions. Align with overall business continuity strategy. Ensure the policy addresses all ICT dependencies and failure scenarios.</p>',
+    source: 'DORA (EU) 2022/2554, Article 11(1)'
+  },
+  'DORA||Art. 11(2)': {
+    title: 'Response and Recovery — Documented Arrangements',
+    text: '<p>The policy requires documented arrangements to maintain critical functions, respond to incidents, activate containment measures, assess impacts, and coordinate communications.</p>',
+    guidance: '<p>Document detailed response procedures for each critical function. Define containment strategies. Establish impact assessment templates. Create communication trees for all stakeholders.</p>',
+    source: 'DORA (EU) 2022/2554, Article 11(2)'
+  },
+  'DORA||Art. 11(3)': {
+    title: 'Response and Recovery — Audit Reviews',
+    text: '<p>Response and recovery plans must be subject to independent internal audit reviews for non-microenterprises.</p>',
+    guidance: '<p>Include BCP/DRP in the internal audit plan. Ensure auditors assess plan completeness, testing adequacy, and alignment with requirements. Track and remediate audit findings.</p>',
+    source: 'DORA (EU) 2022/2554, Article 11(3)'
+  },
+  'DORA||Art. 11(4)': {
+    title: 'Response and Recovery — Periodic Testing',
+    text: '<p>Entities must maintain and periodically test business continuity plans, particularly regarding critical functions handled by ICT third-party providers.</p>',
+    guidance: '<p>Test BCP at least annually. Include third-party provider scenarios. Conduct tabletop exercises and full failover tests. Document results and track improvements.</p>',
+    source: 'DORA (EU) 2022/2554, Article 11(4)'
+  },
+  'DORA||Art. 11(5)': {
+    title: 'Response and Recovery — Business Impact Analysis',
+    text: '<p>A business impact analysis must evaluate exposure to severe disruptions using quantitative and qualitative criteria, considering function criticality, dependencies, and ICT asset redundancy.</p>',
+    guidance: '<p>Conduct BIA for all critical business functions. Quantify financial and operational impact of disruptions. Identify dependencies and single points of failure. Use results to define RTOs and RPOs.</p>',
+    source: 'DORA (EU) 2022/2554, Article 11(5)'
   },
   'DORA||Art. 11(6)': {
-    title: 'Response and Recovery — Testing of ICT Business Continuity Plans',
-    text: '<p>Financial entities shall test the ICT business continuity plans and the ICT response and recovery plans at least yearly, as well as after substantive changes to the ICT systems supporting critical or important functions.</p>',
-    guidance: '<p>Conduct annual disaster recovery exercises including full failover tests for critical systems. Test backup restoration procedures and verify data integrity post-recovery. Simulate various scenarios (ransomware, data centre loss, cloud provider outage). Document test results, identify gaps, and track remediation actions.</p>',
+    title: 'Response and Recovery — Annual Testing Requirements',
+    text: '<p>Financial entities shall test ICT business continuity plans at least yearly including cyber-attack scenarios and infrastructure switchover tests.</p>',
+    guidance: '<p>Conduct annual DR exercises including full failover tests. Simulate ransomware, data centre loss and cloud outage scenarios. Test backup restoration and verify data integrity. Track remediation actions.</p>',
     source: 'DORA (EU) 2022/2554, Article 11(6)'
   },
-  'DORA||Art. 13': {
-    title: 'Learning and Evolving',
-    text: '<p>Financial entities shall have in place capabilities and staff to gather information on vulnerabilities and cyber threats, ICT-related incidents, and analyse the impact they are likely to have on their digital operational resilience.</p>',
-    guidance: '<p>Establish a threat intelligence function or subscription to relevant CTI feeds. Participate in information sharing arrangements (ISACs) relevant to the financial sector. Develop and deliver a comprehensive security awareness programme tailored to different roles. Incorporate lessons learned from incidents into security controls and training.</p>',
-    source: 'DORA (EU) 2022/2554, Article 13'
+  'DORA||Art. 11(7)': {
+    title: 'Response and Recovery — Crisis Management Function',
+    text: '<p>Non-microenterprises require a crisis management function with clear procedures to manage internal and external crisis communications.</p>',
+    guidance: '<p>Establish a crisis management team with defined roles. Develop internal and external communication templates. Conduct crisis simulation exercises. Maintain escalation procedures.</p>',
+    source: 'DORA (EU) 2022/2554, Article 11(7)'
   },
-  'DORA||Art. 17': {
-    title: 'ICT-Related Incident Management Process',
-    text: '<p>Financial entities shall define, establish and implement an ICT-related incident management process to detect, manage and notify ICT-related incidents. Financial entities shall record all ICT-related incidents and significant cyber threats.</p>',
-    guidance: '<p>Implement a formalised incident management process with clear severity classifications aligned to DORA thresholds. Define escalation matrices and notification timelines for competent authorities. Establish incident response playbooks for common scenarios. Ensure evidence preservation procedures for forensic investigation.</p>',
-    source: 'DORA (EU) 2022/2554, Article 17'
+  'DORA||Art. 11(8)': {
+    title: 'Response and Recovery — Disruption Records',
+    text: '<p>Organizations must maintain accessible records of activities during disruption events.</p>',
+    guidance: '<p>Implement incident logging during disruptions. Maintain timeline records of all actions taken. Ensure records are accessible for post-incident review and regulatory reporting.</p>',
+    source: 'DORA (EU) 2022/2554, Article 11(8)'
   },
-  'DORA||Art. 17(3)': {
-    title: 'ICT-Related Incident Management — Post-Incident Reviews',
-    text: '<p>After the resolution of major ICT-related incidents, financial entities shall conduct root-cause analyses and report outcomes to the management body.</p>',
-    guidance: '<p>Conduct structured post-incident reviews (PIR) within 2 weeks of incident closure. Use root cause analysis methodologies (5-Whys, Ishikawa). Document findings in a standardised format. Track remediation actions to completion. Share anonymised learnings across the organisation.</p>',
-    source: 'DORA (EU) 2022/2554, Article 17(3)'
+  'DORA||Art. 12(1)': {
+    title: 'Backup — Policies and Frequency',
+    text: '<p>Financial entities must develop and document backup policies specifying data scope and minimum backup frequency based on criticality and confidentiality levels.</p>',
+    guidance: '<p>Define backup scope covering all critical data and systems. Set backup frequency aligned with RPOs. Document retention policies. Classify data to determine appropriate backup strategies.</p>',
+    source: 'DORA (EU) 2022/2554, Article 12(1)'
   },
-  'DORA||Art. 26': {
-    title: 'Advanced Testing of ICT Tools, Systems and Processes — TLPT',
-    text: '<p>Financial entities identified as meeting the criteria shall carry out at least every 3 years advanced testing by means of threat-led penetration testing (TLPT). The TLPT shall cover several or all critical or important functions of a financial entity and shall be performed on live production systems.</p>',
-    guidance: '<p>Engage qualified external threat intelligence and red team providers. Scope TLPT to cover critical functions and supporting ICT infrastructure. Follow the TIBER-EU framework or equivalent national implementation. Ensure purple team collaboration to maximise learning. Document findings with clear risk ratings and remediation timelines.</p>',
-    source: 'DORA (EU) 2022/2554, Article 26'
+  'DORA||Art. 12(2)': {
+    title: 'Backup — Systems and Testing',
+    text: '<p>Entities must establish backup systems with documented activation procedures and periodically test backup, restoration and recovery procedures.</p>',
+    guidance: '<p>Implement automated backup systems. Document activation and restoration procedures. Test backups regularly including full restoration drills. Verify data integrity after restoration.</p>',
+    source: 'DORA (EU) 2022/2554, Article 12(2)'
   },
-  'DORA||Art. 28': {
-    title: 'General Principles — ICT Third-Party Risk Management',
-    text: '<p>Financial entities shall manage ICT third-party risk as an integral component of ICT risk within their ICT risk management framework. The financial entity shall adopt and regularly review a strategy on ICT third-party risk.</p>',
-    guidance: '<p>Maintain a comprehensive register of all ICT third-party service providers. Conduct risk assessments before onboarding and periodically thereafter. Define a tiering system based on criticality and risk. Implement concentration risk monitoring to avoid over-reliance on single providers.</p>',
-    source: 'DORA (EU) 2022/2554, Article 28'
+  'DORA||Art. 12(3)': {
+    title: 'Backup — Segregation and Protection',
+    text: '<p>Backup restoration systems must be physically and logically segregated from source systems, protected from unauthorized access, and enable timely service restoration.</p>',
+    guidance: '<p>Implement air-gapped or immutable backup storage. Ensure logical separation from production environments. Protect backup systems with appropriate access controls and encryption.</p>',
+    source: 'DORA (EU) 2022/2554, Article 12(3)'
+  },
+  'DORA||Art. 12(4)': {
+    title: 'Backup — Redundant Capacities',
+    text: '<p>Non-microenterprise entities must maintain redundant ICT capacities with adequate resources and functions.</p>',
+    guidance: '<p>Design infrastructure with N+1 or greater redundancy. Implement geographic distribution. Conduct regular failover testing. Document single points of failure and mitigation plans.</p>',
+    source: 'DORA (EU) 2022/2554, Article 12(4)'
+  },
+  'DORA||Art. 12(6)': {
+    title: 'Backup — RTO and RPO Objectives',
+    text: '<p>Recovery time and recovery point objectives must consider function criticality, potential market impact, and ensure service levels in extreme scenarios.</p>',
+    guidance: '<p>Define RTOs and RPOs for each critical function based on BIA results. Ensure DR architecture supports defined objectives. Validate through regular testing. Review after significant changes.</p>',
+    source: 'DORA (EU) 2022/2554, Article 12(6)'
+  },
+  'DORA||Art. 12(7)': {
+    title: 'Backup — Post-Incident Data Integrity',
+    text: '<p>Following ICT incidents, entities must perform checks and reconciliations to maintain data integrity, including verification of reconstructed data.</p>',
+    guidance: '<p>Implement data integrity verification procedures. Conduct reconciliation checks after restoration. Verify completeness and accuracy of recovered data. Document verification results.</p>',
+    source: 'DORA (EU) 2022/2554, Article 12(7)'
+  },
+  'DORA||Art. 13(1)': {
+    title: 'Learning and Evolving — Threat Intelligence',
+    text: '<p>Financial entities shall have capabilities to gather and analyse information on vulnerabilities, cyber threats and ICT-related incidents, assessing their impact on digital operational resilience.</p>',
+    guidance: '<p>Subscribe to relevant CTI feeds. Participate in financial sector ISACs. Implement vulnerability scanning. Analyse threat landscape regularly and update risk assessments accordingly.</p>',
+    source: 'DORA (EU) 2022/2554, Article 13(1)'
+  },
+  'DORA||Art. 13(2)': {
+    title: 'Learning and Evolving — Post-Incident Reviews',
+    text: '<p>Entities must conduct post-incident reviews following major ICT incidents, identifying disruption causes and needed improvements, evaluating response promptness, forensic analysis quality, escalation effectiveness, and communication quality.</p>',
+    guidance: '<p>Conduct PIRs within 2 weeks of incident closure. Use root cause analysis methodologies. Document findings in standardised format. Track remediation actions to completion.</p>',
+    source: 'DORA (EU) 2022/2554, Article 13(2)'
+  },
+  'DORA||Art. 13(3)': {
+    title: 'Learning and Evolving — Continuous Improvement',
+    text: '<p>Lessons learned from testing and real-life incidents including cyber-attacks must be continuously incorporated into ICT risk assessment and the risk management framework.</p>',
+    guidance: '<p>Establish a formal lessons-learned process. Update risk assessments with incident findings. Modify controls based on testing results. Track improvements to closure.</p>',
+    source: 'DORA (EU) 2022/2554, Article 13(3)'
+  },
+  'DORA||Art. 13(4)': {
+    title: 'Learning and Evolving — Strategy Monitoring',
+    text: '<p>Entities must monitor digital operational resilience strategy effectiveness, mapping ICT risk evolution and analysing incident frequency, types and patterns.</p>',
+    guidance: '<p>Define metrics for resilience strategy effectiveness. Track incident trends over time. Map risk evolution against strategy objectives. Report to management body regularly.</p>',
+    source: 'DORA (EU) 2022/2554, Article 13(4)'
+  },
+  'DORA||Art. 13(5)': {
+    title: 'Learning and Evolving — Annual ICT Risk Reporting',
+    text: '<p>Senior ICT staff must report yearly to the management body on findings and recommendations.</p>',
+    guidance: '<p>Prepare annual ICT risk report for the board. Include findings from audits, tests and incidents. Provide recommendations with prioritisation. Track management body decisions and actions.</p>',
+    source: 'DORA (EU) 2022/2554, Article 13(5)'
+  },
+  'DORA||Art. 13(6)': {
+    title: 'Learning and Evolving — Security Training',
+    text: '<p>Entities must develop mandatory ICT security awareness and digital operational resilience training for all employees and senior management, tailored to role complexity.</p>',
+    guidance: '<p>Develop role-based security awareness training. Include phishing simulations. Deliver training for senior management covering strategic ICT risk topics. Track completion rates and effectiveness.</p>',
+    source: 'DORA (EU) 2022/2554, Article 13(6)'
+  },
+  'DORA||Art. 13(7)': {
+    title: 'Learning and Evolving — Technology Monitoring',
+    text: '<p>Non-microenterprises must continuously monitor technological developments and their ICT security impacts, staying current with risk management processes to combat evolving cyber-attacks.</p>',
+    guidance: '<p>Monitor emerging technology risks and trends. Subscribe to security advisories. Update risk management processes for new attack vectors. Conduct horizon scanning exercises.</p>',
+    source: 'DORA (EU) 2022/2554, Article 13(7)'
+  },
+  'DORA||Art. 14(1)': {
+    title: 'Communication — Crisis Communication Plans',
+    text: '<p>Financial entities must establish crisis communication plans enabling responsible disclosure of major incidents and vulnerabilities to clients, counterparts and the public.</p>',
+    guidance: '<p>Develop crisis communication templates for different incident types. Define approval workflows for external communications. Establish media handling procedures. Test communication plans through exercises.</p>',
+    source: 'DORA (EU) 2022/2554, Article 14(1)'
+  },
+  'DORA||Art. 14(2)': {
+    title: 'Communication — Stakeholder Policies',
+    text: '<p>Entities shall implement communication policies for both internal staff and external stakeholders, differentiating between ICT risk management staff and general notification recipients.</p>',
+    guidance: '<p>Create differentiated communication channels. Define what information is shared with which audience. Implement secure communication channels for incident response teams.</p>',
+    source: 'DORA (EU) 2022/2554, Article 14(2)'
+  },
+  'DORA||Art. 14(3)': {
+    title: 'Communication — Designated Spokesperson',
+    text: '<p>At least one designated person must be responsible for implementing the ICT incident communication strategy and serving as the public and media contact point.</p>',
+    guidance: '<p>Designate a named communications lead for ICT incidents. Provide media training. Ensure backup designates are identified. Include contact details in incident response plans.</p>',
+    source: 'DORA (EU) 2022/2554, Article 14(3)'
+  },
+  // ── DORA Chapter III: ICT-Related Incident Management ───────────
+  'DORA||Art. 17(1)': {
+    title: 'Incident Management — Process Establishment',
+    text: '<p>Financial entities shall define, establish and implement an ICT-related incident management process to detect, manage and notify ICT-related incidents.</p>',
+    guidance: '<p>Implement a formalised incident management process with clear severity classifications. Define escalation matrices and notification timelines. Establish incident response playbooks for common scenarios.</p>',
+    source: 'DORA (EU) 2022/2554, Article 17(1)'
+  },
+  'DORA||Art. 17(2)': {
+    title: 'Incident Management — Documentation',
+    text: '<p>Entities shall record all ICT-related incidents and significant cyber threats, implementing monitoring procedures to identify root causes and prevent recurrence.</p>',
+    guidance: '<p>Maintain an incident register with all details. Implement root cause analysis for significant incidents. Track remediation actions. Use incident data for trend analysis and prevention.</p>',
+    source: 'DORA (EU) 2022/2554, Article 17(2)'
+  },
+  'DORA||Art. 17(3)(a)': {
+    title: 'Incident Management — Early Warning Systems',
+    text: '<p>The incident management process must include implementation of early warning systems to detect emerging threats.</p>',
+    guidance: '<p>Deploy threat intelligence-driven early warning capabilities. Integrate CTI feeds into monitoring systems. Establish threat hunting procedures. Share early warnings within information sharing networks.</p>',
+    source: 'DORA (EU) 2022/2554, Article 17(3)(a)'
+  },
+  'DORA||Art. 17(3)(b)': {
+    title: 'Incident Management — Categorization',
+    text: '<p>The process must include procedures for identifying, monitoring and categorizing incidents based on severity and impact to critical services.</p>',
+    guidance: '<p>Define severity levels aligned with DORA classification criteria. Implement automated triage where possible. Categorise by impact to critical functions. Prioritise response based on severity.</p>',
+    source: 'DORA (EU) 2022/2554, Article 17(3)(b)'
+  },
+  'DORA||Art. 17(3)(c)': {
+    title: 'Incident Management — Roles and Responsibilities',
+    text: '<p>Clear assignment of roles and responsibilities for various incident types and scenarios.</p>',
+    guidance: '<p>Define RACI matrices for incident response. Assign incident commanders and response team roles. Document responsibilities for each incident type. Ensure coverage for all shifts and scenarios.</p>',
+    source: 'DORA (EU) 2022/2554, Article 17(3)(c)'
+  },
+  'DORA||Art. 17(3)(d)': {
+    title: 'Incident Management — Communication and Escalation',
+    text: '<p>Communication strategies for staff, stakeholders, media and clients, plus internal escalation protocols must be defined.</p>',
+    guidance: '<p>Develop communication templates for each stakeholder group. Define escalation triggers and timelines. Implement automated notification systems. Test communication procedures regularly.</p>',
+    source: 'DORA (EU) 2022/2554, Article 17(3)(d)'
+  },
+  'DORA||Art. 17(3)(e)': {
+    title: 'Incident Management — Senior Management Escalation',
+    text: '<p>Major incidents must be escalated to senior management and the board with impact assessments.</p>',
+    guidance: '<p>Define escalation criteria for major incidents. Prepare impact assessment templates. Establish rapid communication channels to senior management. Brief the board on significant incidents.</p>',
+    source: 'DORA (EU) 2022/2554, Article 17(3)(e)'
+  },
+  'DORA||Art. 17(3)(f)': {
+    title: 'Incident Management — Response Procedures',
+    text: '<p>Response procedures designed to minimise disruption and restore secure operations promptly.</p>',
+    guidance: '<p>Develop playbooks for common incident types. Include containment, eradication and recovery steps. Define decision criteria for containment strategies. Test procedures through regular exercises.</p>',
+    source: 'DORA (EU) 2022/2554, Article 17(3)(f)'
+  },
+  'DORA||Art. 18(1)': {
+    title: 'Incident Classification — Impact Criteria',
+    text: '<p>Financial entities shall classify ICT incidents using six criteria: affected clients/transactions, incident duration, geographical spread, data losses, criticality of impacted services, and economic costs.</p>',
+    guidance: '<p>Implement classification criteria aligned with the six DORA dimensions. Automate classification where possible. Train staff on consistent application. Review classifications periodically.</p>',
+    source: 'DORA (EU) 2022/2554, Article 18(1)'
+  },
+  'DORA||Art. 18(2)': {
+    title: 'Incident Classification — Cyber Threat Categorization',
+    text: '<p>Financial entities shall categorize cyber threats as significant based on criticality of at-risk services, number of targeted clients, and geographical scope.</p>',
+    guidance: '<p>Define significance thresholds for cyber threats. Assess threats against criticality of targeted services. Consider geographic scope and client impact. Document categorisation rationale.</p>',
+    source: 'DORA (EU) 2022/2554, Article 18(2)'
+  },
+  'DORA||Art. 19(1)': {
+    title: 'Incident Reporting — Major Incident Reporting',
+    text: '<p>Financial entities must report major ICT-related incidents to competent authorities when they have high adverse impact on systems supporting critical functions.</p>',
+    guidance: '<p>Establish reporting procedures aligned with regulatory requirements. Define what constitutes a major incident. Prepare reporting templates. Ensure timely submission within required deadlines.</p>',
+    source: 'DORA (EU) 2022/2554, Article 19(1)'
+  },
+  'DORA||Art. 19(3)': {
+    title: 'Incident Reporting — Client Notification',
+    text: '<p>When major incidents affect client finances, entities must promptly inform clients and advise on protective measures for significant threats.</p>',
+    guidance: '<p>Define client notification triggers and timelines. Prepare client communication templates. Include protective advice in notifications. Maintain client contact databases for rapid notification.</p>',
+    source: 'DORA (EU) 2022/2554, Article 19(3)'
+  },
+  'DORA||Art. 19(4)': {
+    title: 'Incident Reporting — Report Submissions',
+    text: '<p>Entities must submit initial notifications, intermediate reports and final reports within established timeframes.</p>',
+    guidance: '<p>Implement a three-stage reporting process (initial, intermediate, final). Define internal deadlines for each stage. Automate report generation where possible. Track submission compliance.</p>',
+    source: 'DORA (EU) 2022/2554, Article 19(4)'
+  },
+  'DORA||Art. 20(1)': {
+    title: 'Reporting Harmonisation — Content and Templates',
+    text: '<p>Incident reports must use standardised content and templates reflecting Article 18 classification criteria.</p>',
+    guidance: '<p>Adopt regulatory reporting templates. Map internal incident data to required report fields. Automate data extraction for reporting. Test reporting processes through exercises.</p>',
+    source: 'DORA (EU) 2022/2554, Article 20(1)'
+  },
+  // ── DORA Chapter IV: Digital Operational Resilience Testing ──────
+  'DORA||Art. 24(1)': {
+    title: 'Resilience Testing — Programme Establishment',
+    text: '<p>Financial entities must establish a comprehensive digital operational resilience testing programme as part of their ICT risk management framework to assess preparedness, identify weaknesses, and implement corrective measures.</p>',
+    guidance: '<p>Develop a multi-year testing programme. Include various testing types. Align testing with risk profile. Allocate adequate budget and resources for the programme.</p>',
+    source: 'DORA (EU) 2022/2554, Article 24(1)'
+  },
+  'DORA||Art. 24(3)': {
+    title: 'Resilience Testing — Risk-Based Approach',
+    text: '<p>Entities must employ a risk-based approach when conducting tests, considering evolving ICT risks, entity-specific exposures, criticality of information assets, and service provision factors.</p>',
+    guidance: '<p>Prioritise testing of highest-risk areas. Consider threat landscape changes when planning tests. Focus on critical assets and services. Adjust testing intensity based on risk profile.</p>',
+    source: 'DORA (EU) 2022/2554, Article 24(3)'
+  },
+  'DORA||Art. 24(4)': {
+    title: 'Resilience Testing — Independence',
+    text: '<p>Tests must be performed by independent parties with sufficient resources and conflict-of-interest safeguards.</p>',
+    guidance: '<p>Ensure testing independence from development and operations teams. Use qualified external testers for critical tests. Implement conflict-of-interest policies. Verify tester qualifications.</p>',
+    source: 'DORA (EU) 2022/2554, Article 24(4)'
+  },
+  'DORA||Art. 24(5)': {
+    title: 'Resilience Testing — Remediation',
+    text: '<p>Entities shall establish procedures to prioritize, classify and remedy testing-identified issues, plus validate that weaknesses are fully addressed.</p>',
+    guidance: '<p>Implement a findings management process. Prioritise remediation by risk severity. Track remediation to closure. Conduct verification testing to confirm fixes are effective.</p>',
+    source: 'DORA (EU) 2022/2554, Article 24(5)'
+  },
+  'DORA||Art. 24(6)': {
+    title: 'Resilience Testing — Annual Testing of Critical Systems',
+    text: '<p>At minimum annually, entities must test all ICT systems and applications supporting critical or important functions.</p>',
+    guidance: '<p>Identify all systems supporting critical functions. Schedule annual testing cycles. Include functional, security and resilience testing. Document results and track improvements.</p>',
+    source: 'DORA (EU) 2022/2554, Article 24(6)'
+  },
+  'DORA||Art. 25(1)': {
+    title: 'ICT Testing — Range of Tests',
+    text: '<p>Testing programmes must include vulnerability assessments, scans, open source analyses, network security assessments, gap analyses, physical security reviews, penetration testing, and more.</p>',
+    guidance: '<p>Implement a comprehensive testing toolkit. Conduct regular vulnerability scans and penetration tests. Include source code reviews for critical applications. Perform physical security assessments.</p>',
+    source: 'DORA (EU) 2022/2554, Article 25(1)'
+  },
+  'DORA||Art. 25(2)': {
+    title: 'ICT Testing — Pre-Deployment Assessments',
+    text: '<p>Central securities depositories and central counterparties must conduct vulnerability assessments before deploying new or existing applications for critical functions.</p>',
+    guidance: '<p>Integrate security testing into the deployment pipeline. Conduct vulnerability assessments before go-live. Implement security gates in CI/CD processes. Address critical findings before deployment.</p>',
+    source: 'DORA (EU) 2022/2554, Article 25(2)'
+  },
+  'DORA||Art. 26(1)': {
+    title: 'TLPT — Triennial Requirement',
+    text: '<p>Financial entities shall carry out threat-led penetration testing (TLPT) at least every 3 years, with competent authorities able to adjust frequency based on risk profile.</p>',
+    guidance: '<p>Plan TLPT on a 3-year cycle. Engage qualified external providers. Follow TIBER-EU or equivalent national framework. Budget adequately for comprehensive testing.</p>',
+    source: 'DORA (EU) 2022/2554, Article 26(1)'
+  },
+  'DORA||Art. 26(2)': {
+    title: 'TLPT — Scope and Coverage',
+    text: '<p>TLPT must cover critical or important functions on live production systems, identifying all underlying ICT systems, processes and technologies.</p>',
+    guidance: '<p>Scope TLPT to cover all critical functions. Map supporting ICT infrastructure. Test on live production systems with appropriate safeguards. Include outsourced services where relevant.</p>',
+    source: 'DORA (EU) 2022/2554, Article 26(2)'
+  },
+  'DORA||Art. 26(4)': {
+    title: 'TLPT — Third-Party Provider Participation',
+    text: '<p>When third-party service providers participate in TLPT, entities retain full responsibility and must ensure cooperation through necessary safeguards.</p>',
+    guidance: '<p>Include contractual provisions for TLPT participation. Coordinate testing with providers. Implement risk controls during testing. Ensure provider cooperation without compromising test integrity.</p>',
+    source: 'DORA (EU) 2022/2554, Article 26(4)'
+  },
+  'DORA||Art. 26(7)': {
+    title: 'TLPT — Findings and Compliance',
+    text: '<p>Entities must provide authorities with findings summaries, remediation plans and compliance documentation following testing.</p>',
+    guidance: '<p>Document TLPT findings comprehensively. Develop prioritised remediation plans. Prepare compliance documentation for regulatory submission. Track remediation progress.</p>',
+    source: 'DORA (EU) 2022/2554, Article 26(7)'
+  },
+  'DORA||Art. 27(1)': {
+    title: 'TLPT Testers — Qualifications',
+    text: '<p>TLPT testers must demonstrate highest suitability, possess expertise in threat intelligence and penetration testing, hold relevant certifications, and maintain professional indemnity insurance.</p>',
+    guidance: '<p>Define tester selection criteria aligned with Article 27 requirements. Verify certifications (CREST, OSCP, etc.). Check professional indemnity insurance. Assess independence and ethical frameworks.</p>',
+    source: 'DORA (EU) 2022/2554, Article 27(1)'
+  },
+  'DORA||Art. 27(3)': {
+    title: 'TLPT Testers — Data Security',
+    text: '<p>Contracts with external testers must ensure secure management of test results and data processing, preventing risks through proper handling of TLPT-related information.</p>',
+    guidance: '<p>Include data security provisions in tester contracts. Define secure handling of test results. Specify data retention and destruction requirements. Implement secure communication channels.</p>',
+    source: 'DORA (EU) 2022/2554, Article 27(3)'
+  },
+  // ── DORA Chapter V: Managing ICT Third-Party Risk ───────────────
+  'DORA||Art. 28(1)': {
+    title: 'Third-Party Risk — Framework Integration',
+    text: '<p>Financial entities shall manage ICT third-party risk as an integral component of ICT risk within their ICT risk management framework.</p>',
+    guidance: '<p>Embed third-party ICT risk management into the overall risk framework. Ensure consistent risk assessment methodology. Report third-party risks alongside other ICT risks.</p>',
+    source: 'DORA (EU) 2022/2554, Article 28(1)'
+  },
+  'DORA||Art. 28(2)': {
+    title: 'Third-Party Risk — Strategy',
+    text: '<p>Entities shall adopt and regularly review a comprehensive strategy addressing third-party ICT risks, applying proportionality based on dependency nature, scale and service criticality.</p>',
+    guidance: '<p>Develop a third-party ICT risk strategy. Review at least annually. Apply proportionate controls based on provider criticality. Include concentration risk considerations.</p>',
+    source: 'DORA (EU) 2022/2554, Article 28(2)'
+  },
+  'DORA||Art. 28(3)': {
+    title: 'Third-Party Risk — Service Register',
+    text: '<p>Entities must maintain updated registers documenting all ICT service arrangements, distinguish critical function agreements, and report yearly on new arrangements.</p>',
+    guidance: '<p>Maintain a comprehensive register of all ICT service providers. Flag arrangements supporting critical functions. Report new arrangements to competent authorities annually. Keep the register current.</p>',
+    source: 'DORA (EU) 2022/2554, Article 28(3)'
+  },
+  'DORA||Art. 28(4)': {
+    title: 'Third-Party Risk — Pre-Contract Assessment',
+    text: '<p>Before contracting, entities must assess whether arrangements cover critical functions, evaluate supervisory conditions, identify relevant risks including concentration risk, and conduct due diligence.</p>',
+    guidance: '<p>Implement a structured pre-contract assessment process. Include concentration risk evaluation. Conduct comprehensive due diligence. Assess supervisory implications and potential conflicts.</p>',
+    source: 'DORA (EU) 2022/2554, Article 28(4)'
+  },
+  'DORA||Art. 28(5)': {
+    title: 'Third-Party Risk — Security Standards',
+    text: '<p>Entities may only contract with providers meeting appropriate security standards, with heightened standards for critical functions.</p>',
+    guidance: '<p>Define minimum security standards for all providers. Apply enhanced standards for critical function providers. Verify standards through assessments and certifications. Monitor ongoing compliance.</p>',
+    source: 'DORA (EU) 2022/2554, Article 28(5)'
+  },
+  'DORA||Art. 28(6)': {
+    title: 'Third-Party Risk — Audit Rights',
+    text: '<p>Entities must predetermine audit frequencies and areas using risk-based approaches and verify auditor competency for complex arrangements.</p>',
+    guidance: '<p>Define risk-based audit schedules for providers. Include audit rights in contracts. Use qualified auditors for technical assessments. Review audit reports and track findings.</p>',
+    source: 'DORA (EU) 2022/2554, Article 28(6)'
+  },
+  'DORA||Art. 28(7)': {
+    title: 'Third-Party Risk — Termination Rights',
+    text: '<p>Contracts must permit termination for: significant breaches, monitored risk changes, provider ICT weaknesses, or supervisory impediments.</p>',
+    guidance: '<p>Include comprehensive termination clauses in contracts. Define specific termination triggers. Ensure notice periods allow for orderly transition. Link to exit strategy requirements.</p>',
+    source: 'DORA (EU) 2022/2554, Article 28(7)'
   },
   'DORA||Art. 28(8)': {
-    title: 'ICT Third-Party Risk — Exit Strategies',
-    text: '<p>Financial entities shall ensure that they are able to exit contractual arrangements without disruption to their business activities, without limiting compliance with regulatory requirements. Financial entities shall put in place comprehensive and documented exit plans.</p>',
-    guidance: '<p>Develop and maintain exit strategies for all critical ICT third-party service providers. Ensure data portability provisions are contractually agreed. Define transition timelines and resource requirements. Test exit plans periodically through tabletop exercises. Maintain alternative provider assessments.</p>',
+    title: 'Third-Party Risk — Exit Strategies',
+    text: '<p>Exit strategies for critical functions must address provider failure risks, ensure business continuity, include documented transition plans, identify alternatives, and maintain contingency measures.</p>',
+    guidance: '<p>Develop exit plans for all critical providers. Include data portability provisions. Define transition timelines. Identify alternative providers. Test exit plans through tabletop exercises.</p>',
     source: 'DORA (EU) 2022/2554, Article 28(8)'
   },
-  'DORA||Art. 30': {
-    title: 'Key Contractual Provisions',
-    text: '<p>Contractual arrangements on the use of ICT services shall include at least: a clear and complete description of all functions and services, the locations where such functions and services are provided and where data is to be processed, provisions on availability, authenticity, integrity and confidentiality.</p>',
-    guidance: '<p>Include comprehensive security requirements in all ICT service contracts. Define service levels, incident notification timelines, and audit rights. Specify data processing locations and any restrictions on data transfer. Include provisions for business continuity, disaster recovery and exit management.</p>',
-    source: 'DORA (EU) 2022/2554, Article 30'
+  'DORA||Art. 29(1)': {
+    title: 'Concentration Risk — Entity-Level Assessment',
+    text: '<p>Financial entities must evaluate whether contracting with non-easily substitutable ICT providers or maintaining multiple arrangements with the same provider creates concentration risk.</p>',
+    guidance: '<p>Map dependencies to identify concentration points. Assess substitutability of providers. Evaluate cost-benefit of diversification. Document concentration risk assessments.</p>',
+    source: 'DORA (EU) 2022/2554, Article 29(1)'
+  },
+  'DORA||Art. 29(2)': {
+    title: 'Concentration Risk — Subcontracting and Third-Country Risks',
+    text: '<p>Entities must evaluate subcontracting risks, insolvency law implications, data protection compliance, and whether complex subcontracting chains impair monitoring capability.</p>',
+    guidance: '<p>Assess subcontracting chains for critical services. Evaluate third-country legal and regulatory risks. Ensure data protection compliance across the chain. Verify monitoring capability is maintained.</p>',
+    source: 'DORA (EU) 2022/2554, Article 29(2)'
+  },
+  'DORA||Art. 30(1)': {
+    title: 'Contractual Provisions — Written Documentation',
+    text: '<p>Rights and obligations must be clearly allocated and documented in a single written contract available in accessible format.</p>',
+    guidance: '<p>Use comprehensive contract templates. Ensure all rights and obligations are documented. Maintain contracts in accessible formats. Review contracts for completeness before execution.</p>',
+    source: 'DORA (EU) 2022/2554, Article 30(1)'
+  },
+  'DORA||Art. 30(2)': {
+    title: 'Contractual Provisions — Required Contract Terms',
+    text: '<p>All ICT contracts must include: service descriptions, subcontracting conditions, service locations, data protection provisions, SLAs, incident assistance, cooperation requirements, and termination rights.</p>',
+    guidance: '<p>Use a contractual checklist covering all Article 30(2) requirements. Ensure SLAs are measurable and enforceable. Include data protection provisions aligned with GDPR. Define incident notification timelines.</p>',
+    source: 'DORA (EU) 2022/2554, Article 30(2)'
+  },
+  'DORA||Art. 30(3)': {
+    title: 'Contractual Provisions — Critical Function Requirements',
+    text: '<p>Contracts for critical functions must additionally include performance targets, notification obligations, business continuity measures, TLPT participation, monitoring rights, and exit strategies.</p>',
+    guidance: '<p>Apply enhanced contractual requirements for critical function providers. Define precise performance targets. Include mandatory TLPT participation. Ensure comprehensive audit and inspection rights.</p>',
+    source: 'DORA (EU) 2022/2554, Article 30(3)'
+  },
+  'DORA||Art. 31(1)': {
+    title: 'Critical Provider Designation — Awareness and Alignment',
+    text: '<p>The ESAs shall designate critical ICT third-party service providers based on systemic impact, systemic importance, concentration of functions, and substitutability.</p>',
+    guidance: '<p>Monitor ESA publications for critical provider designations. Assess own provider portfolio against designation criteria. Understand implications for oversight and reporting requirements.</p>',
+    source: 'DORA (EU) 2022/2554, Article 31(1)'
+  },
+  'DORA||Art. 45(1)': {
+    title: 'Information Sharing — Threat Intelligence',
+    text: '<p>Financial entities may exchange cyber threat data and intelligence among themselves within trusted communities, respecting confidentiality, data protection and competition policy.</p>',
+    guidance: '<p>Evaluate and join relevant information sharing communities (e.g., FS-ISAC). Define internal processes for sharing and receiving threat intelligence. Implement safeguards for data protection and competition compliance.</p>',
+    source: 'DORA (EU) 2022/2554, Article 45(1)'
+  },
+  'DORA||Art. 45(2)': {
+    title: 'Information Sharing — Governance',
+    text: '<p>Information-sharing arrangements must define participation conditions and may specify how public authorities and ICT third-party service providers participate.</p>',
+    guidance: '<p>Define governance for information sharing participation. Establish conditions for what information can be shared. Include provisions for public authority and provider participation where appropriate.</p>',
+    source: 'DORA (EU) 2022/2554, Article 45(2)'
+  },
+  'DORA||Art. 45(3)': {
+    title: 'Information Sharing — Regulatory Notification',
+    text: '<p>Financial entities must notify their competent authorities when joining or leaving information-sharing arrangements.</p>',
+    guidance: '<p>Establish notification procedures for sharing arrangement membership changes. Maintain records of all sharing arrangements. Notify competent authorities promptly upon joining or leaving.</p>',
+    source: 'DORA (EU) 2022/2554, Article 45(3)'
   },
 
   // ── NIS2 ───────────────────────────────────────────────────────────
@@ -1943,8 +3519,9 @@ document.addEventListener('click', (e) => {
 // INIT
 // ═══════════════════════════════════════════════════════════════════════
 
-// Load persisted scores and notes before any rendering
+// Load persisted state before any rendering
 loadState();
+loadSnapshots();
 
 buildFrameworkData();
 
@@ -1958,6 +3535,11 @@ renderAssessmentCards();
 initChart();
 updateOverall();
 updateRiskSummary();
+updateStatusBar();
+updateDistChart();
+updateExecSummary();
+renderSnapshots();
+applyMeta();
 
 // ─── Dark mode ──────────────────────────────────────────────────────────
 document.getElementById('darkModeBtn').addEventListener('click', () => {
@@ -1967,9 +3549,31 @@ document.getElementById('darkModeBtn').addEventListener('click', () => {
 });
 applyDarkMode();
 
+// ─── Metadata ───────────────────────────────────────────────────────────
+['metaOrg', 'metaAssessor', 'metaVersion'].forEach(id => {
+  document.getElementById(id).addEventListener('input', saveMeta);
+});
+
+// ─── Undo / Redo ────────────────────────────────────────────────────────
+document.getElementById('undoBtn').addEventListener('click', undo);
+document.getElementById('redoBtn').addEventListener('click', redo);
+
+// ─── View toggle ────────────────────────────────────────────────────────
+document.getElementById('viewDetail').addEventListener('click', () => toggleView('detail'));
+document.getElementById('viewMatrix').addEventListener('click', () => toggleView('matrix'));
+
+// ─── Snapshots ──────────────────────────────────────────────────────────
+document.getElementById('saveSnapshotBtn').addEventListener('click', createSnapshot);
+
 // ─── Export CSV ─────────────────────────────────────────────────────────
 document.getElementById('exportBtn').addEventListener('click', () => {
-  const rows = [['Framework','Article','Clause','Control','Score','Maturity Level','Status','Notes']];
+  const rows = [];
+  if (META.org) rows.push(['Organisation', META.org]);
+  if (META.assessor) rows.push(['Assessor', META.assessor]);
+  if (META.version) rows.push(['Version', META.version]);
+  rows.push(['Date', new Date().toLocaleDateString('en-GB')]);
+  rows.push([]);
+  rows.push(['Framework','Article','Clause','Control','Score','Maturity Level','Status','Notes']);
   FRAMEWORKS.forEach(fw => {
     FRAMEWORK_DATA[fw].articles.forEach(art => {
       art.subClauses.forEach(sc => {
@@ -2006,6 +3610,69 @@ document.getElementById('riskFilterBtn').addEventListener('click', () => {
   showRiskOnly = !showRiskOnly;
   document.getElementById('riskFilterBtn').classList.toggle('active', showRiskOnly);
   renderAssessmentCards();
+});
+
+// ─── Keyboard shortcuts ─────────────────────────────────────────────────
+document.addEventListener('keydown', (e) => {
+  // Don't intercept when typing in inputs
+  if (e.target.matches('input, textarea, select')) {
+    if (e.key === 'Escape') e.target.blur();
+    return;
+  }
+
+  // ? — show keyboard shortcuts
+  if (e.key === '?' && !e.ctrlKey && !e.metaKey) {
+    document.getElementById('kbdOverlay').classList.toggle('open');
+    return;
+  }
+
+  // Escape — close overlays
+  if (e.key === 'Escape') {
+    document.getElementById('kbdOverlay').classList.remove('open');
+    closeModal();
+    return;
+  }
+
+  // / — focus search
+  if (e.key === '/' && !e.ctrlKey && !e.metaKey) {
+    e.preventDefault();
+    document.getElementById('searchInput').focus();
+    return;
+  }
+
+  // Ctrl+Z — undo
+  if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) {
+    e.preventDefault();
+    undo();
+    return;
+  }
+
+  // Ctrl+Shift+Z or Ctrl+Y — redo
+  if ((e.ctrlKey || e.metaKey) && (e.key === 'Z' || e.key === 'y')) {
+    e.preventDefault();
+    redo();
+    return;
+  }
+
+  // Ctrl+E — export CSV
+  if ((e.ctrlKey || e.metaKey) && e.key === 'e') {
+    e.preventDefault();
+    document.getElementById('exportBtn').click();
+    return;
+  }
+
+  // Ctrl+D — toggle dark mode
+  if ((e.ctrlKey || e.metaKey) && e.key === 'd') {
+    e.preventDefault();
+    document.getElementById('darkModeBtn').click();
+    return;
+  }
+});
+
+document.getElementById('kbdOverlay').addEventListener('click', (e) => {
+  if (e.target === document.getElementById('kbdOverlay')) {
+    document.getElementById('kbdOverlay').classList.remove('open');
+  }
 });
 </script>
 </body>
