@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kilometer Registratie</title>
+<script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+<style>
+  :root {
+    --blue: #1a56db;
+    --blue-light: #e8f0fe;
+    --green: #057a55;
+    --green-light: #def7ec;
+    --red: #c81e1e;
+    --red-light: #fde8e8;
+    --amber: #92400e;
+    --amber-light: #fffbeb;
+    --gray-50: #f9fafb;
+    --gray-100: #f3f4f6;
+    --gray-200: #e5e7eb;
+    --gray-300: #d1d5db;
+    --gray-400: #9ca3af;
+    --gray-600: #4b5563;
+    --gray-700: #374151;
+    --gray-800: #1f2937;
+    --gray-900: #111827;
+    --white: #ffffff;
+    --radius: 8px;
+    --shadow: 0 1px 3px rgba(0,0,0,.1), 0 1px 2px rgba(0,0,0,.06);
+    --shadow-md: 0 4px 6px rgba(0,0,0,.07), 0 2px 4px rgba(0,0,0,.06);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+    background: var(--gray-100);
+    color: var(--gray-900);
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+
+  /* ── Header ── */
+  .header {
+    background: var(--blue);
+    color: var(--white);
+    padding: 20px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: var(--shadow-md);
+  }
+  .header-left h1 { font-size: 22px; font-weight: 700; letter-spacing: -.3px; }
+  .header-left p { font-size: 13px; opacity: .75; margin-top: 2px; }
+  .header-date { font-size: 13px; opacity: .8; text-align: right; }
+
+  /* ── Layout ── */
+  .container { max-width: 1100px; margin: 0 auto; padding: 28px 24px 60px; }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+
+  @media (max-width: 768px) {
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    .header { flex-direction: column; align-items: flex-start; gap: 8px; }
+    .container { padding: 16px 12px 40px; }
+  }
+
+  /* ── Cards ── */
+  .card {
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 20px 24px;
+  }
+  .card-title {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .7px;
+    color: var(--gray-400);
+    margin-bottom: 16px;
+  }
+
+  /* ── Summary cards ── */
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  @media (max-width: 900px) { .summary-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 480px) { .summary-grid { grid-template-columns: 1fr; } }
+
+  .stat-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 16px 18px;
+    border-top: 3px solid var(--gray-200);
+  }
+  .stat-card.blue  { border-top-color: var(--blue); }
+  .stat-card.green { border-top-color: var(--green); }
+  .stat-card.red   { border-top-color: var(--red); }
+  .stat-card.amber { border-top-color: #d97706; }
+
+  .stat-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .6px; color: var(--gray-400); margin-bottom: 6px; }
+  .stat-value { font-size: 28px; font-weight: 700; color: var(--gray-800); line-height: 1; }
+  .stat-value.green { color: var(--green); }
+  .stat-value.red   { color: var(--red); }
+  .stat-sub { font-size: 11px; color: var(--gray-400); margin-top: 4px; }
+
+  /* ── Section labels ── */
+  .section-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--gray-700);
+    margin: 28px 0 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-title::after { content: ''; flex: 1; height: 1px; background: var(--gray-200); }
+
+  /* ── Forms ── */
+  .form-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; }
+  .form-group { display: flex; flex-direction: column; gap: 4px; }
+  .form-group label { font-size: 12px; font-weight: 600; color: var(--gray-600); }
+  input[type="text"], input[type="number"], input[type="date"] {
+    border: 1px solid var(--gray-300);
+    border-radius: 6px;
+    padding: 8px 10px;
+    font-size: 14px;
+    color: var(--gray-800);
+    background: var(--white);
+    transition: border-color .15s;
+    outline: none;
+  }
+  input[type="text"]:focus, input[type="number"]:focus, input[type="date"]:focus {
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(26,86,219,.12);
+  }
+  input[type="number"] { width: 110px; }
+  input[type="date"]   { width: 150px; }
+  input[type="text"]   { width: 240px; }
+
+  /* ── Buttons ── */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: background .15s, opacity .15s;
+    white-space: nowrap;
+  }
+  .btn-primary { background: var(--blue); color: var(--white); }
+  .btn-primary:hover { background: #1446b8; }
+  .btn-secondary { background: var(--gray-100); color: var(--gray-700); border: 1px solid var(--gray-300); }
+  .btn-secondary:hover { background: var(--gray-200); }
+  .btn-danger { background: var(--red-light); color: var(--red); border: 1px solid #fca5a5; }
+  .btn-danger:hover { background: #fca5a5; }
+  .btn-sm { padding: 5px 10px; font-size: 12px; }
+  .btn:disabled { opacity: .5; cursor: not-allowed; }
+
+  /* ── Settings card ── */
+  .settings-grid { display: flex; gap: 16px; flex-wrap: wrap; align-items: flex-end; }
+
+  /* ── Upload area ── */
+  .upload-area {
+    border: 2px dashed var(--gray-300);
+    border-radius: var(--radius);
+    padding: 24px;
+    text-align: center;
+    background: var(--gray-50);
+    cursor: pointer;
+    transition: border-color .2s, background .2s;
+  }
+  .upload-area:hover, .upload-area.drag-over {
+    border-color: var(--blue);
+    background: var(--blue-light);
+  }
+  .upload-area input[type="file"] { display: none; }
+  .upload-icon { font-size: 28px; margin-bottom: 8px; }
+  .upload-area p { font-size: 13px; color: var(--gray-600); }
+  .upload-area small { font-size: 11px; color: var(--gray-400); }
+
+  .upload-preview {
+    margin-top: 12px;
+    padding: 12px 16px;
+    background: var(--green-light);
+    border: 1px solid #84e1bc;
+    border-radius: 6px;
+    font-size: 13px;
+    color: var(--green);
+    display: none;
+  }
+  .upload-preview.error { background: var(--red-light); border-color: #fca5a5; color: var(--red); }
+
+  /* ── Table ── */
+  .table-wrap { overflow-x: auto; margin-top: 8px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  thead th {
+    text-align: left;
+    padding: 10px 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    color: var(--gray-400);
+    border-bottom: 2px solid var(--gray-200);
+    white-space: nowrap;
+  }
+  tbody tr { border-bottom: 1px solid var(--gray-100); transition: background .1s; }
+  tbody tr:hover { background: var(--gray-50); }
+  tbody td { padding: 10px 12px; color: var(--gray-700); }
+  tbody td.km { font-weight: 600; color: var(--gray-800); }
+  .empty-state { text-align: center; padding: 32px; color: var(--gray-400); font-size: 13px; }
+
+  /* ── Toast ── */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    box-shadow: var(--shadow-md);
+    z-index: 9999;
+    transition: opacity .3s, transform .3s;
+    opacity: 0;
+    transform: translateY(8px);
+    pointer-events: none;
+  }
+  .toast.show { opacity: 1; transform: translateY(0); }
+  .toast.success { background: var(--green); color: var(--white); }
+  .toast.error   { background: var(--red); color: var(--white); }
+  .toast.info    { background: var(--blue); color: var(--white); }
+
+  /* ── Progress bar ── */
+  .progress-wrap { margin-top: 8px; }
+  .progress-label { display: flex; justify-content: space-between; font-size: 11px; color: var(--gray-400); margin-bottom: 4px; }
+  .progress-bar { height: 6px; background: var(--gray-200); border-radius: 99px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 99px; transition: width .4s; background: var(--blue); }
+  .progress-fill.warning { background: #d97706; }
+  .progress-fill.danger  { background: var(--red); }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-left">
+    <h1>Kilometer Registratie</h1>
+    <p>Zakelijke en privé kilometer administratie</p>
+  </div>
+  <div class="header-date" id="headerDate"></div>
+</header>
+
+<div class="container">
+
+  <!-- INSTELLINGEN -->
+  <div class="section-title">Instellingen</div>
+  <div class="card" style="margin-bottom:0">
+    <div class="settings-grid">
+      <div class="form-group">
+        <label for="leaseStart">Leasedatum start</label>
+        <input type="date" id="leaseStart" oninput="saveSettings(); render()">
+      </div>
+      <div class="form-group">
+        <label for="leaseEnd">Leasedatum einde</label>
+        <input type="date" id="leaseEnd" oninput="saveSettings(); render()">
+      </div>
+      <div class="form-group">
+        <label for="dailyKm">Privé km/dag</label>
+        <input type="number" id="dailyKm" value="41" min="1" oninput="saveSettings(); render()">
+      </div>
+      <div class="form-group" style="justify-content:flex-end">
+        <button class="btn btn-secondary btn-sm" onclick="clearAll()">Alles wissen</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div class="section-title">Dashboard</div>
+  <div class="summary-grid">
+    <div class="stat-card blue">
+      <div class="stat-label">Verstreken dagen</div>
+      <div class="stat-value" id="statDays">—</div>
+      <div class="stat-sub" id="statDaysSub"></div>
+    </div>
+    <div class="stat-card" id="statBudgetCard">
+      <div class="stat-label">Privé budget t/m vandaag</div>
+      <div class="stat-value" id="statBudget">—</div>
+      <div class="stat-sub">km toegestaan</div>
+    </div>
+    <div class="stat-card blue">
+      <div class="stat-label">Zakelijke km geregistreerd</div>
+      <div class="stat-value" id="statBusiness">0</div>
+      <div class="stat-sub" id="statBusinessSub"></div>
+    </div>
+    <div class="stat-card" id="statPrivateCard">
+      <div class="stat-label">Logische privé km</div>
+      <div class="stat-value" id="statPrivate">—</div>
+      <div class="stat-sub" id="statPrivateSub"></div>
+    </div>
+    <div class="stat-card" id="statRemainCard">
+      <div class="stat-label">Resterende leasedagen</div>
+      <div class="stat-value" id="statRemain">—</div>
+      <div class="stat-sub" id="statRemainSub"></div>
+    </div>
+  </div>
+
+  <!-- PROGRESS BAR privé vs budget -->
+  <div class="card" id="progressCard" style="margin-bottom:0; display:none">
+    <div class="progress-wrap">
+      <div class="progress-label">
+        <span>Privé km gebruikt van budget</span>
+        <span id="progressLabel"></span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill" style="width:0%"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIT REGISTREREN -->
+  <div class="section-title">Rit registreren</div>
+  <div class="card" style="margin-bottom:0">
+    <div class="form-row">
+      <div class="form-group">
+        <label for="tripDate">Datum</label>
+        <input type="date" id="tripDate">
+      </div>
+      <div class="form-group">
+        <label for="tripKm">Km</label>
+        <input type="number" id="tripKm" min="0.1" step="0.1" placeholder="0">
+      </div>
+      <div class="form-group">
+        <label for="tripDesc">Omschrijving (optioneel)</label>
+        <input type="text" id="tripDesc" placeholder="Bijv. klantbezoek Utrecht">
+      </div>
+      <div class="form-group" style="justify-content:flex-end">
+        <button class="btn btn-primary" onclick="addTrip()">+ Toevoegen</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- UPLOAD -->
+  <div class="section-title">Bestand uploaden</div>
+  <div class="card" style="margin-bottom:0">
+    <p style="font-size:13px; color:var(--gray-600); margin-bottom:12px">
+      Upload een CSV- of Excel-bestand met kolommen <strong>datum</strong> en <strong>km</strong>.
+      Alle geïmporteerde ritten worden als zakelijk beschouwd.
+    </p>
+    <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()"
+         ondragover="event.preventDefault(); this.classList.add('drag-over')"
+         ondragleave="this.classList.remove('drag-over')"
+         ondrop="handleDrop(event)">
+      <input type="file" id="fileInput" accept=".csv,.xlsx,.xls" onchange="handleFile(this.files[0])">
+      <div class="upload-icon">📂</div>
+      <p>Klik om een bestand te kiezen of sleep het hierheen</p>
+      <small>Ondersteunde formaten: .csv, .xlsx, .xls</small>
+    </div>
+    <div class="upload-preview" id="uploadPreview"></div>
+  </div>
+
+  <!-- RITTENLIJST -->
+  <div class="section-title" style="margin-top:28px">
+    Rittenlijst
+    <span id="tripCount" style="font-size:12px; font-weight:400; color:var(--gray-400)"></span>
+    <button class="btn btn-secondary btn-sm" style="margin-left:auto; flex-shrink:0" onclick="exportCsv()">⬇ Download CSV</button>
+  </div>
+  <div class="card" style="padding:0; overflow:hidden">
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Datum</th>
+            <th>Km</th>
+            <th>Omschrijving</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="tripTable"></tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── Storage helpers ──────────────────────────────────────────────
+const STORAGE_KEY = 'km_tracker_v1';
+
+function load() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch { return {}; }
+}
+function save(data) { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
+
+function getData() {
+  const d = load();
+  return {
+    settings: d.settings || { leaseStart: '', leaseEnd: '', privateDailyKm: 41 },
+    trips: d.trips || []
+  };
+}
+
+// ── Settings ─────────────────────────────────────────────────────
+function loadSettings() {
+  const { settings } = getData();
+  document.getElementById('leaseStart').value = settings.leaseStart || '';
+  document.getElementById('leaseEnd').value   = settings.leaseEnd   || '';
+  document.getElementById('dailyKm').value    = settings.privateDailyKm || 41;
+}
+
+function saveSettings() {
+  const d = getData();
+  d.settings = {
+    leaseStart:     document.getElementById('leaseStart').value,
+    leaseEnd:       document.getElementById('leaseEnd').value,
+    privateDailyKm: parseFloat(document.getElementById('dailyKm').value) || 41
+  };
+  save(d);
+}
+
+// ── Calculations ─────────────────────────────────────────────────
+function calcStats() {
+  const { settings, trips } = getData();
+  const today = new Date(); today.setHours(0,0,0,0);
+
+  const result = {
+    elapsedDays: null,
+    totalLeaseDays: null,
+    remainDays: null,
+    privateBudget: null,
+    businessKm: 0,
+    logicalPrivate: null,
+    privateRatio: null
+  };
+
+  result.businessKm = trips.reduce((s, t) => s + (parseFloat(t.km) || 0), 0);
+
+  if (settings.leaseStart) {
+    const start = new Date(settings.leaseStart); start.setHours(0,0,0,0);
+    result.elapsedDays = Math.max(0, Math.floor((today - start) / 86400000) + 1);
+  }
+  if (settings.leaseEnd) {
+    const end = new Date(settings.leaseEnd); end.setHours(0,0,0,0);
+    result.remainDays = Math.max(0, Math.floor((end - today) / 86400000));
+  }
+  if (settings.leaseStart && settings.leaseEnd) {
+    const start = new Date(settings.leaseStart); start.setHours(0,0,0,0);
+    const end   = new Date(settings.leaseEnd);   end.setHours(0,0,0,0);
+    result.totalLeaseDays = Math.max(0, Math.floor((end - start) / 86400000) + 1);
+  }
+  if (result.elapsedDays !== null) {
+    result.privateBudget  = (settings.privateDailyKm || 41) * result.elapsedDays;
+    result.logicalPrivate = result.privateBudget - result.businessKm;
+    if (result.privateBudget > 0) {
+      result.privateRatio = Math.min((result.businessKm / result.privateBudget) * 100, 200);
+    }
+  }
+
+  return result;
+}
+
+// ── Render ────────────────────────────────────────────────────────
+function render() {
+  renderHeader();
+  renderStats();
+  renderTable();
+}
+
+function renderHeader() {
+  const now = new Date();
+  const opts = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+  document.getElementById('headerDate').textContent = now.toLocaleDateString('nl-NL', opts);
+}
+
+function fmt(n) {
+  if (n === null || n === undefined || isNaN(n)) return '—';
+  return Math.round(n).toLocaleString('nl-NL');
+}
+
+function renderStats() {
+  const s = calcStats();
+
+  // Verstreken dagen
+  document.getElementById('statDays').textContent = s.elapsedDays !== null ? fmt(s.elapsedDays) : '—';
+  document.getElementById('statDaysSub').textContent = s.totalLeaseDays ? `van ${fmt(s.totalLeaseDays)} leasedagen` : 'stel leasedatum in';
+
+  // Budget
+  const budgetCard = document.getElementById('statBudgetCard');
+  document.getElementById('statBudget').textContent = s.privateBudget !== null ? fmt(s.privateBudget) : '—';
+  budgetCard.className = 'stat-card' + (s.privateBudget !== null ? ' blue' : '');
+
+  // Zakelijk
+  document.getElementById('statBusiness').textContent = fmt(s.businessKm);
+  document.getElementById('statBusinessSub').textContent = getData().trips.length + ' ritten';
+
+  // Logische privé
+  const privCard = document.getElementById('statPrivateCard');
+  const privVal  = document.getElementById('statPrivate');
+  const privSub  = document.getElementById('statPrivateSub');
+  if (s.logicalPrivate !== null) {
+    privVal.textContent = fmt(Math.abs(s.logicalPrivate));
+    if (s.logicalPrivate >= 0) {
+      privCard.className = 'stat-card green';
+      privVal.className  = 'stat-value green';
+      privSub.textContent = 'binnen budget';
+    } else {
+      privCard.className = 'stat-card red';
+      privVal.className  = 'stat-value red';
+      privSub.textContent = 'boven budget (te veel privé)';
+    }
+  } else {
+    privCard.className = 'stat-card';
+    privVal.className  = 'stat-value';
+    privVal.textContent = '—';
+    privSub.textContent = 'stel leasedatum in';
+  }
+
+  // Resterende leasedagen
+  const remCard = document.getElementById('statRemainCard');
+  const remVal  = document.getElementById('statRemain');
+  const remSub  = document.getElementById('statRemainSub');
+  if (s.remainDays !== null) {
+    remVal.textContent = fmt(s.remainDays);
+    if (s.remainDays < 30)      { remCard.className = 'stat-card red';   remSub.textContent = 'bijna afgelopen'; }
+    else if (s.remainDays < 90) { remCard.className = 'stat-card amber'; remSub.textContent = 'nog minder dan 3 maanden'; }
+    else                         { remCard.className = 'stat-card';       remSub.textContent = 'tot einde lease'; }
+  } else {
+    remCard.className = 'stat-card';
+    remVal.textContent = '—';
+    remSub.textContent = 'stel einddatum in';
+  }
+
+  // Progress bar
+  const progressCard = document.getElementById('progressCard');
+  if (s.privateRatio !== null) {
+    progressCard.style.display = 'block';
+    const fill = document.getElementById('progressFill');
+    const pct  = Math.min(s.privateRatio, 100);
+    fill.style.width = pct + '%';
+    fill.className = 'progress-fill' + (pct >= 100 ? ' danger' : pct >= 80 ? ' warning' : '');
+    document.getElementById('progressLabel').textContent =
+      fmt(s.businessKm) + ' / ' + fmt(s.privateBudget) + ' km (' + Math.round(s.privateRatio) + '%)';
+  } else {
+    progressCard.style.display = 'none';
+  }
+}
+
+function renderTable() {
+  const { trips } = getData();
+  const tbody = document.getElementById('tripTable');
+  document.getElementById('tripCount').textContent = trips.length ? `(${trips.length})` : '';
+
+  if (!trips.length) {
+    tbody.innerHTML = '<tr><td colspan="4" class="empty-state">Nog geen ritten geregistreerd</td></tr>';
+    return;
+  }
+
+  const sorted = [...trips].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+  tbody.innerHTML = sorted.map(t => `
+    <tr>
+      <td>${formatDateDisplay(t.date)}</td>
+      <td class="km">${parseFloat(t.km).toLocaleString('nl-NL', {minimumFractionDigits: 0, maximumFractionDigits: 1})} km</td>
+      <td>${escHtml(t.description || '')}</td>
+      <td><button class="btn btn-danger btn-sm" onclick="deleteTrip('${t.id}')">Verwijder</button></td>
+    </tr>
+  `).join('');
+}
+
+function formatDateDisplay(iso) {
+  if (!iso) return '—';
+  const [y, m, d] = iso.split('-');
+  return `${d}-${m}-${y}`;
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── Add trip ──────────────────────────────────────────────────────
+function addTrip() {
+  const date = document.getElementById('tripDate').value;
+  const km   = parseFloat(document.getElementById('tripKm').value);
+  const desc = document.getElementById('tripDesc').value.trim();
+
+  if (!date) { showToast('Vul een datum in.', 'error'); return; }
+  if (!km || km <= 0) { showToast('Vul een geldig aantal km in.', 'error'); return; }
+
+  const d = getData();
+  d.trips.push({ id: genId(), date, km, description: desc });
+  save(d);
+
+  document.getElementById('tripDate').value = '';
+  document.getElementById('tripKm').value   = '';
+  document.getElementById('tripDesc').value = '';
+
+  render();
+  showToast('Rit toegevoegd.', 'success');
+}
+
+function deleteTrip(id) {
+  const d = getData();
+  d.trips = d.trips.filter(t => t.id !== id);
+  save(d);
+  render();
+  showToast('Rit verwijderd.', 'info');
+}
+
+function clearAll() {
+  if (!confirm('Weet je zeker dat je alle ritten en instellingen wilt wissen?')) return;
+  localStorage.removeItem(STORAGE_KEY);
+  loadSettings();
+  render();
+  showToast('Alles gewist.', 'info');
+}
+
+// ── File upload ───────────────────────────────────────────────────
+function handleDrop(e) {
+  e.preventDefault();
+  document.getElementById('uploadArea').classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if (file) handleFile(file);
+}
+
+function handleFile(file) {
+  if (!file) return;
+  const ext = file.name.split('.').pop().toLowerCase();
+  if (ext === 'csv') {
+    const reader = new FileReader();
+    reader.onload = e => parseCsv(e.target.result);
+    reader.readAsText(file, 'UTF-8');
+  } else if (ext === 'xlsx' || ext === 'xls') {
+    const reader = new FileReader();
+    reader.onload = e => parseExcel(e.target.result);
+    reader.readAsArrayBuffer(file);
+  } else {
+    showUploadError('Niet-ondersteund bestandstype. Gebruik .csv, .xlsx of .xls.');
+  }
+  // Reset file input so same file can be re-uploaded
+  document.getElementById('fileInput').value = '';
+}
+
+function parseCsv(text) {
+  // Detect separator
+  const sep = text.indexOf(';') !== -1 ? ';' : ',';
+  const lines = text.split(/\r?\n/).filter(l => l.trim());
+  if (lines.length < 2) { showUploadError('Bestand is leeg of heeft geen dataregels.'); return; }
+
+  const headers = lines[0].split(sep).map(h => h.trim().toLowerCase().replace(/['"]/g,''));
+  const rows = lines.slice(1).map(l => {
+    const cells = l.split(sep).map(c => c.trim().replace(/^["']|["']$/g, ''));
+    return headers.reduce((obj, h, i) => { obj[h] = cells[i] || ''; return obj; }, {});
+  });
+  importRows(rows, headers);
+}
+
+function parseExcel(buffer) {
+  try {
+    const wb = XLSX.read(buffer, { type: 'array' });
+    const ws = wb.Sheets[wb.SheetNames[0]];
+    const rows = XLSX.utils.sheet_to_json(ws, { raw: false, defval: '' });
+    const headers = rows.length ? Object.keys(rows[0]).map(k => k.toLowerCase()) : [];
+    const normalised = rows.map(r => {
+      const obj = {};
+      Object.entries(r).forEach(([k, v]) => { obj[k.toLowerCase()] = v; });
+      return obj;
+    });
+    importRows(normalised, headers);
+  } catch (err) {
+    showUploadError('Kan Excel-bestand niet lezen: ' + err.message);
+  }
+}
+
+function findColumn(headers, candidates) {
+  for (const c of candidates) {
+    const match = headers.find(h => h.includes(c));
+    if (match) return match;
+  }
+  return null;
+}
+
+function importRows(rows, headers) {
+  const dateCol = findColumn(headers, ['datum', 'date', 'dag']);
+  const kmCol   = findColumn(headers, ['km', 'kilometers', 'afstand', 'kilometer']);
+
+  if (!dateCol || !kmCol) {
+    showUploadError(`Kolommen niet herkend. Gevonden: ${headers.join(', ')}. Zorg dat er een kolom "datum" en een kolom "km" aanwezig zijn.`);
+    return;
+  }
+
+  const d = getData();
+  let added = 0, skipped = 0, dupes = 0;
+
+  rows.forEach(row => {
+    const rawDate = row[dateCol];
+    const rawKm   = row[kmCol];
+    if (!rawDate || !rawKm) { skipped++; return; }
+
+    const isoDate = parseDate(rawDate);
+    const km = parseFloat(String(rawKm).replace(',', '.'));
+
+    if (!isoDate || isNaN(km) || km <= 0) { skipped++; return; }
+
+    // Duplicate check
+    const isDupe = d.trips.some(t => t.date === isoDate && Math.abs(t.km - km) < 0.01);
+    if (isDupe) { dupes++; return; }
+
+    d.trips.push({ id: genId(), date: isoDate, km, description: '' });
+    added++;
+  });
+
+  save(d);
+  render();
+
+  let msg = `${added} rit${added !== 1 ? 'ten' : ''} geïmporteerd.`;
+  if (skipped)  msg += ` ${skipped} overgeslagen (lege/ongeldige rijen).`;
+  if (dupes)    msg += ` ${dupes} duplicaten genegeerd.`;
+
+  showUploadPreview(msg, added > 0 ? 'success' : 'warning');
+  if (added > 0) showToast(msg, 'success');
+}
+
+// Try to parse various date formats to ISO YYYY-MM-DD
+function parseDate(raw) {
+  if (!raw) return null;
+  const s = String(raw).trim();
+
+  // Already ISO
+  if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+
+  // DD-MM-YYYY or DD/MM/YYYY
+  const dmy = s.match(/^(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{4})$/);
+  if (dmy) return `${dmy[3]}-${dmy[2].padStart(2,'0')}-${dmy[1].padStart(2,'0')}`;
+
+  // MM/DD/YYYY
+  const mdy = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (mdy) {
+    // Ambiguous — assume DD/MM if both values <= 12, but prefer DD/MM for NL
+    return `${mdy[3]}-${mdy[1].padStart(2,'0')}-${mdy[2].padStart(2,'0')}`;
+  }
+
+  // Excel serial date number
+  const num = parseFloat(s);
+  if (!isNaN(num) && num > 10000 && num < 100000) {
+    const d = XLSX.SSF.parse_date_code(num);
+    if (d) return `${d.y}-${String(d.m).padStart(2,'0')}-${String(d.d).padStart(2,'0')}`;
+  }
+
+  // Try native Date parse as last resort
+  const parsed = new Date(s);
+  if (!isNaN(parsed)) {
+    return parsed.toISOString().slice(0, 10);
+  }
+
+  return null;
+}
+
+// ── Export CSV ────────────────────────────────────────────────────
+function exportCsv() {
+  const { trips } = getData();
+  if (!trips.length) { showToast('Geen ritten om te exporteren.', 'error'); return; }
+
+  const sorted = [...trips].sort((a, b) => (a.date || '').localeCompare(b.date || ''));
+  const rows = [['datum', 'km', 'omschrijving']].concat(
+    sorted.map(t => [t.date, t.km, t.description || ''])
+  );
+  const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(',')).join('\r\n');
+  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url; a.download = 'kilometer_registratie.csv'; a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ── UI helpers ────────────────────────────────────────────────────
+let toastTimer;
+function showToast(msg, type = 'info') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast ' + type + ' show';
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 3500);
+}
+
+function showUploadPreview(msg, type = 'success') {
+  const el = document.getElementById('uploadPreview');
+  el.textContent = msg;
+  el.className = 'upload-preview' + (type === 'success' ? '' : ' error');
+  el.style.display = 'block';
+}
+
+function showUploadError(msg) {
+  showUploadPreview(msg, 'error');
+  showToast(msg, 'error');
+}
+
+function genId() {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+}
+
+// ── Init ──────────────────────────────────────────────────────────
+loadSettings();
+
+// Set today as default date for new trip
+document.getElementById('tripDate').value = new Date().toISOString().slice(0, 10);
+
+render();
+
+// Update header date every minute (handles day change without reload)
+setInterval(renderHeader, 60000);
+</script>
+</body>
+</html>
