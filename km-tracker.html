@@ -331,7 +331,10 @@
   <div class="section-title">
     Rittenlijst
     <span id="tripCount" style="font-size:12px; font-weight:400; color:var(--gray-400)"></span>
-    <button class="btn btn-secondary btn-sm" style="margin-left:auto; flex-shrink:0" onclick="exportCsv()">&#8659; Download CSV</button>
+    <div style="margin-left:auto; display:flex; gap:8px; flex-shrink:0">
+      <button class="btn btn-danger btn-sm" onclick="deleteAllTrips()">Verwijder alle ritten</button>
+      <button class="btn btn-secondary btn-sm" onclick="exportCsv()">&#8659; Download CSV</button>
+    </div>
   </div>
   <div class="card" style="padding:0; overflow:hidden">
     <div class="table-wrap">
@@ -571,6 +574,17 @@ function deleteTrip(id) {
   showToast('Rit verwijderd.', 'info');
 }
 
+function deleteAllTrips() {
+  const { trips } = getData();
+  if (!trips.length) { showToast('Geen ritten om te verwijderen.', 'error'); return; }
+  if (!confirm(`Weet je zeker dat je alle ${trips.length} ritten wilt verwijderen?`)) return;
+  const d = getData();
+  d.trips = [];
+  save(d);
+  render();
+  showToast('Alle ritten verwijderd.', 'info');
+}
+
 function clearAll() {
   if (!confirm('Weet je zeker dat je alle ritten en instellingen wilt wissen?')) return;
   localStorage.removeItem(STORAGE_KEY);
@@ -657,7 +671,8 @@ function importRows(rows, headers) {
   }
 
   const d = getData();
-  let added = 0, skipped = 0, dupes = 0;
+  const { leaseStart, leaseEnd } = d.settings;
+  let added = 0, skipped = 0, dupes = 0, outOfRange = 0, dateDupes = [];
 
   rows.forEach(row => {
     const rawDate = row[dateCol];
@@ -669,8 +684,16 @@ function importRows(rows, headers) {
 
     if (!isoDate || isNaN(km) || km <= 0) { skipped++; return; }
 
-    const isDupe = d.trips.some(t => t.date === isoDate && Math.abs(t.km - km) < 0.01);
-    if (isDupe) { dupes++; return; }
+    // Filter: only within lease period (if dates are set)
+    if (leaseStart && isoDate < leaseStart) { outOfRange++; return; }
+    if (leaseEnd   && isoDate > leaseEnd)   { outOfRange++; return; }
+
+    // Duplicate date check (one entry per day max)
+    if (d.trips.some(t => t.date === isoDate)) {
+      dateDupes.push(formatDateDisplay(isoDate));
+      dupes++;
+      return;
+    }
 
     d.trips.push({ id: genId(), date: isoDate, km });
     added++;
@@ -680,11 +703,14 @@ function importRows(rows, headers) {
   render();
 
   let msg = `${added} rit${added !== 1 ? 'ten' : ''} geïmporteerd.`;
-  if (skipped) msg += ` ${skipped} overgeslagen (lege/ongeldige rijen).`;
-  if (dupes)   msg += ` ${dupes} duplicaten genegeerd.`;
+  if (outOfRange) msg += ` ${outOfRange} buiten leaseperiode genegeerd.`;
+  if (skipped)    msg += ` ${skipped} overgeslagen (lege/ongeldige rijen).`;
+  if (dupes)      msg += ` ${dupes} datum-duplicaat${dupes !== 1 ? 'en' : ''} genegeerd (${dateDupes.join(', ')}).`;
 
-  showUploadPreview(msg, added > 0 ? 'success' : 'warning');
-  if (added > 0) showToast(msg, 'success');
+  const hasWarning = dupes > 0;
+  showUploadPreview(msg, added > 0 && !hasWarning ? 'success' : 'warning');
+  if (added > 0) showToast(`${added} rit${added !== 1 ? 'ten' : ''} geïmporteerd.`, 'success');
+  if (dupes > 0) showToast(`Let op: ${dupes} datum-duplicaat${dupes !== 1 ? 'en' : ''} genegeerd.`, 'error');
 }
 
 function parseDate(raw) {
