@@ -137,8 +137,10 @@
   }
   .car-svg.lane-top    { top: 6px;  }
   .car-svg.lane-bottom { top: 44px; }
-  .car-svg.right { animation: driveRight linear infinite; }
-  .car-svg.left  { animation: driveLeft  linear infinite; transform: scaleX(-1); }
+  /* Use individual properties so .car-N duration/delay is not overridden by shorthand */
+  .car-svg { animation-timing-function: linear; animation-iteration-count: infinite; }
+  .car-svg.right { animation-name: driveRight; }
+  .car-svg.left  { animation-name: driveLeft; transform: scaleX(-1); }
   .car-1 { animation-duration: 9s;  animation-delay:  0s;  }
   .car-2 { animation-duration: 13s; animation-delay: -3s;  }
   .car-3 { animation-duration: 11s; animation-delay: -6s;  }
