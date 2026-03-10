@@ -7,26 +7,31 @@
 <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
 <style>
   :root {
-    --blue: #1a56db;
-    --blue-light: #e8f0fe;
-    --green: #057a55;
-    --green-light: #def7ec;
-    --red: #c81e1e;
-    --red-light: #fde8e8;
-    --amber: #92400e;
-    --gray-50: #f9fafb;
-    --gray-100: #f3f4f6;
-    --gray-200: #e5e7eb;
-    --gray-300: #d1d5db;
-    --gray-400: #9ca3af;
-    --gray-600: #4b5563;
-    --gray-700: #374151;
-    --gray-800: #1f2937;
-    --gray-900: #111827;
-    --white: #ffffff;
-    --radius: 8px;
-    --shadow: 0 1px 3px rgba(0,0,0,.1), 0 1px 2px rgba(0,0,0,.06);
-    --shadow-md: 0 4px 6px rgba(0,0,0,.07), 0 2px 4px rgba(0,0,0,.06);
+    --road:    #1e293b;
+    --asphalt: #334155;
+    --yellow:  #f59e0b;
+    --blue:    #2563eb;
+    --blue-lt: #dbeafe;
+    --green:   #059669;
+    --green-lt:#d1fae5;
+    --red:     #dc2626;
+    --red-lt:  #fee2e2;
+    --amber:   #d97706;
+    --amber-lt:#fef3c7;
+    --gray-50: #f8fafc;
+    --gray-100:#f1f5f9;
+    --gray-200:#e2e8f0;
+    --gray-300:#cbd5e1;
+    --gray-400:#94a3b8;
+    --gray-500:#64748b;
+    --gray-600:#475569;
+    --gray-700:#334155;
+    --gray-800:#1e293b;
+    --gray-900:#0f172a;
+    --white:   #ffffff;
+    --radius:  10px;
+    --shadow:  0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.05);
+    --shadow-md:0 4px 12px rgba(0,0,0,.1), 0 2px 4px rgba(0,0,0,.06);
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -41,27 +46,184 @@
 
   /* ── Header ── */
   .header {
-    background: var(--blue);
+    background: var(--road);
     color: var(--white);
-    padding: 20px 32px;
+    padding: 20px 32px 14px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    box-shadow: var(--shadow-md);
   }
-  .header-left h1 { font-size: 22px; font-weight: 700; letter-spacing: -.3px; }
-  .header-left p  { font-size: 13px; opacity: .75; margin-top: 2px; }
-  .header-date    { font-size: 13px; opacity: .8; text-align: right; }
+  .header-left h1 { font-size: 22px; font-weight: 800; letter-spacing: -.4px; }
+  .header-left h1 span { color: var(--yellow); }
+  .header-left p  { font-size: 12px; opacity: .65; margin-top: 2px; }
+  .header-date    { font-size: 12px; opacity: .7; text-align: right; line-height: 1.6; }
+
+  /* ── Road strip ── */
+  .road-strip {
+    background: var(--asphalt);
+    height: 44px;
+    position: relative;
+    overflow: hidden;
+    border-bottom: 4px solid var(--yellow);
+  }
+  /* Center dashed lane marking */
+  .road-strip::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 3px;
+    margin-top: -1px;
+    background: repeating-linear-gradient(90deg,
+      rgba(255,255,255,.35) 0 36px,
+      transparent 36px 72px);
+  }
+  .car {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 24px;
+    line-height: 1;
+    animation: drive linear infinite;
+    user-select: none;
+  }
+  .car-1 { animation-duration: 9s;  animation-delay:  0s; top: 28%; }
+  .car-2 { animation-duration: 13s; animation-delay: -5s; top: 68%; transform: translateY(-50%) scaleX(-1); }
+  .car-3 { animation-duration: 7s;  animation-delay: -3s; top: 30%; }
+  .car-4 { animation-duration: 15s; animation-delay: -8s; top: 65%; transform: translateY(-50%) scaleX(-1); }
+  @keyframes drive {
+    from { left: -80px; }
+    to   { left: calc(100% + 80px); }
+  }
 
   /* ── Layout ── */
-  .container { max-width: 1100px; margin: 0 auto; padding: 28px 24px 60px; }
-
+  .container { max-width: 1150px; margin: 0 auto; padding: 28px 24px 64px; }
   @media (max-width: 768px) {
-    .header { flex-direction: column; align-items: flex-start; gap: 8px; }
-    .container { padding: 16px 12px 40px; }
+    .header { flex-direction: column; gap: 8px; padding: 16px 20px 12px; }
+    .container { padding: 16px 12px 48px; }
   }
 
-  /* ── Cards ── */
+  /* ── Section title ── */
+  .section-title {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .8px;
+    color: var(--gray-400);
+    margin: 28px 0 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-title::after { content: ''; flex: 1; height: 1px; background: var(--gray-200); }
+
+  /* ── Hero card ── */
+  .hero-card {
+    border-radius: var(--radius);
+    padding: 28px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    box-shadow: var(--shadow-md);
+    margin-bottom: 20px;
+    transition: background .3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-card::after {
+    content: '🛣️';
+    position: absolute;
+    right: 20px;
+    bottom: -8px;
+    font-size: 72px;
+    opacity: .07;
+    pointer-events: none;
+  }
+  .hero-card.ok   { background: var(--green); color: var(--white); }
+  .hero-card.over { background: var(--red);   color: var(--white); }
+  .hero-card.idle { background: var(--white); color: var(--gray-700); border: 2px dashed var(--gray-300); box-shadow: none; }
+  .hero-card.idle::after { display: none; }
+
+  .hero-left { }
+  .hero-eyebrow { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .8px; opacity: .75; margin-bottom: 4px; }
+  .hero-value {
+    font-size: 56px;
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -2px;
+  }
+  .hero-value small { font-size: 22px; font-weight: 600; letter-spacing: 0; margin-left: 4px; opacity: .8; }
+  .hero-desc { font-size: 15px; font-weight: 600; margin-top: 6px; opacity: .9; }
+  .hero-right { text-align: right; flex-shrink: 0; }
+  .hero-badge {
+    display: inline-block;
+    font-size: 42px;
+    background: rgba(255,255,255,.15);
+    border-radius: 50%;
+    width: 80px;
+    height: 80px;
+    line-height: 80px;
+    text-align: center;
+  }
+
+  /* ── Stat cards grid ── */
+  .stat-grid-4 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+  .stat-grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+  @media (max-width: 950px) { .stat-grid-4 { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 700px) { .stat-grid-3 { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 480px) {
+    .stat-grid-4, .stat-grid-3 { grid-template-columns: 1fr; }
+  }
+
+  .stat-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 16px 18px;
+    border-left: 4px solid var(--gray-200);
+    transition: border-color .2s;
+  }
+  .stat-card.c-blue  { border-left-color: var(--blue); }
+  .stat-card.c-green { border-left-color: var(--green); }
+  .stat-card.c-red   { border-left-color: var(--red); }
+  .stat-card.c-amber { border-left-color: var(--amber); }
+  .stat-card.c-yellow{ border-left-color: var(--yellow); }
+
+  .stat-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .7px; color: var(--gray-400); margin-bottom: 5px; }
+  .stat-value { font-size: 26px; font-weight: 800; color: var(--gray-800); line-height: 1.1; }
+  .stat-value.green { color: var(--green); }
+  .stat-value.red   { color: var(--red); }
+  .stat-value.amber { color: var(--amber); }
+  .stat-unit  { font-size: 13px; font-weight: 500; color: var(--gray-400); }
+  .stat-sub   { font-size: 11px; color: var(--gray-400); margin-top: 3px; }
+
+  /* ── Progress bar ── */
+  .progress-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 16px 20px;
+    margin-bottom: 0;
+  }
+  .progress-label { display: flex; justify-content: space-between; font-size: 11px; color: var(--gray-400); margin-bottom: 6px; font-weight: 600; }
+  .progress-bar   { height: 8px; background: var(--gray-100); border-radius: 99px; overflow: hidden; }
+  .progress-fill  { height: 100%; border-radius: 99px; transition: width .5s cubic-bezier(.4,0,.2,1); background: var(--green); }
+  .progress-fill.warning { background: var(--amber); }
+  .progress-fill.danger  { background: var(--red); }
+
+  /* ── Card ── */
   .card {
     background: var(--white);
     border-radius: var(--radius);
@@ -69,137 +231,97 @@
     padding: 20px 24px;
   }
 
-  /* ── Summary cards ── */
-  .summary-grid {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 16px;
-    margin-bottom: 24px;
-  }
-  @media (max-width: 900px) { .summary-grid { grid-template-columns: repeat(2, 1fr); } }
-  @media (max-width: 480px) { .summary-grid { grid-template-columns: 1fr; } }
-
-  .stat-card {
-    background: var(--white);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    padding: 16px 18px;
-    border-top: 3px solid var(--gray-200);
-  }
-  .stat-card.blue  { border-top-color: var(--blue); }
-  .stat-card.green { border-top-color: var(--green); }
-  .stat-card.red   { border-top-color: var(--red); }
-  .stat-card.amber { border-top-color: #d97706; }
-
-  .stat-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .6px; color: var(--gray-400); margin-bottom: 6px; }
-  .stat-value { font-size: 28px; font-weight: 700; color: var(--gray-800); line-height: 1; }
-  .stat-value.green { color: var(--green); }
-  .stat-value.red   { color: var(--red); }
-  .stat-sub { font-size: 11px; color: var(--gray-400); margin-top: 4px; }
-
-  /* ── Section labels ── */
-  .section-title {
-    font-size: 15px;
-    font-weight: 600;
-    color: var(--gray-700);
-    margin: 28px 0 12px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .section-title::after { content: ''; flex: 1; height: 1px; background: var(--gray-200); }
-
   /* ── Forms ── */
-  .form-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; }
+  .form-row   { display: flex; gap: 14px; flex-wrap: wrap; align-items: flex-end; }
   .form-group { display: flex; flex-direction: column; gap: 4px; }
-  .form-group label { font-size: 12px; font-weight: 600; color: var(--gray-600); }
+  .form-group label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: var(--gray-500); }
   input[type="number"], input[type="date"] {
     border: 1px solid var(--gray-300);
-    border-radius: 6px;
-    padding: 8px 10px;
+    border-radius: 7px;
+    padding: 8px 11px;
     font-size: 14px;
     color: var(--gray-800);
     background: var(--white);
-    transition: border-color .15s;
     outline: none;
+    transition: border-color .15s, box-shadow .15s;
   }
   input[type="number"]:focus, input[type="date"]:focus {
     border-color: var(--blue);
-    box-shadow: 0 0 0 3px rgba(26,86,219,.12);
+    box-shadow: 0 0 0 3px rgba(37,99,235,.12);
   }
-  input[type="number"] { width: 140px; }
-  input[type="date"]   { width: 150px; }
+  input[type="number"] { width: 145px; }
+  input[type="date"]   { width: 155px; }
 
   /* ── Buttons ── */
   .btn {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 5px;
     padding: 8px 16px;
-    border-radius: 6px;
+    border-radius: 7px;
     font-size: 13px;
     font-weight: 600;
     cursor: pointer;
     border: none;
-    transition: background .15s, opacity .15s;
+    transition: background .15s, transform .1s;
     white-space: nowrap;
   }
-  .btn-secondary { background: var(--gray-100); color: var(--gray-700); border: 1px solid var(--gray-300); }
+  .btn:active { transform: scale(.97); }
+  .btn-secondary { background: var(--gray-100); color: var(--gray-700); border: 1px solid var(--gray-200); }
   .btn-secondary:hover { background: var(--gray-200); }
-  .btn-danger { background: var(--red-light); color: var(--red); border: 1px solid #fca5a5; }
-  .btn-danger:hover { background: #fca5a5; }
-  .btn-sm { padding: 5px 10px; font-size: 12px; }
+  .btn-danger { background: var(--red-lt); color: var(--red); border: 1px solid #fca5a5; }
+  .btn-danger:hover { background: #fecaca; }
+  .btn-sm { padding: 5px 11px; font-size: 12px; }
 
-  /* ── Upload area ── */
+  /* ── Upload ── */
   .upload-area {
     border: 2px dashed var(--gray-300);
     border-radius: var(--radius);
-    padding: 24px;
+    padding: 22px;
     text-align: center;
     background: var(--gray-50);
     cursor: pointer;
     transition: border-color .2s, background .2s;
   }
-  .upload-area:hover, .upload-area.drag-over {
-    border-color: var(--blue);
-    background: var(--blue-light);
-  }
+  .upload-area:hover, .upload-area.drag-over { border-color: var(--blue); background: var(--blue-lt); }
   .upload-area input[type="file"] { display: none; }
-  .upload-icon { font-size: 28px; margin-bottom: 8px; }
-  .upload-area p    { font-size: 13px; color: var(--gray-600); }
+  .upload-icon { font-size: 26px; margin-bottom: 6px; }
+  .upload-area p     { font-size: 13px; color: var(--gray-500); }
   .upload-area small { font-size: 11px; color: var(--gray-400); }
 
   .upload-preview {
-    margin-top: 12px;
-    padding: 12px 16px;
-    background: var(--green-light);
-    border: 1px solid #84e1bc;
-    border-radius: 6px;
+    margin-top: 10px;
+    padding: 10px 14px;
+    background: var(--green-lt);
+    border: 1px solid #6ee7b7;
+    border-radius: 7px;
     font-size: 13px;
-    color: var(--green);
+    color: #065f46;
     display: none;
   }
-  .upload-preview.error { background: var(--red-light); border-color: #fca5a5; color: var(--red); }
+  .upload-preview.warn  { background: var(--amber-lt); border-color: #fcd34d; color: #92400e; }
+  .upload-preview.error { background: var(--red-lt);   border-color: #fca5a5; color: #991b1b; }
 
   /* ── Table ── */
   .table-wrap { overflow-x: auto; }
   table { width: 100%; border-collapse: collapse; font-size: 13px; }
   thead th {
     text-align: left;
-    padding: 10px 12px;
-    font-size: 11px;
-    font-weight: 600;
+    padding: 10px 14px;
+    font-size: 10px;
+    font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: .5px;
+    letter-spacing: .6px;
     color: var(--gray-400);
-    border-bottom: 2px solid var(--gray-200);
+    border-bottom: 2px solid var(--gray-100);
     white-space: nowrap;
+    background: var(--gray-50);
   }
   tbody tr { border-bottom: 1px solid var(--gray-100); transition: background .1s; }
   tbody tr:hover { background: var(--gray-50); }
-  tbody td { padding: 10px 12px; color: var(--gray-700); }
-  tbody td.km { font-weight: 600; color: var(--gray-800); }
-  .empty-state { text-align: center; padding: 32px; color: var(--gray-400); font-size: 13px; }
+  tbody td { padding: 10px 14px; color: var(--gray-600); }
+  tbody td.km { font-weight: 700; color: var(--gray-800); }
+  .empty-state { text-align: center; padding: 36px; color: var(--gray-300); font-size: 13px; }
 
   /* ── Toast ── */
   .toast {
@@ -209,37 +331,39 @@
     padding: 12px 20px;
     border-radius: 8px;
     font-size: 13px;
-    font-weight: 500;
+    font-weight: 600;
     box-shadow: var(--shadow-md);
     z-index: 9999;
     transition: opacity .3s, transform .3s;
     opacity: 0;
-    transform: translateY(8px);
+    transform: translateY(10px);
     pointer-events: none;
+    max-width: 360px;
   }
   .toast.show { opacity: 1; transform: translateY(0); }
   .toast.success { background: var(--green); color: var(--white); }
   .toast.error   { background: var(--red);   color: var(--white); }
-  .toast.info    { background: var(--blue);  color: var(--white); }
-
-  /* ── Progress bar ── */
-  .progress-wrap { }
-  .progress-label { display: flex; justify-content: space-between; font-size: 11px; color: var(--gray-400); margin-bottom: 4px; }
-  .progress-bar { height: 6px; background: var(--gray-200); border-radius: 99px; overflow: hidden; }
-  .progress-fill { height: 100%; border-radius: 99px; transition: width .4s; background: var(--blue); }
-  .progress-fill.warning { background: #d97706; }
-  .progress-fill.danger  { background: var(--red); }
+  .toast.info    { background: var(--road);  color: var(--white); }
 </style>
 </head>
 <body>
 
+<!-- HEADER -->
 <header class="header">
   <div class="header-left">
-    <h1>Kilometer Registratie</h1>
+    <h1>🚗 Km <span>Registratie</span></h1>
     <p>Zakelijke en privé kilometer administratie</p>
   </div>
   <div class="header-date" id="headerDate"></div>
 </header>
+
+<!-- ANIMATED ROAD STRIP -->
+<div class="road-strip">
+  <div class="car car-1">🚗</div>
+  <div class="car car-2">🚙</div>
+  <div class="car car-3">🏎️</div>
+  <div class="car car-4">🚐</div>
+</div>
 
 <div class="container">
 
@@ -267,53 +391,79 @@
 
   <!-- DASHBOARD -->
   <div class="section-title">Dashboard</div>
-  <div class="summary-grid">
-    <div class="stat-card blue">
+
+  <!-- HERO: OVER/ONDER BUDGET -->
+  <div class="hero-card idle" id="heroCard">
+    <div class="hero-left">
+      <div class="hero-eyebrow" id="heroEyebrow">Privé km t.o.v. budget t/m vandaag</div>
+      <div class="hero-value" id="heroValue">—<small>km</small></div>
+      <div class="hero-desc" id="heroDesc">Vul km-stand en leasedatum in om te beginnen</div>
+    </div>
+    <div class="hero-right">
+      <div class="hero-badge" id="heroBadge">🚦</div>
+    </div>
+  </div>
+
+  <!-- SECONDARY STATS ROW 1 -->
+  <div class="stat-grid-4">
+    <div class="stat-card c-blue">
       <div class="stat-label">Verstreken dagen</div>
       <div class="stat-value" id="statDays">—</div>
-      <div class="stat-sub" id="statDaysSub"></div>
+      <div class="stat-sub" id="statDaysSub">stel leasedatum in</div>
     </div>
     <div class="stat-card" id="statBudgetCard">
       <div class="stat-label">Privé budget t/m vandaag</div>
       <div class="stat-value" id="statBudget">—</div>
       <div class="stat-sub">km toegestaan (41/dag)</div>
     </div>
-    <div class="stat-card blue">
+    <div class="stat-card c-blue">
       <div class="stat-label">Zakelijke km geregistreerd</div>
       <div class="stat-value" id="statBusiness">0</div>
-      <div class="stat-sub" id="statBusinessSub"></div>
+      <div class="stat-sub" id="statBusinessSub">0 ritten</div>
     </div>
     <div class="stat-card" id="statPrivateCard">
       <div class="stat-label">Werkelijk privé km</div>
       <div class="stat-value" id="statPrivate">—</div>
       <div class="stat-sub" id="statPrivateSub">totaal km − zakelijk</div>
     </div>
+  </div>
+
+  <!-- SECONDARY STATS ROW 2 -->
+  <div class="stat-grid-3">
+    <div class="stat-card c-yellow" id="statFiscalCard">
+      <div class="stat-label">Privé km resterend t/m 30 sep</div>
+      <div class="stat-value" id="statFiscal">—</div>
+      <div class="stat-sub" id="statFiscalSub">fiscaal jaar</div>
+    </div>
+    <div class="stat-card c-yellow" id="statLeaseRemCard">
+      <div class="stat-label">Privé km resterend t/m einde lease</div>
+      <div class="stat-value" id="statLeaseRem">—</div>
+      <div class="stat-sub" id="statLeaseRemSub">einde leasecontract</div>
+    </div>
     <div class="stat-card" id="statRemainCard">
       <div class="stat-label">Resterende leasedagen</div>
       <div class="stat-value" id="statRemain">—</div>
-      <div class="stat-sub" id="statRemainSub"></div>
+      <div class="stat-sub" id="statRemainSub">stel einddatum in</div>
     </div>
   </div>
 
   <!-- PROGRESS BAR -->
-  <div class="card" id="progressCard" style="display:none; margin-bottom:0">
-    <div class="progress-wrap">
-      <div class="progress-label">
-        <span>Werkelijk privé km t.o.v. budget</span>
-        <span id="progressLabel"></span>
-      </div>
-      <div class="progress-bar">
-        <div class="progress-fill" id="progressFill" style="width:0%"></div>
-      </div>
+  <div class="progress-card" id="progressCard" style="display:none; margin-bottom:0">
+    <div class="progress-label">
+      <span>Werkelijk privé km t.o.v. budget</span>
+      <span id="progressLabel"></span>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill" style="width:0%"></div>
     </div>
   </div>
 
   <!-- UPLOAD -->
   <div class="section-title">Bestand uploaden</div>
   <div class="card">
-    <p style="font-size:13px; color:var(--gray-600); margin-bottom:12px">
+    <p style="font-size:13px; color:var(--gray-500); margin-bottom:12px">
       Upload een CSV- of Excel-bestand met kolommen <strong>Date</strong> en <strong>Distance</strong>.
-      Alle geïmporteerde ritten worden als zakelijk beschouwd.
+      Ritten buiten de leaseperiode worden automatisch genegeerd.
     </p>
     <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()"
          ondragover="event.preventDefault(); this.classList.add('drag-over')"
@@ -330,7 +480,7 @@
   <!-- RITTENLIJST -->
   <div class="section-title">
     Rittenlijst
-    <span id="tripCount" style="font-size:12px; font-weight:400; color:var(--gray-400)"></span>
+    <span id="tripCount" style="font-size:11px; font-weight:600; color:var(--gray-400)"></span>
     <div style="margin-left:auto; display:flex; gap:8px; flex-shrink:0">
       <button class="btn btn-danger btn-sm" onclick="deleteAllTrips()">Verwijder alle ritten</button>
       <button class="btn btn-secondary btn-sm" onclick="exportCsv()">&#8659; Download CSV</button>
@@ -356,8 +506,8 @@
 <div class="toast" id="toast"></div>
 
 <script>
-const STORAGE_KEY = 'km_tracker_v2';
-const DAILY_PRIVATE_KM = 41;
+const STORAGE_KEY    = 'km_tracker_v2';
+const DAILY_PRIVATE  = 41;
 
 // ── Storage ───────────────────────────────────────────────────────
 function load() {
@@ -397,23 +547,25 @@ function calcStats() {
   const today = new Date(); today.setHours(0,0,0,0);
 
   const s = {
-    elapsedDays:    null,
-    totalLeaseDays: null,
-    remainDays:     null,
-    privateBudget:  null,
-    businessKm:     0,
-    totalKm:        null,
-    actualPrivate:  null,   // totalKm - businessKm
-    privateVsBudget: null,  // budget - actualPrivate (positive = within budget)
-    privateRatio:   null
+    elapsedDays:           null,
+    totalLeaseDays:        null,
+    remainDays:            null,
+    privateBudget:         null,
+    businessKm:            0,
+    totalKm:               null,
+    actualPrivate:         null,
+    privateVsBudget:       null,  // budget - actual (positive = under budget)
+    privateRatio:          null,
+    privateRemainingFiscal: null,
+    privateRemainingLease:  null,
+    daysToFiscalEnd:       null,
+    fiscalEndDisplay:      null
   };
 
   s.businessKm = trips.reduce((sum, t) => sum + (parseFloat(t.km) || 0), 0);
 
-  if (settings.totalKm !== '' && settings.totalKm !== null) {
-    const v = parseFloat(settings.totalKm);
-    if (!isNaN(v)) s.totalKm = v;
-  }
+  const rawTotal = parseFloat(settings.totalKm);
+  if (!isNaN(rawTotal) && settings.totalKm !== '') s.totalKm = rawTotal;
 
   if (settings.leaseStart) {
     const start = new Date(settings.leaseStart); start.setHours(0,0,0,0);
@@ -428,16 +580,33 @@ function calcStats() {
     const end   = new Date(settings.leaseEnd);   end.setHours(0,0,0,0);
     s.totalLeaseDays = Math.max(0, Math.floor((end - start) / 86400000) + 1);
   }
+
   if (s.elapsedDays !== null) {
-    s.privateBudget = DAILY_PRIVATE_KM * s.elapsedDays;
+    s.privateBudget = DAILY_PRIVATE * s.elapsedDays;
   }
   if (s.totalKm !== null) {
     s.actualPrivate = s.totalKm - s.businessKm;
     if (s.privateBudget !== null) {
       s.privateVsBudget = s.privateBudget - s.actualPrivate;
-      if (s.privateBudget > 0) {
-        s.privateRatio = (s.actualPrivate / s.privateBudget) * 100;
-      }
+      if (s.privateBudget > 0) s.privateRatio = (s.actualPrivate / s.privateBudget) * 100;
+    }
+  }
+
+  // Fiscal year end: 30 sep of current year, or next year if already past
+  const fiscalEnd = new Date(today.getFullYear(), 8, 30); // Sep = month 8
+  if (fiscalEnd < today) fiscalEnd.setFullYear(fiscalEnd.getFullYear() + 1);
+  // Cap at lease end if earlier
+  if (settings.leaseEnd) {
+    const leaseEndDate = new Date(settings.leaseEnd); leaseEndDate.setHours(0,0,0,0);
+    if (leaseEndDate < fiscalEnd) fiscalEnd.setTime(leaseEndDate.getTime());
+  }
+  s.daysToFiscalEnd  = Math.max(0, Math.floor((fiscalEnd - today) / 86400000));
+  s.fiscalEndDisplay = formatDateDisplay(fiscalEnd.toISOString().slice(0, 10));
+
+  if (s.privateVsBudget !== null) {
+    s.privateRemainingFiscal = DAILY_PRIVATE * s.daysToFiscalEnd + s.privateVsBudget;
+    if (s.remainDays !== null) {
+      s.privateRemainingLease = DAILY_PRIVATE * s.remainDays + s.privateVsBudget;
     }
   }
 
@@ -456,47 +625,69 @@ function renderHeader() {
   document.getElementById('headerDate').textContent = new Date().toLocaleDateString('nl-NL', opts);
 }
 
-function fmt(n) {
+function fmt(n, abs) {
   if (n === null || n === undefined || isNaN(n)) return '—';
-  return Math.round(n).toLocaleString('nl-NL');
+  const v = abs ? Math.abs(n) : n;
+  return Math.round(v).toLocaleString('nl-NL');
 }
 
 function renderStats() {
   const s = calcStats();
 
-  // Verstreken dagen
+  // ── Hero card ──
+  const hero      = document.getElementById('heroCard');
+  const heroVal   = document.getElementById('heroValue');
+  const heroDesc  = document.getElementById('heroDesc');
+  const heroBadge = document.getElementById('heroBadge');
+  if (s.privateVsBudget !== null) {
+    const absDiff = Math.abs(Math.round(s.privateVsBudget));
+    heroVal.innerHTML = `${absDiff.toLocaleString('nl-NL')}<small> km</small>`;
+    if (s.privateVsBudget >= 0) {
+      hero.className      = 'hero-card ok';
+      heroDesc.textContent = `ONDER budget — je hebt nog ${absDiff.toLocaleString('nl-NL')} km ruimte`;
+      heroBadge.textContent = '✅';
+    } else {
+      hero.className      = 'hero-card over';
+      heroDesc.textContent = `BOVEN budget — je hebt ${absDiff.toLocaleString('nl-NL')} km te veel privé gereden`;
+      heroBadge.textContent = '⚠️';
+    }
+  } else {
+    hero.className      = 'hero-card idle';
+    heroVal.innerHTML   = '—<small> km</small>';
+    heroDesc.textContent = 'Vul km-stand en leasedatum in om te beginnen';
+    heroBadge.textContent = '🚦';
+  }
+
+  // ── Verstreken dagen ──
   document.getElementById('statDays').textContent = s.elapsedDays !== null ? fmt(s.elapsedDays) : '—';
   document.getElementById('statDaysSub').textContent = s.totalLeaseDays
     ? `van ${fmt(s.totalLeaseDays)} leasedagen`
     : 'stel leasedatum in';
 
-  // Budget
+  // ── Privé budget ──
   const budgetCard = document.getElementById('statBudgetCard');
   document.getElementById('statBudget').textContent = s.privateBudget !== null ? fmt(s.privateBudget) : '—';
-  budgetCard.className = 'stat-card' + (s.privateBudget !== null ? ' blue' : '');
+  budgetCard.className = 'stat-card' + (s.privateBudget !== null ? ' c-blue' : '');
 
-  // Zakelijk
+  // ── Zakelijk ──
   document.getElementById('statBusiness').textContent = fmt(s.businessKm);
   document.getElementById('statBusinessSub').textContent = getData().trips.length + ' ritten';
 
-  // Werkelijk privé
+  // ── Werkelijk privé ──
   const privCard = document.getElementById('statPrivateCard');
   const privVal  = document.getElementById('statPrivate');
   const privSub  = document.getElementById('statPrivateSub');
-
   if (s.actualPrivate !== null) {
     privVal.textContent = fmt(s.actualPrivate);
     if (s.privateVsBudget !== null) {
       if (s.privateVsBudget >= 0) {
-        // actual private <= budget: OK
-        privCard.className = 'stat-card green';
+        privCard.className = 'stat-card c-green';
         privVal.className  = 'stat-value green';
         privSub.textContent = `${fmt(s.privateVsBudget)} km onder budget`;
       } else {
-        // over budget
-        privCard.className = 'stat-card red';
+        privCard.className = 'stat-card c-red';
         privVal.className  = 'stat-value red';
-        privSub.textContent = `${fmt(Math.abs(s.privateVsBudget))} km boven budget`;
+        privSub.textContent = `${fmt(s.privateVsBudget, true)} km boven budget`;
       }
     } else {
       privCard.className = 'stat-card';
@@ -510,22 +701,64 @@ function renderStats() {
     privSub.textContent = s.totalKm === null ? 'vul km-stand in' : 'totaal km − zakelijk';
   }
 
-  // Resterende leasedagen
+  // ── Privé km resterend t/m 30 sep ──
+  const fiscCard = document.getElementById('statFiscalCard');
+  const fiscVal  = document.getElementById('statFiscal');
+  const fiscSub  = document.getElementById('statFiscalSub');
+  if (s.privateRemainingFiscal !== null) {
+    fiscVal.textContent = fmt(s.privateRemainingFiscal, true);
+    if (s.privateRemainingFiscal >= 0) {
+      fiscCard.className = 'stat-card c-yellow';
+      fiscVal.className  = 'stat-value';
+      fiscSub.textContent = `beschikbaar t/m ${s.fiscalEndDisplay}`;
+    } else {
+      fiscCard.className = 'stat-card c-red';
+      fiscVal.className  = 'stat-value red';
+      fiscSub.textContent = `km tekort t/m ${s.fiscalEndDisplay}`;
+    }
+  } else {
+    fiscVal.textContent = '—';
+    fiscVal.className   = 'stat-value';
+    fiscSub.textContent = s.fiscalEndDisplay ? `t/m ${s.fiscalEndDisplay}` : 'fiscaal jaar';
+  }
+
+  // ── Privé km resterend t/m einde lease ──
+  const leaseRemCard = document.getElementById('statLeaseRemCard');
+  const leaseRemVal  = document.getElementById('statLeaseRem');
+  const leaseRemSub  = document.getElementById('statLeaseRemSub');
+  if (s.privateRemainingLease !== null) {
+    leaseRemVal.textContent = fmt(s.privateRemainingLease, true);
+    if (s.privateRemainingLease >= 0) {
+      leaseRemCard.className = 'stat-card c-yellow';
+      leaseRemVal.className  = 'stat-value';
+      leaseRemSub.textContent = `beschikbaar t/m einde lease`;
+    } else {
+      leaseRemCard.className = 'stat-card c-red';
+      leaseRemVal.className  = 'stat-value red';
+      leaseRemSub.textContent = `km tekort t/m einde lease`;
+    }
+  } else {
+    leaseRemVal.textContent = '—';
+    leaseRemVal.className   = 'stat-value';
+    leaseRemSub.textContent = 'stel einddatum in';
+  }
+
+  // ── Resterende leasedagen ──
   const remCard = document.getElementById('statRemainCard');
   const remVal  = document.getElementById('statRemain');
   const remSub  = document.getElementById('statRemainSub');
   if (s.remainDays !== null) {
     remVal.textContent = fmt(s.remainDays);
-    if (s.remainDays < 30)      { remCard.className = 'stat-card red';   remSub.textContent = 'bijna afgelopen'; }
-    else if (s.remainDays < 90) { remCard.className = 'stat-card amber'; remSub.textContent = 'minder dan 3 maanden'; }
-    else                        { remCard.className = 'stat-card';       remSub.textContent = 'tot einde lease'; }
+    if (s.remainDays < 30)      { remCard.className = 'stat-card c-red';   remSub.textContent = 'bijna afgelopen!'; }
+    else if (s.remainDays < 90) { remCard.className = 'stat-card c-amber'; remSub.textContent = 'minder dan 3 maanden'; }
+    else                        { remCard.className = 'stat-card';         remSub.textContent = 'tot einde lease'; }
   } else {
-    remCard.className = 'stat-card';
-    remVal.textContent = '—';
-    remSub.textContent = 'stel einddatum in';
+    remCard.className   = 'stat-card';
+    remVal.textContent  = '—';
+    remSub.textContent  = 'stel einddatum in';
   }
 
-  // Progress bar
+  // ── Progress bar ──
   const progressCard = document.getElementById('progressCard');
   if (s.privateRatio !== null) {
     progressCard.style.display = 'block';
@@ -555,7 +788,7 @@ function renderTable() {
     <tr>
       <td>${formatDateDisplay(t.date)}</td>
       <td class="km">${parseFloat(t.km).toLocaleString('nl-NL', {minimumFractionDigits: 0, maximumFractionDigits: 1})} km</td>
-      <td><button class="btn btn-danger btn-sm" onclick="deleteTrip('${t.id}')">Verwijder</button></td>
+      <td style="text-align:right"><button class="btn btn-danger btn-sm" onclick="deleteTrip('${t.id}')">Verwijder</button></td>
     </tr>
   `).join('');
 }
@@ -566,6 +799,7 @@ function formatDateDisplay(iso) {
   return `${d}-${m}-${y}`;
 }
 
+// ── Trip management ───────────────────────────────────────────────
 function deleteTrip(id) {
   const d = getData();
   d.trips = d.trips.filter(t => t.id !== id);
@@ -586,7 +820,7 @@ function deleteAllTrips() {
 }
 
 function clearAll() {
-  if (!confirm('Weet je zeker dat je alle ritten en instellingen wilt wissen?')) return;
+  if (!confirm('Weet je zeker dat je alle ritten én instellingen wilt wissen?')) return;
   localStorage.removeItem(STORAGE_KEY);
   loadSettings();
   render();
@@ -613,17 +847,17 @@ function handleFile(file) {
     reader.onload = e => parseExcel(e.target.result);
     reader.readAsArrayBuffer(file);
   } else {
-    showUploadError('Niet-ondersteund bestandstype. Gebruik .csv, .xlsx of .xls.');
+    showUploadMsg('Niet-ondersteund bestandstype. Gebruik .csv, .xlsx of .xls.', 'error');
   }
   document.getElementById('fileInput').value = '';
 }
 
 function parseCsv(text) {
-  const sep = text.indexOf(';') !== -1 ? ';' : ',';
+  const sep   = text.indexOf(';') !== -1 ? ';' : ',';
   const lines = text.split(/\r?\n/).filter(l => l.trim());
-  if (lines.length < 2) { showUploadError('Bestand is leeg of heeft geen dataregels.'); return; }
+  if (lines.length < 2) { showUploadMsg('Bestand is leeg of heeft geen dataregels.', 'error'); return; }
 
-  const headers = lines[0].split(sep).map(h => h.trim().toLowerCase().replace(/['"]/g,''));
+  const headers = lines[0].split(sep).map(h => h.trim().toLowerCase().replace(/['"]/g, ''));
   const rows = lines.slice(1).map(l => {
     const cells = l.split(sep).map(c => c.trim().replace(/^["']|["']$/g, ''));
     return headers.reduce((obj, h, i) => { obj[h] = cells[i] || ''; return obj; }, {});
@@ -644,35 +878,33 @@ function parseExcel(buffer) {
     });
     importRows(normalised, headers);
   } catch (err) {
-    showUploadError('Kan Excel-bestand niet lezen: ' + err.message);
+    showUploadMsg('Kan Excel-bestand niet lezen: ' + err.message, 'error');
   }
 }
 
-function findColumn(headers, candidates) {
+function findCol(headers, candidates) {
   for (const c of candidates) {
-    const match = headers.find(h => h === c || h.includes(c));
-    if (match) return match;
+    const m = headers.find(h => h === c || h.includes(c));
+    if (m) return m;
   }
   return null;
 }
 
 function importRows(rows, headers) {
-  // Date: "date" first (exact match for the app's CSV format), then fallbacks
-  const dateCol = findColumn(headers, ['date', 'datum', 'dag']);
-  // Distance: "distance" first, then fallbacks
-  const kmCol   = findColumn(headers, ['distance', 'km', 'kilometers', 'afstand', 'kilometer']);
+  const dateCol = findCol(headers, ['date', 'datum', 'dag']);
+  const kmCol   = findCol(headers, ['distance', 'km', 'kilometers', 'afstand', 'kilometer']);
 
   if (!dateCol || !kmCol) {
-    showUploadError(
-      `Kolommen niet herkend. Gevonden: ${headers.join(', ')}. ` +
-      `Verwacht: een kolom "Date" en een kolom "Distance".`
+    showUploadMsg(
+      `Kolommen niet herkend. Gevonden: ${headers.join(', ')}. Verwacht: "Date" en "Distance".`,
+      'error'
     );
     return;
   }
 
   const d = getData();
   const { leaseStart, leaseEnd } = d.settings;
-  let added = 0, skipped = 0, dupes = 0, outOfRange = 0, dateDupes = [];
+  let added = 0, skipped = 0, outOfRange = 0;
 
   rows.forEach(row => {
     const rawDate = row[dateCol];
@@ -680,20 +912,13 @@ function importRows(rows, headers) {
     if (!rawDate || !rawKm) { skipped++; return; }
 
     const isoDate = parseDate(rawDate);
-    const km = parseFloat(String(rawKm).replace(',', '.'));
+    const km      = parseFloat(String(rawKm).replace(',', '.'));
 
     if (!isoDate || isNaN(km) || km <= 0) { skipped++; return; }
 
-    // Filter: only within lease period (if dates are set)
+    // Filter: only within lease period
     if (leaseStart && isoDate < leaseStart) { outOfRange++; return; }
     if (leaseEnd   && isoDate > leaseEnd)   { outOfRange++; return; }
-
-    // Duplicate date check (one entry per day max)
-    if (d.trips.some(t => t.date === isoDate)) {
-      dateDupes.push(formatDateDisplay(isoDate));
-      dupes++;
-      return;
-    }
 
     d.trips.push({ id: genId(), date: isoDate, km });
     added++;
@@ -705,32 +930,32 @@ function importRows(rows, headers) {
   let msg = `${added} rit${added !== 1 ? 'ten' : ''} geïmporteerd.`;
   if (outOfRange) msg += ` ${outOfRange} buiten leaseperiode genegeerd.`;
   if (skipped)    msg += ` ${skipped} overgeslagen (lege/ongeldige rijen).`;
-  if (dupes)      msg += ` ${dupes} datum-duplicaat${dupes !== 1 ? 'en' : ''} genegeerd (${dateDupes.join(', ')}).`;
 
-  const hasWarning = dupes > 0;
-  showUploadPreview(msg, added > 0 && !hasWarning ? 'success' : 'warning');
-  if (added > 0) showToast(`${added} rit${added !== 1 ? 'ten' : ''} geïmporteerd.`, 'success');
-  if (dupes > 0) showToast(`Let op: ${dupes} datum-duplicaat${dupes !== 1 ? 'en' : ''} genegeerd.`, 'error');
+  showUploadMsg(msg, 'success');
+  if (added > 0) showToast(msg, 'success');
 }
 
 function parseDate(raw) {
   if (!raw) return null;
   const s = String(raw).trim();
 
+  // ISO YYYY-MM-DD
   if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
 
+  // DD-MM-YYYY or DD/MM/YYYY
   const dmy = s.match(/^(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{4})$/);
   if (dmy) return `${dmy[3]}-${dmy[2].padStart(2,'0')}-${dmy[1].padStart(2,'0')}`;
 
+  // Excel serial
   const num = parseFloat(s);
   if (!isNaN(num) && num > 10000 && num < 100000) {
-    const parsed = XLSX.SSF.parse_date_code(num);
-    if (parsed) return `${parsed.y}-${String(parsed.m).padStart(2,'0')}-${String(parsed.d).padStart(2,'0')}`;
+    const p = XLSX.SSF.parse_date_code(num);
+    if (p) return `${p.y}-${String(p.m).padStart(2,'0')}-${String(p.d).padStart(2,'0')}`;
   }
 
-  const parsed = new Date(s);
-  if (!isNaN(parsed)) return parsed.toISOString().slice(0, 10);
-
+  // Native parse fallback
+  const p = new Date(s);
+  if (!isNaN(p)) return p.toISOString().slice(0, 10);
   return null;
 }
 
@@ -740,11 +965,11 @@ function exportCsv() {
   if (!trips.length) { showToast('Geen ritten om te exporteren.', 'error'); return; }
 
   const sorted = [...trips].sort((a, b) => (a.date || '').localeCompare(b.date || ''));
-  const rows = [['Date', 'Distance']].concat(sorted.map(t => [t.date, t.km]));
-  const csv  = rows.map(r => r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(',')).join('\r\n');
-  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
-  const url  = URL.createObjectURL(blob);
-  const a    = document.createElement('a');
+  const rows   = [['Date', 'Distance']].concat(sorted.map(t => [t.date, t.km]));
+  const csv    = rows.map(r => r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(',')).join('\r\n');
+  const blob   = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+  const url    = URL.createObjectURL(blob);
+  const a      = document.createElement('a');
   a.href = url; a.download = 'kilometer_registratie.csv'; a.click();
   URL.revokeObjectURL(url);
 }
@@ -754,21 +979,16 @@ let toastTimer;
 function showToast(msg, type = 'info') {
   const el = document.getElementById('toast');
   el.textContent = msg;
-  el.className = 'toast ' + type + ' show';
+  el.className   = 'toast ' + type + ' show';
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => el.classList.remove('show'), 3500);
 }
 
-function showUploadPreview(msg, type = 'success') {
+function showUploadMsg(msg, type = 'success') {
   const el = document.getElementById('uploadPreview');
   el.textContent = msg;
-  el.className = 'upload-preview' + (type === 'success' ? '' : ' error');
+  el.className   = 'upload-preview' + (type === 'success' ? '' : type === 'warn' ? ' warn' : ' error');
   el.style.display = 'block';
-}
-
-function showUploadError(msg) {
-  showUploadPreview(msg, 'error');
-  showToast(msg, 'error');
 }
 
 function genId() {
