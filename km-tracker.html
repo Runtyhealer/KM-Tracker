@@ -6,369 +6,535 @@
 <title>Kilometer Registratie</title>
 <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
 <style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
   :root {
-    --road:    #1e293b;
-    --asphalt: #334155;
-    --yellow:  #f59e0b;
-    --blue:    #2563eb;
-    --blue-lt: #dbeafe;
-    --green:   #059669;
-    --green-lt:#d1fae5;
-    --red:     #dc2626;
-    --red-lt:  #fee2e2;
-    --amber:   #d97706;
-    --amber-lt:#fef3c7;
-    --gray-50: #f8fafc;
-    --gray-100:#f1f5f9;
-    --gray-200:#e2e8f0;
-    --gray-300:#cbd5e1;
-    --gray-400:#94a3b8;
-    --gray-500:#64748b;
-    --gray-600:#475569;
-    --gray-700:#334155;
-    --gray-800:#1e293b;
-    --gray-900:#0f172a;
-    --white:   #ffffff;
-    --radius:  10px;
-    --shadow:  0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.05);
-    --shadow-md:0 4px 12px rgba(0,0,0,.1), 0 2px 4px rgba(0,0,0,.06);
+    --bg:       #0c0f1a;
+    --bg-card:  rgba(255,255,255,.06);
+    --bg-card-solid: #161b2e;
+    --glass:    rgba(255,255,255,.08);
+    --glass-border: rgba(255,255,255,.1);
+    --text:     #e2e8f0;
+    --text-dim: #64748b;
+    --text-bright: #f8fafc;
+    --accent:   #3b82f6;
+    --accent-glow: rgba(59,130,246,.25);
+    --green:    #22c55e;
+    --green-dim:rgba(34,197,94,.15);
+    --red:      #ef4444;
+    --red-dim:  rgba(239,68,68,.15);
+    --amber:    #f59e0b;
+    --amber-dim:rgba(245,158,11,.15);
+    --road:     #1a1f35;
+    --road-line:#f59e0b;
+    --radius:   14px;
+    --shadow:   0 2px 12px rgba(0,0,0,.3);
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
-    background: var(--gray-100);
-    color: var(--gray-900);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    color: var(--text);
     line-height: 1.5;
     min-height: 100vh;
+    overflow-x: hidden;
   }
 
-  /* ── Header ── */
-  .header {
-    background: var(--road);
-    color: var(--white);
-    padding: 20px 32px 14px;
+  /* ═══════════════════════════════════════════════
+     ROAD SCENE HEADER
+     ═══════════════════════════════════════════════ */
+  .scene {
+    position: relative;
+    background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+    overflow: hidden;
+    padding: 0;
+  }
+
+  /* Sky with stars */
+  .scene::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(1px 1px at 10% 20%, rgba(255,255,255,.7), transparent),
+      radial-gradient(1px 1px at 25% 45%, rgba(255,255,255,.5), transparent),
+      radial-gradient(1.5px 1.5px at 50% 15%, rgba(255,255,255,.8), transparent),
+      radial-gradient(1px 1px at 70% 35%, rgba(255,255,255,.4), transparent),
+      radial-gradient(1px 1px at 85% 10%, rgba(255,255,255,.6), transparent),
+      radial-gradient(1.5px 1.5px at 40% 60%, rgba(255,255,255,.5), transparent),
+      radial-gradient(1px 1px at 90% 55%, rgba(255,255,255,.4), transparent),
+      radial-gradient(1px 1px at 15% 70%, rgba(255,255,255,.3), transparent),
+      radial-gradient(1px 1px at 60% 25%, rgba(255,255,255,.6), transparent),
+      radial-gradient(1px 1px at 35% 8%, rgba(255,255,255,.5), transparent);
+    z-index: 0;
+  }
+
+  .header-content {
+    position: relative;
+    z-index: 2;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    padding: 28px 36px 20px;
+    max-width: 1200px;
+    margin: 0 auto;
   }
-  .header-left h1 { font-size: 22px; font-weight: 800; letter-spacing: -.4px; }
-  .header-left h1 span { color: var(--yellow); }
-  .header-left p  { font-size: 12px; opacity: .65; margin-top: 2px; }
-  .header-date    { font-size: 12px; opacity: .7; text-align: right; line-height: 1.6; }
+  .header-content h1 {
+    font-size: 26px;
+    font-weight: 900;
+    letter-spacing: -.5px;
+    color: var(--text-bright);
+  }
+  .header-content h1 .highlight { color: var(--road-line); }
+  .header-content .subtitle { font-size: 13px; color: var(--text-dim); margin-top: 2px; }
+  .header-date { font-size: 13px; color: var(--text-dim); text-align: right; }
 
-  /* ── Road strip ── */
-  .road-strip {
-    background: var(--asphalt);
-    height: 44px;
+  /* ── Road surface ── */
+  .road {
     position: relative;
+    z-index: 1;
+    background: #2d3348;
+    height: 80px;
+    border-top: 2px solid #3f4560;
+    border-bottom: 3px solid var(--road-line);
     overflow: hidden;
-    border-bottom: 4px solid var(--yellow);
   }
-  /* Center dashed lane marking */
-  .road-strip::before {
+  /* Dashed center line */
+  .road::before {
     content: '';
     position: absolute;
     top: 50%;
     left: 0;
-    right: 0;
+    width: 200%;
     height: 3px;
-    margin-top: -1px;
-    background: repeating-linear-gradient(90deg,
-      rgba(255,255,255,.35) 0 36px,
-      transparent 36px 72px);
+    margin-top: -1.5px;
+    background: repeating-linear-gradient(90deg, var(--road-line) 0 40px, transparent 40px 80px);
+    opacity: .5;
+    animation: roadScroll 3s linear infinite;
   }
-  .car {
+  /* Shoulder lines */
+  .road::after {
+    content: '';
     position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 24px;
-    line-height: 1;
-    animation: drive linear infinite;
-    user-select: none;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: rgba(255,255,255,.06);
   }
-  .car-1 { animation-duration: 9s;  animation-delay:  0s; top: 28%; }
-  .car-2 { animation-duration: 13s; animation-delay: -5s; top: 68%; transform: translateY(-50%) scaleX(-1); }
-  .car-3 { animation-duration: 7s;  animation-delay: -3s; top: 30%; }
-  .car-4 { animation-duration: 15s; animation-delay: -8s; top: 65%; transform: translateY(-50%) scaleX(-1); }
-  @keyframes drive {
-    from { left: -80px; }
-    to   { left: calc(100% + 80px); }
+  @keyframes roadScroll {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-80px); }
   }
 
-  /* ── Layout ── */
-  .container { max-width: 1150px; margin: 0 auto; padding: 28px 24px 64px; }
-  @media (max-width: 768px) {
-    .header { flex-direction: column; gap: 8px; padding: 16px 20px 12px; }
-    .container { padding: 16px 12px 48px; }
+  /* ── SVG Cars ── */
+  .car-svg {
+    position: absolute;
+    z-index: 2;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,.5));
+  }
+  .car-svg.lane-top    { top: 8px;  }
+  .car-svg.lane-bottom { top: 42px; }
+  .car-svg.right { animation: driveRight linear infinite; }
+  .car-svg.left  { animation: driveLeft  linear infinite; }
+  .car-1 { animation-duration: 8s;  animation-delay: 0s; }
+  .car-2 { animation-duration: 12s; animation-delay: -4s; }
+  .car-3 { animation-duration: 10s; animation-delay: -7s; }
+  .car-4 { animation-duration: 14s; animation-delay: -2s; }
+
+  @keyframes driveRight {
+    from { left: -100px; }
+    to   { left: calc(100% + 100px); }
+  }
+  @keyframes driveLeft {
+    from { right: -100px; }
+    to   { right: calc(100% + 100px); }
   }
 
-  /* ── Section title ── */
-  .section-title {
-    font-size: 12px;
+  /* ═══════════════════════════════════════════════
+     LAYOUT
+     ═══════════════════════════════════════════════ */
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 32px 28px 80px;
+  }
+
+  .section-label {
+    font-size: 11px;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: .8px;
-    color: var(--gray-400);
-    margin: 28px 0 10px;
+    letter-spacing: 1.2px;
+    color: var(--text-dim);
+    margin: 36px 0 14px;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
   }
-  .section-title::after { content: ''; flex: 1; height: 1px; background: var(--gray-200); }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(255,255,255,.1), transparent);
+  }
 
-  /* ── Hero card ── */
-  .hero-card {
-    border-radius: var(--radius);
-    padding: 28px 32px;
+  /* ═══════════════════════════════════════════════
+     HERO CARD (over/onder budget)
+     ═══════════════════════════════════════════════ */
+  .hero {
+    border-radius: 18px;
+    padding: 32px 36px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 24px;
-    box-shadow: var(--shadow-md);
+    gap: 28px;
     margin-bottom: 20px;
-    transition: background .3s;
     position: relative;
     overflow: hidden;
+    transition: all .4s;
   }
-  .hero-card::after {
-    content: '🛣️';
+  .hero::before {
+    content: '';
     position: absolute;
-    right: 20px;
-    bottom: -8px;
-    font-size: 72px;
-    opacity: .07;
+    inset: 0;
+    border-radius: 18px;
+    border: 1px solid rgba(255,255,255,.1);
     pointer-events: none;
   }
-  .hero-card.ok   { background: var(--green); color: var(--white); }
-  .hero-card.over { background: var(--red);   color: var(--white); }
-  .hero-card.idle { background: var(--white); color: var(--gray-700); border: 2px dashed var(--gray-300); box-shadow: none; }
-  .hero-card.idle::after { display: none; }
+  .hero.ok {
+    background: linear-gradient(135deg, #065f46 0%, #047857 50%, #059669 100%);
+    box-shadow: 0 4px 30px rgba(5,150,105,.3), inset 0 1px 0 rgba(255,255,255,.1);
+  }
+  .hero.over {
+    background: linear-gradient(135deg, #7f1d1d 0%, #b91c1c 50%, #dc2626 100%);
+    box-shadow: 0 4px 30px rgba(220,38,38,.3), inset 0 1px 0 rgba(255,255,255,.1);
+  }
+  .hero.idle {
+    background: var(--bg-card);
+    border: 2px dashed rgba(255,255,255,.12);
+  }
+  .hero.idle::before { display: none; }
 
-  .hero-left { }
-  .hero-eyebrow { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .8px; opacity: .75; margin-bottom: 4px; }
-  .hero-value {
-    font-size: 56px;
+  .hero-eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    opacity: .7;
+    margin-bottom: 6px;
+  }
+  .hero-number {
+    font-size: 64px;
     font-weight: 900;
     line-height: 1;
-    letter-spacing: -2px;
+    letter-spacing: -3px;
+    text-shadow: 0 2px 12px rgba(0,0,0,.3);
   }
-  .hero-value small { font-size: 22px; font-weight: 600; letter-spacing: 0; margin-left: 4px; opacity: .8; }
-  .hero-desc { font-size: 15px; font-weight: 600; margin-top: 6px; opacity: .9; }
-  .hero-right { text-align: right; flex-shrink: 0; }
-  .hero-badge {
-    display: inline-block;
-    font-size: 42px;
-    background: rgba(255,255,255,.15);
+  .hero-number .unit {
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: 0;
+    margin-left: 4px;
+    opacity: .7;
+  }
+  .hero-desc {
+    font-size: 15px;
+    font-weight: 600;
+    margin-top: 8px;
+    opacity: .85;
+  }
+  .hero-icon {
+    width: 90px;
+    height: 90px;
     border-radius: 50%;
-    width: 80px;
-    height: 80px;
-    line-height: 80px;
-    text-align: center;
+    background: rgba(255,255,255,.12);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
   }
+  .hero-icon svg { width: 44px; height: 44px; }
 
-  /* ── Stat cards grid ── */
-  .stat-grid-4 {
+  /* ═══════════════════════════════════════════════
+     GLASS STAT CARDS
+     ═══════════════════════════════════════════════ */
+  .stats-row {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
     gap: 14px;
     margin-bottom: 14px;
   }
-  .stat-grid-3 {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 14px;
-    margin-bottom: 20px;
-  }
-  @media (max-width: 950px) { .stat-grid-4 { grid-template-columns: repeat(2, 1fr); } }
-  @media (max-width: 700px) { .stat-grid-3 { grid-template-columns: 1fr 1fr; } }
-  @media (max-width: 480px) {
-    .stat-grid-4, .stat-grid-3 { grid-template-columns: 1fr; }
-  }
+  .stats-row.four { grid-template-columns: repeat(4, 1fr); }
+  .stats-row.three { grid-template-columns: repeat(3, 1fr); }
+  @media (max-width: 950px) { .stats-row.four { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 700px) { .stats-row.three { grid-template-columns: 1fr; } }
+  @media (max-width: 500px) { .stats-row.four { grid-template-columns: 1fr; } }
 
-  .stat-card {
-    background: var(--white);
+  .stat {
+    background: var(--bg-card);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
     border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    padding: 16px 18px;
-    border-left: 4px solid var(--gray-200);
-    transition: border-color .2s;
+    padding: 18px 20px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color .2s, transform .2s;
   }
-  .stat-card.c-blue  { border-left-color: var(--blue); }
-  .stat-card.c-green { border-left-color: var(--green); }
-  .stat-card.c-red   { border-left-color: var(--red); }
-  .stat-card.c-amber { border-left-color: var(--amber); }
-  .stat-card.c-yellow{ border-left-color: var(--yellow); }
+  .stat:hover { transform: translateY(-2px); border-color: rgba(255,255,255,.18); }
+  .stat .indicator {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 3px;
+    height: 100%;
+    border-radius: 0 3px 3px 0;
+  }
+  .stat .indicator.blue   { background: var(--accent); }
+  .stat .indicator.green  { background: var(--green); }
+  .stat .indicator.red    { background: var(--red); }
+  .stat .indicator.amber  { background: var(--amber); }
+  .stat .indicator.yellow { background: var(--road-line); }
 
-  .stat-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .7px; color: var(--gray-400); margin-bottom: 5px; }
-  .stat-value { font-size: 26px; font-weight: 800; color: var(--gray-800); line-height: 1.1; }
-  .stat-value.green { color: var(--green); }
-  .stat-value.red   { color: var(--red); }
-  .stat-value.amber { color: var(--amber); }
-  .stat-unit  { font-size: 13px; font-weight: 500; color: var(--gray-400); }
-  .stat-sub   { font-size: 11px; color: var(--gray-400); margin-top: 3px; }
+  .stat-lbl { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .8px; color: var(--text-dim); margin-bottom: 6px; }
+  .stat-val { font-size: 28px; font-weight: 800; line-height: 1.1; color: var(--text-bright); }
+  .stat-val.green { color: var(--green); }
+  .stat-val.red   { color: var(--red); }
+  .stat-val.amber { color: var(--amber); }
+  .stat-sub { font-size: 11px; color: var(--text-dim); margin-top: 4px; }
 
-  /* ── Progress bar ── */
+  /* ── Progress ── */
   .progress-card {
-    background: var(--white);
+    background: var(--bg-card);
+    border: 1px solid var(--glass-border);
     border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    padding: 16px 20px;
+    padding: 18px 22px;
     margin-bottom: 0;
   }
-  .progress-label { display: flex; justify-content: space-between; font-size: 11px; color: var(--gray-400); margin-bottom: 6px; font-weight: 600; }
-  .progress-bar   { height: 8px; background: var(--gray-100); border-radius: 99px; overflow: hidden; }
-  .progress-fill  { height: 100%; border-radius: 99px; transition: width .5s cubic-bezier(.4,0,.2,1); background: var(--green); }
-  .progress-fill.warning { background: var(--amber); }
-  .progress-fill.danger  { background: var(--red); }
+  .progress-head { display: flex; justify-content: space-between; font-size: 11px; font-weight: 600; color: var(--text-dim); margin-bottom: 8px; }
+  .progress-track { height: 8px; background: rgba(255,255,255,.06); border-radius: 99px; overflow: hidden; }
+  .progress-bar   { height: 100%; border-radius: 99px; transition: width .5s cubic-bezier(.4,0,.2,1); background: var(--green); }
+  .progress-bar.warning { background: var(--amber); }
+  .progress-bar.danger  { background: var(--red); }
 
-  /* ── Card ── */
+  /* ═══════════════════════════════════════════════
+     GLASS CARD (settings, upload, table)
+     ═══════════════════════════════════════════════ */
   .card {
-    background: var(--white);
+    background: var(--bg-card);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
     border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    padding: 20px 24px;
+    padding: 22px 26px;
   }
 
   /* ── Forms ── */
-  .form-row   { display: flex; gap: 14px; flex-wrap: wrap; align-items: flex-end; }
-  .form-group { display: flex; flex-direction: column; gap: 4px; }
-  .form-group label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: var(--gray-500); }
+  .form-row { display: flex; gap: 16px; flex-wrap: wrap; align-items: flex-end; }
+  .form-group { display: flex; flex-direction: column; gap: 5px; }
+  .form-group label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .8px;
+    color: var(--text-dim);
+  }
   input[type="number"], input[type="date"] {
-    border: 1px solid var(--gray-300);
-    border-radius: 7px;
-    padding: 8px 11px;
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 8px;
+    padding: 9px 12px;
     font-size: 14px;
-    color: var(--gray-800);
-    background: var(--white);
+    font-family: inherit;
+    color: var(--text-bright);
     outline: none;
-    transition: border-color .15s, box-shadow .15s;
+    transition: border-color .2s, box-shadow .2s;
   }
   input[type="number"]:focus, input[type="date"]:focus {
-    border-color: var(--blue);
-    box-shadow: 0 0 0 3px rgba(37,99,235,.12);
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow);
   }
-  input[type="number"] { width: 145px; }
-  input[type="date"]   { width: 155px; }
+  input[type="number"] { width: 150px; }
+  input[type="date"]   { width: 160px; }
+  /* Fix dark date picker icon */
+  input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(.7); cursor: pointer; }
 
   /* ── Buttons ── */
   .btn {
     display: inline-flex;
     align-items: center;
-    gap: 5px;
-    padding: 8px 16px;
-    border-radius: 7px;
+    gap: 6px;
+    padding: 9px 18px;
+    border-radius: 8px;
     font-size: 13px;
     font-weight: 600;
+    font-family: inherit;
     cursor: pointer;
     border: none;
-    transition: background .15s, transform .1s;
+    transition: all .15s;
     white-space: nowrap;
   }
   .btn:active { transform: scale(.97); }
-  .btn-secondary { background: var(--gray-100); color: var(--gray-700); border: 1px solid var(--gray-200); }
-  .btn-secondary:hover { background: var(--gray-200); }
-  .btn-danger { background: var(--red-lt); color: var(--red); border: 1px solid #fca5a5; }
-  .btn-danger:hover { background: #fecaca; }
-  .btn-sm { padding: 5px 11px; font-size: 12px; }
+  .btn-ghost {
+    background: rgba(255,255,255,.06);
+    color: var(--text);
+    border: 1px solid rgba(255,255,255,.1);
+  }
+  .btn-ghost:hover { background: rgba(255,255,255,.1); }
+  .btn-danger-outline {
+    background: var(--red-dim);
+    color: var(--red);
+    border: 1px solid rgba(239,68,68,.3);
+  }
+  .btn-danger-outline:hover { background: rgba(239,68,68,.25); }
+  .btn-sm { padding: 6px 12px; font-size: 12px; }
 
   /* ── Upload ── */
-  .upload-area {
-    border: 2px dashed var(--gray-300);
-    border-radius: var(--radius);
-    padding: 22px;
+  .upload-zone {
+    border: 2px dashed rgba(255,255,255,.12);
+    border-radius: 12px;
+    padding: 28px;
     text-align: center;
-    background: var(--gray-50);
     cursor: pointer;
     transition: border-color .2s, background .2s;
   }
-  .upload-area:hover, .upload-area.drag-over { border-color: var(--blue); background: var(--blue-lt); }
-  .upload-area input[type="file"] { display: none; }
-  .upload-icon { font-size: 26px; margin-bottom: 6px; }
-  .upload-area p     { font-size: 13px; color: var(--gray-500); }
-  .upload-area small { font-size: 11px; color: var(--gray-400); }
+  .upload-zone:hover, .upload-zone.drag-over {
+    border-color: var(--accent);
+    background: var(--accent-glow);
+  }
+  .upload-zone input[type="file"] { display: none; }
+  .upload-zone .icon { font-size: 32px; margin-bottom: 8px; opacity: .6; }
+  .upload-zone p     { font-size: 13px; color: var(--text-dim); }
+  .upload-zone small { font-size: 11px; color: rgba(255,255,255,.25); }
 
-  .upload-preview {
-    margin-top: 10px;
-    padding: 10px 14px;
-    background: var(--green-lt);
-    border: 1px solid #6ee7b7;
-    border-radius: 7px;
+  .upload-msg {
+    margin-top: 12px;
+    padding: 10px 16px;
+    border-radius: 8px;
     font-size: 13px;
-    color: #065f46;
     display: none;
   }
-  .upload-preview.warn  { background: var(--amber-lt); border-color: #fcd34d; color: #92400e; }
-  .upload-preview.error { background: var(--red-lt);   border-color: #fca5a5; color: #991b1b; }
+  .upload-msg.success { background: var(--green-dim); color: var(--green); border: 1px solid rgba(34,197,94,.25); }
+  .upload-msg.warn    { background: var(--amber-dim); color: var(--amber); border: 1px solid rgba(245,158,11,.25); }
+  .upload-msg.error   { background: var(--red-dim);   color: var(--red);   border: 1px solid rgba(239,68,68,.25); }
 
   /* ── Table ── */
+  .table-card { padding: 0; overflow: hidden; }
   .table-wrap { overflow-x: auto; }
-  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  table { width: 100%; border-collapse: collapse; }
   thead th {
     text-align: left;
-    padding: 10px 14px;
+    padding: 12px 16px;
     font-size: 10px;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: .6px;
-    color: var(--gray-400);
-    border-bottom: 2px solid var(--gray-100);
-    white-space: nowrap;
-    background: var(--gray-50);
+    letter-spacing: .8px;
+    color: var(--text-dim);
+    border-bottom: 1px solid rgba(255,255,255,.06);
+    background: rgba(255,255,255,.02);
   }
-  tbody tr { border-bottom: 1px solid var(--gray-100); transition: background .1s; }
-  tbody tr:hover { background: var(--gray-50); }
-  tbody td { padding: 10px 14px; color: var(--gray-600); }
-  tbody td.km { font-weight: 700; color: var(--gray-800); }
-  .empty-state { text-align: center; padding: 36px; color: var(--gray-300); font-size: 13px; }
+  tbody tr { border-bottom: 1px solid rgba(255,255,255,.04); transition: background .1s; }
+  tbody tr:hover { background: rgba(255,255,255,.03); }
+  tbody td { padding: 11px 16px; font-size: 13px; color: var(--text-dim); }
+  tbody td.km { font-weight: 700; color: var(--text-bright); font-variant-numeric: tabular-nums; }
+  .empty-row { text-align: center; padding: 40px; color: rgba(255,255,255,.2); font-size: 13px; }
 
   /* ── Toast ── */
   .toast {
     position: fixed;
-    bottom: 24px;
-    right: 24px;
-    padding: 12px 20px;
-    border-radius: 8px;
+    bottom: 28px;
+    right: 28px;
+    padding: 13px 22px;
+    border-radius: 10px;
     font-size: 13px;
     font-weight: 600;
-    box-shadow: var(--shadow-md);
+    font-family: inherit;
+    box-shadow: 0 8px 30px rgba(0,0,0,.4);
     z-index: 9999;
     transition: opacity .3s, transform .3s;
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(12px);
     pointer-events: none;
-    max-width: 360px;
+    backdrop-filter: blur(16px);
+    max-width: 400px;
   }
   .toast.show { opacity: 1; transform: translateY(0); }
-  .toast.success { background: var(--green); color: var(--white); }
-  .toast.error   { background: var(--red);   color: var(--white); }
-  .toast.info    { background: var(--road);  color: var(--white); }
+  .toast.success { background: rgba(34,197,94,.9); color: #fff; }
+  .toast.error   { background: rgba(239,68,68,.9); color: #fff; }
+  .toast.info    { background: rgba(59,130,246,.9); color: #fff; }
+
+  /* ── Responsive ── */
+  @media (max-width: 768px) {
+    .header-content { flex-direction: column; gap: 8px; padding: 20px 20px 16px; }
+    .container { padding: 20px 14px 60px; }
+    .hero { padding: 24px; flex-direction: column; text-align: center; }
+    .hero-number { font-size: 48px; }
+    .hero-icon { width: 64px; height: 64px; }
+    .hero-icon svg { width: 32px; height: 32px; }
+  }
 </style>
 </head>
 <body>
 
-<!-- HEADER -->
-<header class="header">
-  <div class="header-left">
-    <h1>🚗 Km <span>Registratie</span></h1>
-    <p>Zakelijke en privé kilometer administratie</p>
+<!-- ═══ ROAD SCENE HEADER ═══ -->
+<div class="scene">
+  <div class="header-content">
+    <div>
+      <h1>Km <span class="highlight">Registratie</span></h1>
+      <div class="subtitle">Zakelijke en prive kilometer administratie</div>
+    </div>
+    <div class="header-date" id="headerDate"></div>
   </div>
-  <div class="header-date" id="headerDate"></div>
-</header>
-
-<!-- ANIMATED ROAD STRIP -->
-<div class="road-strip">
-  <div class="car car-1">🚗</div>
-  <div class="car car-2">🚙</div>
-  <div class="car car-3">🏎️</div>
-  <div class="car car-4">🚐</div>
+  <div class="road">
+    <!-- Car 1: blue sedan going right, top lane -->
+    <svg class="car-svg lane-top right car-1" width="70" height="30" viewBox="0 0 70 30">
+      <rect x="5" y="10" width="60" height="14" rx="5" fill="#3b82f6"/>
+      <rect x="15" y="3" width="30" height="12" rx="4" fill="#60a5fa"/>
+      <rect x="18" y="5" width="11" height="7" rx="2" fill="rgba(255,255,255,.3)"/>
+      <rect x="32" y="5" width="11" height="7" rx="2" fill="rgba(255,255,255,.3)"/>
+      <circle cx="17" cy="26" r="5" fill="#1e293b"/><circle cx="17" cy="26" r="3" fill="#475569"/>
+      <circle cx="53" cy="26" r="5" fill="#1e293b"/><circle cx="53" cy="26" r="3" fill="#475569"/>
+      <rect x="60" y="14" width="6" height="3" rx="1" fill="#fbbf24" opacity=".8"/>
+      <rect x="4" y="14" width="5" height="3" rx="1" fill="#ef4444" opacity=".8"/>
+    </svg>
+    <!-- Car 2: red SUV going left, bottom lane -->
+    <svg class="car-svg lane-bottom left car-2" width="76" height="32" viewBox="0 0 76 32">
+      <rect x="5" y="10" width="66" height="16" rx="5" fill="#dc2626"/>
+      <rect x="16" y="2" width="36" height="14" rx="5" fill="#ef4444"/>
+      <rect x="20" y="4" width="12" height="8" rx="2" fill="rgba(255,255,255,.25)"/>
+      <rect x="36" y="4" width="12" height="8" rx="2" fill="rgba(255,255,255,.25)"/>
+      <circle cx="18" cy="28" r="5.5" fill="#1e293b"/><circle cx="18" cy="28" r="3.5" fill="#475569"/>
+      <circle cx="58" cy="28" r="5.5" fill="#1e293b"/><circle cx="58" cy="28" r="3.5" fill="#475569"/>
+      <rect x="66" y="15" width="6" height="3" rx="1" fill="#fbbf24" opacity=".8"/>
+      <rect x="4" y="15" width="5" height="3" rx="1" fill="#ef4444" opacity=".6"/>
+    </svg>
+    <!-- Car 3: green compact going right, top lane -->
+    <svg class="car-svg lane-top right car-3" width="60" height="26" viewBox="0 0 60 26">
+      <rect x="4" y="9" width="52" height="12" rx="4" fill="#22c55e"/>
+      <rect x="14" y="3" width="24" height="10" rx="3" fill="#4ade80"/>
+      <rect x="17" y="5" width="8" height="6" rx="1.5" fill="rgba(255,255,255,.3)"/>
+      <rect x="28" y="5" width="8" height="6" rx="1.5" fill="rgba(255,255,255,.3)"/>
+      <circle cx="14" cy="23" r="4.5" fill="#1e293b"/><circle cx="14" cy="23" r="2.5" fill="#475569"/>
+      <circle cx="46" cy="23" r="4.5" fill="#1e293b"/><circle cx="46" cy="23" r="2.5" fill="#475569"/>
+      <rect x="52" y="12" width="5" height="2.5" rx="1" fill="#fbbf24" opacity=".8"/>
+    </svg>
+    <!-- Car 4: white van going left, bottom lane -->
+    <svg class="car-svg lane-bottom left car-4" width="82" height="34" viewBox="0 0 82 34">
+      <rect x="5" y="6" width="72" height="20" rx="4" fill="#e2e8f0"/>
+      <rect x="8" y="2" width="26" height="14" rx="3" fill="#f1f5f9"/>
+      <rect x="11" y="4" width="9" height="8" rx="2" fill="rgba(100,180,255,.35)"/>
+      <rect x="23" y="4" width="9" height="8" rx="2" fill="rgba(100,180,255,.35)"/>
+      <circle cx="20" cy="29" r="5.5" fill="#1e293b"/><circle cx="20" cy="29" r="3.5" fill="#475569"/>
+      <circle cx="62" cy="29" r="5.5" fill="#1e293b"/><circle cx="62" cy="29" r="3.5" fill="#475569"/>
+      <rect x="72" y="13" width="6" height="3" rx="1" fill="#fbbf24" opacity=".7"/>
+    </svg>
+  </div>
 </div>
 
 <div class="container">
 
-  <!-- INSTELLINGEN -->
-  <div class="section-title">Instellingen</div>
+  <!-- ═══ INSTELLINGEN ═══ -->
+  <div class="section-label">Instellingen</div>
   <div class="card">
     <div class="form-row">
       <div class="form-group">
@@ -384,118 +550,125 @@
         <input type="number" id="totalKm" min="0" step="1" placeholder="bijv. 24500" oninput="saveSettings(); render()">
       </div>
       <div class="form-group" style="justify-content:flex-end">
-        <button class="btn btn-secondary btn-sm" onclick="clearAll()">Alles wissen</button>
+        <button class="btn btn-ghost btn-sm" onclick="clearAll()">Alles wissen</button>
       </div>
     </div>
   </div>
 
-  <!-- DASHBOARD -->
-  <div class="section-title">Dashboard</div>
+  <!-- ═══ DASHBOARD ═══ -->
+  <div class="section-label">Dashboard</div>
 
-  <!-- HERO: OVER/ONDER BUDGET -->
-  <div class="hero-card idle" id="heroCard">
-    <div class="hero-left">
-      <div class="hero-eyebrow" id="heroEyebrow">Privé km t.o.v. budget t/m vandaag</div>
-      <div class="hero-value" id="heroValue">—<small>km</small></div>
+  <!-- HERO -->
+  <div class="hero idle" id="heroCard">
+    <div>
+      <div class="hero-eyebrow" id="heroEyebrow">Prive km t.o.v. budget t/m vandaag</div>
+      <div class="hero-number" id="heroValue">—<span class="unit">km</span></div>
       <div class="hero-desc" id="heroDesc">Vul km-stand en leasedatum in om te beginnen</div>
     </div>
-    <div class="hero-right">
-      <div class="hero-badge" id="heroBadge">🚦</div>
+    <div class="hero-icon" id="heroIcon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
+      </svg>
     </div>
   </div>
 
-  <!-- SECONDARY STATS ROW 1 -->
-  <div class="stat-grid-4">
-    <div class="stat-card c-blue">
-      <div class="stat-label">Verstreken dagen</div>
-      <div class="stat-value" id="statDays">—</div>
+  <!-- STATS ROW 1 -->
+  <div class="stats-row four">
+    <div class="stat">
+      <div class="indicator blue"></div>
+      <div class="stat-lbl">Verstreken dagen</div>
+      <div class="stat-val" id="statDays">—</div>
       <div class="stat-sub" id="statDaysSub">stel leasedatum in</div>
     </div>
-    <div class="stat-card" id="statBudgetCard">
-      <div class="stat-label">Privé budget t/m vandaag</div>
-      <div class="stat-value" id="statBudget">—</div>
+    <div class="stat" id="statBudgetCard">
+      <div class="indicator blue"></div>
+      <div class="stat-lbl">Prive budget t/m vandaag</div>
+      <div class="stat-val" id="statBudget">—</div>
       <div class="stat-sub">km toegestaan (41/dag)</div>
     </div>
-    <div class="stat-card c-blue">
-      <div class="stat-label">Zakelijke km geregistreerd</div>
-      <div class="stat-value" id="statBusiness">0</div>
+    <div class="stat">
+      <div class="indicator blue"></div>
+      <div class="stat-lbl">Zakelijke km geregistreerd</div>
+      <div class="stat-val" id="statBusiness">0</div>
       <div class="stat-sub" id="statBusinessSub">0 ritten</div>
     </div>
-    <div class="stat-card" id="statPrivateCard">
-      <div class="stat-label">Werkelijk privé km</div>
-      <div class="stat-value" id="statPrivate">—</div>
-      <div class="stat-sub" id="statPrivateSub">totaal km − zakelijk</div>
+    <div class="stat" id="statPrivateCard">
+      <div class="indicator"></div>
+      <div class="stat-lbl">Werkelijk prive km</div>
+      <div class="stat-val" id="statPrivate">—</div>
+      <div class="stat-sub" id="statPrivateSub">totaal km - zakelijk</div>
     </div>
   </div>
 
-  <!-- SECONDARY STATS ROW 2 -->
-  <div class="stat-grid-3">
-    <div class="stat-card c-yellow" id="statFiscalCard">
-      <div class="stat-label">Privé km resterend t/m 30 sep</div>
-      <div class="stat-value" id="statFiscal">—</div>
+  <!-- STATS ROW 2 -->
+  <div class="stats-row three">
+    <div class="stat" id="statFiscalCard">
+      <div class="indicator yellow"></div>
+      <div class="stat-lbl">Prive km resterend t/m 30 sep</div>
+      <div class="stat-val" id="statFiscal">—</div>
       <div class="stat-sub" id="statFiscalSub">fiscaal jaar</div>
     </div>
-    <div class="stat-card c-yellow" id="statLeaseRemCard">
-      <div class="stat-label">Privé km resterend t/m einde lease</div>
-      <div class="stat-value" id="statLeaseRem">—</div>
+    <div class="stat" id="statLeaseRemCard">
+      <div class="indicator yellow"></div>
+      <div class="stat-lbl">Prive km resterend t/m einde lease</div>
+      <div class="stat-val" id="statLeaseRem">—</div>
       <div class="stat-sub" id="statLeaseRemSub">einde leasecontract</div>
     </div>
-    <div class="stat-card" id="statRemainCard">
-      <div class="stat-label">Resterende leasedagen</div>
-      <div class="stat-value" id="statRemain">—</div>
+    <div class="stat" id="statRemainCard">
+      <div class="indicator"></div>
+      <div class="stat-lbl">Resterende leasedagen</div>
+      <div class="stat-val" id="statRemain">—</div>
       <div class="stat-sub" id="statRemainSub">stel einddatum in</div>
     </div>
   </div>
 
-  <!-- PROGRESS BAR -->
-  <div class="progress-card" id="progressCard" style="display:none; margin-bottom:0">
-    <div class="progress-label">
-      <span>Werkelijk privé km t.o.v. budget</span>
+  <!-- PROGRESS -->
+  <div class="progress-card" id="progressCard" style="display:none">
+    <div class="progress-head">
+      <span>Werkelijk prive km t.o.v. budget</span>
       <span id="progressLabel"></span>
     </div>
-    <div class="progress-bar">
-      <div class="progress-fill" id="progressFill" style="width:0%"></div>
+    <div class="progress-track">
+      <div class="progress-bar" id="progressFill" style="width:0%"></div>
     </div>
   </div>
 
-  <!-- UPLOAD -->
-  <div class="section-title">Bestand uploaden</div>
+  <!-- ═══ UPLOAD ═══ -->
+  <div class="section-label">Bestand uploaden</div>
   <div class="card">
-    <p style="font-size:13px; color:var(--gray-500); margin-bottom:12px">
-      Upload een CSV- of Excel-bestand met kolommen <strong>Date</strong> en <strong>Distance</strong>.
+    <p style="font-size:13px; color:var(--text-dim); margin-bottom:14px">
+      Upload een CSV- of Excel-bestand met kolommen <strong style="color:var(--text)">Date</strong> en <strong style="color:var(--text)">Distance</strong>.
       Ritten buiten de leaseperiode worden automatisch genegeerd.
     </p>
-    <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()"
+    <div class="upload-zone" id="uploadArea" onclick="document.getElementById('fileInput').click()"
          ondragover="event.preventDefault(); this.classList.add('drag-over')"
          ondragleave="this.classList.remove('drag-over')"
          ondrop="handleDrop(event)">
       <input type="file" id="fileInput" accept=".csv,.xlsx,.xls" onchange="handleFile(this.files[0])">
-      <div class="upload-icon">📂</div>
-      <p>Klik om een bestand te kiezen of sleep het hierheen</p>
-      <small>Ondersteunde formaten: .csv, .xlsx, .xls</small>
+      <div class="icon">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="opacity:.5">
+          <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+        </svg>
+      </div>
+      <p>Klik of sleep een bestand hierheen</p>
+      <small>.csv, .xlsx, .xls</small>
     </div>
-    <div class="upload-preview" id="uploadPreview"></div>
+    <div class="upload-msg" id="uploadPreview"></div>
   </div>
 
-  <!-- RITTENLIJST -->
-  <div class="section-title">
+  <!-- ═══ RITTENLIJST ═══ -->
+  <div class="section-label">
     Rittenlijst
-    <span id="tripCount" style="font-size:11px; font-weight:600; color:var(--gray-400)"></span>
+    <span id="tripCount" style="font-weight:500; color:rgba(255,255,255,.2)"></span>
     <div style="margin-left:auto; display:flex; gap:8px; flex-shrink:0">
-      <button class="btn btn-danger btn-sm" onclick="deleteAllTrips()">Verwijder alle ritten</button>
-      <button class="btn btn-secondary btn-sm" onclick="exportCsv()">&#8659; Download CSV</button>
+      <button class="btn btn-danger-outline btn-sm" onclick="deleteAllTrips()">Verwijder alles</button>
+      <button class="btn btn-ghost btn-sm" onclick="exportCsv()">&#8659; CSV</button>
     </div>
   </div>
-  <div class="card" style="padding:0; overflow:hidden">
+  <div class="card table-card">
     <div class="table-wrap">
       <table>
-        <thead>
-          <tr>
-            <th>Datum</th>
-            <th>Km</th>
-            <th></th>
-          </tr>
-        </thead>
+        <thead><tr><th>Datum</th><th>Km</th><th></th></tr></thead>
         <tbody id="tripTable"></tbody>
       </table>
     </div>
@@ -506,31 +679,22 @@
 <div class="toast" id="toast"></div>
 
 <script>
-const STORAGE_KEY    = 'km_tracker_v2';
-const DAILY_PRIVATE  = 41;
+const STORAGE_KEY   = 'km_tracker_v2';
+const DAILY_PRIVATE = 41;
 
-// ── Storage ───────────────────────────────────────────────────────
-function load() {
-  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch { return {}; }
-}
-function save(data) { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
-
+function load() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch { return {}; } }
+function save(d) { localStorage.setItem(STORAGE_KEY, JSON.stringify(d)); }
 function getData() {
   const d = load();
-  return {
-    settings: d.settings || { leaseStart: '', leaseEnd: '', totalKm: '' },
-    trips: d.trips || []
-  };
+  return { settings: d.settings || { leaseStart:'', leaseEnd:'', totalKm:'' }, trips: d.trips || [] };
 }
 
-// ── Settings ──────────────────────────────────────────────────────
 function loadSettings() {
   const { settings } = getData();
   document.getElementById('leaseStart').value = settings.leaseStart || '';
   document.getElementById('leaseEnd').value   = settings.leaseEnd   || '';
   document.getElementById('totalKm').value    = settings.totalKm    || '';
 }
-
 function saveSettings() {
   const d = getData();
   d.settings = {
@@ -541,49 +705,35 @@ function saveSettings() {
   save(d);
 }
 
-// ── Calculations ──────────────────────────────────────────────────
 function calcStats() {
   const { settings, trips } = getData();
   const today = new Date(); today.setHours(0,0,0,0);
-
   const s = {
-    elapsedDays:           null,
-    totalLeaseDays:        null,
-    remainDays:            null,
-    privateBudget:         null,
-    businessKm:            0,
-    totalKm:               null,
-    actualPrivate:         null,
-    privateVsBudget:       null,  // budget - actual (positive = under budget)
-    privateRatio:          null,
-    privateRemainingFiscal: null,
-    privateRemainingLease:  null,
-    daysToFiscalEnd:       null,
-    fiscalEndDisplay:      null
+    elapsedDays:null, totalLeaseDays:null, remainDays:null,
+    privateBudget:null, businessKm:0, totalKm:null,
+    actualPrivate:null, privateVsBudget:null, privateRatio:null,
+    privateRemainingFiscal:null, privateRemainingLease:null,
+    daysToFiscalEnd:null, fiscalEndDisplay:null
   };
 
   s.businessKm = trips.reduce((sum, t) => sum + (parseFloat(t.km) || 0), 0);
-
-  const rawTotal = parseFloat(settings.totalKm);
-  if (!isNaN(rawTotal) && settings.totalKm !== '') s.totalKm = rawTotal;
+  const raw = parseFloat(settings.totalKm);
+  if (!isNaN(raw) && settings.totalKm !== '') s.totalKm = raw;
 
   if (settings.leaseStart) {
-    const start = new Date(settings.leaseStart); start.setHours(0,0,0,0);
-    s.elapsedDays = Math.max(0, Math.floor((today - start) / 86400000) + 1);
+    const st = new Date(settings.leaseStart); st.setHours(0,0,0,0);
+    s.elapsedDays = Math.max(0, Math.floor((today - st) / 86400000) + 1);
   }
   if (settings.leaseEnd) {
-    const end = new Date(settings.leaseEnd); end.setHours(0,0,0,0);
-    s.remainDays = Math.max(0, Math.floor((end - today) / 86400000));
+    const en = new Date(settings.leaseEnd); en.setHours(0,0,0,0);
+    s.remainDays = Math.max(0, Math.floor((en - today) / 86400000));
   }
   if (settings.leaseStart && settings.leaseEnd) {
-    const start = new Date(settings.leaseStart); start.setHours(0,0,0,0);
-    const end   = new Date(settings.leaseEnd);   end.setHours(0,0,0,0);
-    s.totalLeaseDays = Math.max(0, Math.floor((end - start) / 86400000) + 1);
+    const st = new Date(settings.leaseStart); st.setHours(0,0,0,0);
+    const en = new Date(settings.leaseEnd);   en.setHours(0,0,0,0);
+    s.totalLeaseDays = Math.max(0, Math.floor((en - st) / 86400000) + 1);
   }
-
-  if (s.elapsedDays !== null) {
-    s.privateBudget = DAILY_PRIVATE * s.elapsedDays;
-  }
+  if (s.elapsedDays !== null) s.privateBudget = DAILY_PRIVATE * s.elapsedDays;
   if (s.totalKm !== null) {
     s.actualPrivate = s.totalKm - s.businessKm;
     if (s.privateBudget !== null) {
@@ -591,414 +741,205 @@ function calcStats() {
       if (s.privateBudget > 0) s.privateRatio = (s.actualPrivate / s.privateBudget) * 100;
     }
   }
-
-  // Fiscal year end: 30 sep of current year, or next year if already past
-  const fiscalEnd = new Date(today.getFullYear(), 8, 30); // Sep = month 8
-  if (fiscalEnd < today) fiscalEnd.setFullYear(fiscalEnd.getFullYear() + 1);
-  // Cap at lease end if earlier
-  if (settings.leaseEnd) {
-    const leaseEndDate = new Date(settings.leaseEnd); leaseEndDate.setHours(0,0,0,0);
-    if (leaseEndDate < fiscalEnd) fiscalEnd.setTime(leaseEndDate.getTime());
-  }
-  s.daysToFiscalEnd  = Math.max(0, Math.floor((fiscalEnd - today) / 86400000));
-  s.fiscalEndDisplay = formatDateDisplay(fiscalEnd.toISOString().slice(0, 10));
-
+  const fe = new Date(today.getFullYear(), 8, 30);
+  if (fe < today) fe.setFullYear(fe.getFullYear() + 1);
+  if (settings.leaseEnd) { const le = new Date(settings.leaseEnd); le.setHours(0,0,0,0); if (le < fe) fe.setTime(le.getTime()); }
+  s.daysToFiscalEnd  = Math.max(0, Math.floor((fe - today) / 86400000));
+  s.fiscalEndDisplay = fmtDate(fe.toISOString().slice(0,10));
   if (s.privateVsBudget !== null) {
     s.privateRemainingFiscal = DAILY_PRIVATE * s.daysToFiscalEnd + s.privateVsBudget;
-    if (s.remainDays !== null) {
-      s.privateRemainingLease = DAILY_PRIVATE * s.remainDays + s.privateVsBudget;
-    }
+    if (s.remainDays !== null) s.privateRemainingLease = DAILY_PRIVATE * s.remainDays + s.privateVsBudget;
   }
-
   return s;
 }
 
-// ── Render ────────────────────────────────────────────────────────
-function render() {
-  renderHeader();
-  renderStats();
-  renderTable();
-}
+function render() { renderHeader(); renderStats(); renderTable(); }
 
 function renderHeader() {
-  const opts = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-  document.getElementById('headerDate').textContent = new Date().toLocaleDateString('nl-NL', opts);
+  document.getElementById('headerDate').textContent = new Date().toLocaleDateString('nl-NL', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
 }
-
-function fmt(n, abs) {
-  if (n === null || n === undefined || isNaN(n)) return '—';
-  const v = abs ? Math.abs(n) : n;
-  return Math.round(v).toLocaleString('nl-NL');
-}
+function fmt(n, abs) { if (n===null||n===undefined||isNaN(n)) return '—'; return Math.round(abs?Math.abs(n):n).toLocaleString('nl-NL'); }
+function fmtDate(iso) { if (!iso) return '—'; const [y,m,d] = iso.split('-'); return `${d}-${m}-${y}`; }
 
 function renderStats() {
   const s = calcStats();
 
-  // ── Hero card ──
-  const hero      = document.getElementById('heroCard');
-  const heroVal   = document.getElementById('heroValue');
-  const heroDesc  = document.getElementById('heroDesc');
-  const heroBadge = document.getElementById('heroBadge');
+  // Hero
+  const hero = document.getElementById('heroCard');
+  const hVal = document.getElementById('heroValue');
+  const hDesc = document.getElementById('heroDesc');
+  const hIcon = document.getElementById('heroIcon');
   if (s.privateVsBudget !== null) {
-    const absDiff = Math.abs(Math.round(s.privateVsBudget));
-    heroVal.innerHTML = `${absDiff.toLocaleString('nl-NL')}<small> km</small>`;
+    const abs = Math.abs(Math.round(s.privateVsBudget));
+    hVal.innerHTML = `${abs.toLocaleString('nl-NL')}<span class="unit">km</span>`;
     if (s.privateVsBudget >= 0) {
-      hero.className      = 'hero-card ok';
-      heroDesc.textContent = `ONDER budget — je hebt nog ${absDiff.toLocaleString('nl-NL')} km ruimte`;
-      heroBadge.textContent = '✅';
+      hero.className = 'hero ok';
+      hDesc.textContent = `ONDER budget — nog ${abs.toLocaleString('nl-NL')} km ruimte`;
+      hIcon.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>';
     } else {
-      hero.className      = 'hero-card over';
-      heroDesc.textContent = `BOVEN budget — je hebt ${absDiff.toLocaleString('nl-NL')} km te veel privé gereden`;
-      heroBadge.textContent = '⚠️';
+      hero.className = 'hero over';
+      hDesc.textContent = `BOVEN budget — ${abs.toLocaleString('nl-NL')} km te veel prive gereden`;
+      hIcon.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>';
     }
   } else {
-    hero.className      = 'hero-card idle';
-    heroVal.innerHTML   = '—<small> km</small>';
-    heroDesc.textContent = 'Vul km-stand en leasedatum in om te beginnen';
-    heroBadge.textContent = '🚦';
+    hero.className = 'hero idle';
+    hVal.innerHTML = '—<span class="unit">km</span>';
+    hDesc.textContent = 'Vul km-stand en leasedatum in om te beginnen';
+    hIcon.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>';
   }
 
-  // ── Verstreken dagen ──
+  // Days
   document.getElementById('statDays').textContent = s.elapsedDays !== null ? fmt(s.elapsedDays) : '—';
-  document.getElementById('statDaysSub').textContent = s.totalLeaseDays
-    ? `van ${fmt(s.totalLeaseDays)} leasedagen`
-    : 'stel leasedatum in';
+  document.getElementById('statDaysSub').textContent = s.totalLeaseDays ? `van ${fmt(s.totalLeaseDays)} leasedagen` : 'stel leasedatum in';
 
-  // ── Privé budget ──
-  const budgetCard = document.getElementById('statBudgetCard');
+  // Budget
   document.getElementById('statBudget').textContent = s.privateBudget !== null ? fmt(s.privateBudget) : '—';
-  budgetCard.className = 'stat-card' + (s.privateBudget !== null ? ' c-blue' : '');
 
-  // ── Zakelijk ──
+  // Business
   document.getElementById('statBusiness').textContent = fmt(s.businessKm);
   document.getElementById('statBusinessSub').textContent = getData().trips.length + ' ritten';
 
-  // ── Werkelijk privé ──
-  const privCard = document.getElementById('statPrivateCard');
-  const privVal  = document.getElementById('statPrivate');
-  const privSub  = document.getElementById('statPrivateSub');
+  // Actual private
+  const pc = document.getElementById('statPrivateCard');
+  const pv = document.getElementById('statPrivate');
+  const ps = document.getElementById('statPrivateSub');
+  const pi = pc.querySelector('.indicator');
   if (s.actualPrivate !== null) {
-    privVal.textContent = fmt(s.actualPrivate);
+    pv.textContent = fmt(s.actualPrivate);
     if (s.privateVsBudget !== null) {
-      if (s.privateVsBudget >= 0) {
-        privCard.className = 'stat-card c-green';
-        privVal.className  = 'stat-value green';
-        privSub.textContent = `${fmt(s.privateVsBudget)} km onder budget`;
-      } else {
-        privCard.className = 'stat-card c-red';
-        privVal.className  = 'stat-value red';
-        privSub.textContent = `${fmt(s.privateVsBudget, true)} km boven budget`;
-      }
-    } else {
-      privCard.className = 'stat-card';
-      privVal.className  = 'stat-value';
-      privSub.textContent = 'totaal km − zakelijk';
-    }
-  } else {
-    privCard.className = 'stat-card';
-    privVal.className  = 'stat-value';
-    privVal.textContent = '—';
-    privSub.textContent = s.totalKm === null ? 'vul km-stand in' : 'totaal km − zakelijk';
-  }
+      if (s.privateVsBudget >= 0) { pi.className='indicator green'; pv.className='stat-val green'; ps.textContent=`${fmt(s.privateVsBudget)} km onder budget`; }
+      else { pi.className='indicator red'; pv.className='stat-val red'; ps.textContent=`${fmt(s.privateVsBudget,true)} km boven budget`; }
+    } else { pi.className='indicator'; pv.className='stat-val'; ps.textContent='totaal km - zakelijk'; }
+  } else { pi.className='indicator'; pv.className='stat-val'; pv.textContent='—'; ps.textContent=s.totalKm===null?'vul km-stand in':'totaal km - zakelijk'; }
 
-  // ── Privé km resterend t/m 30 sep ──
-  const fiscCard = document.getElementById('statFiscalCard');
-  const fiscVal  = document.getElementById('statFiscal');
-  const fiscSub  = document.getElementById('statFiscalSub');
+  // Fiscal
+  const fc = document.getElementById('statFiscalCard'); const fv = document.getElementById('statFiscal'); const fs = document.getElementById('statFiscalSub'); const fi = fc.querySelector('.indicator');
   if (s.privateRemainingFiscal !== null) {
-    fiscVal.textContent = fmt(s.privateRemainingFiscal, true);
-    if (s.privateRemainingFiscal >= 0) {
-      fiscCard.className = 'stat-card c-yellow';
-      fiscVal.className  = 'stat-value';
-      fiscSub.textContent = `beschikbaar t/m ${s.fiscalEndDisplay}`;
-    } else {
-      fiscCard.className = 'stat-card c-red';
-      fiscVal.className  = 'stat-value red';
-      fiscSub.textContent = `km tekort t/m ${s.fiscalEndDisplay}`;
-    }
-  } else {
-    fiscVal.textContent = '—';
-    fiscVal.className   = 'stat-value';
-    fiscSub.textContent = s.fiscalEndDisplay ? `t/m ${s.fiscalEndDisplay}` : 'fiscaal jaar';
-  }
+    fv.textContent = fmt(s.privateRemainingFiscal, true);
+    if (s.privateRemainingFiscal >= 0) { fi.className='indicator yellow'; fv.className='stat-val'; fs.textContent=`beschikbaar t/m ${s.fiscalEndDisplay}`; }
+    else { fi.className='indicator red'; fv.className='stat-val red'; fs.textContent=`km tekort t/m ${s.fiscalEndDisplay}`; }
+  } else { fv.textContent='—'; fv.className='stat-val'; fs.textContent=s.fiscalEndDisplay?`t/m ${s.fiscalEndDisplay}`:'fiscaal jaar'; }
 
-  // ── Privé km resterend t/m einde lease ──
-  const leaseRemCard = document.getElementById('statLeaseRemCard');
-  const leaseRemVal  = document.getElementById('statLeaseRem');
-  const leaseRemSub  = document.getElementById('statLeaseRemSub');
+  // Lease remaining
+  const lc = document.getElementById('statLeaseRemCard'); const lv = document.getElementById('statLeaseRem'); const ls = document.getElementById('statLeaseRemSub'); const li = lc.querySelector('.indicator');
   if (s.privateRemainingLease !== null) {
-    leaseRemVal.textContent = fmt(s.privateRemainingLease, true);
-    if (s.privateRemainingLease >= 0) {
-      leaseRemCard.className = 'stat-card c-yellow';
-      leaseRemVal.className  = 'stat-value';
-      leaseRemSub.textContent = `beschikbaar t/m einde lease`;
-    } else {
-      leaseRemCard.className = 'stat-card c-red';
-      leaseRemVal.className  = 'stat-value red';
-      leaseRemSub.textContent = `km tekort t/m einde lease`;
-    }
-  } else {
-    leaseRemVal.textContent = '—';
-    leaseRemVal.className   = 'stat-value';
-    leaseRemSub.textContent = 'stel einddatum in';
-  }
+    lv.textContent = fmt(s.privateRemainingLease, true);
+    if (s.privateRemainingLease >= 0) { li.className='indicator yellow'; lv.className='stat-val'; ls.textContent='beschikbaar t/m einde lease'; }
+    else { li.className='indicator red'; lv.className='stat-val red'; ls.textContent='km tekort t/m einde lease'; }
+  } else { lv.textContent='—'; lv.className='stat-val'; ls.textContent='stel einddatum in'; }
 
-  // ── Resterende leasedagen ──
-  const remCard = document.getElementById('statRemainCard');
-  const remVal  = document.getElementById('statRemain');
-  const remSub  = document.getElementById('statRemainSub');
+  // Remain days
+  const rc = document.getElementById('statRemainCard'); const rv = document.getElementById('statRemain'); const rs = document.getElementById('statRemainSub'); const ri = rc.querySelector('.indicator');
   if (s.remainDays !== null) {
-    remVal.textContent = fmt(s.remainDays);
-    if (s.remainDays < 30)      { remCard.className = 'stat-card c-red';   remSub.textContent = 'bijna afgelopen!'; }
-    else if (s.remainDays < 90) { remCard.className = 'stat-card c-amber'; remSub.textContent = 'minder dan 3 maanden'; }
-    else                        { remCard.className = 'stat-card';         remSub.textContent = 'tot einde lease'; }
-  } else {
-    remCard.className   = 'stat-card';
-    remVal.textContent  = '—';
-    remSub.textContent  = 'stel einddatum in';
-  }
+    rv.textContent = fmt(s.remainDays);
+    if (s.remainDays < 30) { ri.className='indicator red'; rs.textContent='bijna afgelopen!'; }
+    else if (s.remainDays < 90) { ri.className='indicator amber'; rs.textContent='minder dan 3 maanden'; }
+    else { ri.className='indicator'; rs.textContent='tot einde lease'; }
+  } else { ri.className='indicator'; rv.textContent='—'; rs.textContent='stel einddatum in'; }
 
-  // ── Progress bar ──
-  const progressCard = document.getElementById('progressCard');
+  // Progress
+  const prog = document.getElementById('progressCard');
   if (s.privateRatio !== null) {
-    progressCard.style.display = 'block';
-    const pct  = Math.min(s.privateRatio, 100);
+    prog.style.display = 'block';
+    const pct = Math.min(s.privateRatio, 100);
     const fill = document.getElementById('progressFill');
     fill.style.width = pct + '%';
-    fill.className = 'progress-fill' + (s.privateRatio >= 100 ? ' danger' : s.privateRatio >= 80 ? ' warning' : '');
-    document.getElementById('progressLabel').textContent =
-      fmt(s.actualPrivate) + ' / ' + fmt(s.privateBudget) + ' km (' + Math.round(s.privateRatio) + '%)';
-  } else {
-    progressCard.style.display = 'none';
-  }
+    fill.className = 'progress-bar' + (s.privateRatio >= 100 ? ' danger' : s.privateRatio >= 80 ? ' warning' : '');
+    document.getElementById('progressLabel').textContent = fmt(s.actualPrivate)+' / '+fmt(s.privateBudget)+' km ('+Math.round(s.privateRatio)+'%)';
+  } else { prog.style.display = 'none'; }
 }
 
 function renderTable() {
   const { trips } = getData();
   document.getElementById('tripCount').textContent = trips.length ? `(${trips.length})` : '';
-  const tbody = document.getElementById('tripTable');
-
-  if (!trips.length) {
-    tbody.innerHTML = '<tr><td colspan="3" class="empty-state">Nog geen ritten geregistreerd</td></tr>';
-    return;
-  }
-
-  const sorted = [...trips].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
-  tbody.innerHTML = sorted.map(t => `
-    <tr>
-      <td>${formatDateDisplay(t.date)}</td>
-      <td class="km">${parseFloat(t.km).toLocaleString('nl-NL', {minimumFractionDigits: 0, maximumFractionDigits: 1})} km</td>
-      <td style="text-align:right"><button class="btn btn-danger btn-sm" onclick="deleteTrip('${t.id}')">Verwijder</button></td>
-    </tr>
-  `).join('');
+  const tb = document.getElementById('tripTable');
+  if (!trips.length) { tb.innerHTML = '<tr><td colspan="3" class="empty-row">Nog geen ritten geregistreerd</td></tr>'; return; }
+  const sorted = [...trips].sort((a,b) => (b.date||'').localeCompare(a.date||''));
+  tb.innerHTML = sorted.map(t => `<tr>
+    <td>${fmtDate(t.date)}</td>
+    <td class="km">${parseFloat(t.km).toLocaleString('nl-NL',{minimumFractionDigits:0,maximumFractionDigits:1})} km</td>
+    <td style="text-align:right"><button class="btn btn-danger-outline btn-sm" onclick="deleteTrip('${t.id}')">Verwijder</button></td>
+  </tr>`).join('');
 }
 
-function formatDateDisplay(iso) {
-  if (!iso) return '—';
-  const [y, m, d] = iso.split('-');
-  return `${d}-${m}-${y}`;
-}
-
-// ── Trip management ───────────────────────────────────────────────
-function deleteTrip(id) {
-  const d = getData();
-  d.trips = d.trips.filter(t => t.id !== id);
-  save(d);
-  render();
-  showToast('Rit verwijderd.', 'info');
-}
-
+function deleteTrip(id) { const d=getData(); d.trips=d.trips.filter(t=>t.id!==id); save(d); render(); showToast('Rit verwijderd.','info'); }
 function deleteAllTrips() {
-  const { trips } = getData();
-  if (!trips.length) { showToast('Geen ritten om te verwijderen.', 'error'); return; }
-  if (!confirm(`Weet je zeker dat je alle ${trips.length} ritten wilt verwijderen?`)) return;
-  const d = getData();
-  d.trips = [];
-  save(d);
-  render();
-  showToast('Alle ritten verwijderd.', 'info');
+  const{trips}=getData(); if(!trips.length){showToast('Geen ritten.','error');return;}
+  if(!confirm(`Alle ${trips.length} ritten verwijderen?`))return;
+  const d=getData(); d.trips=[]; save(d); render(); showToast('Alle ritten verwijderd.','info');
 }
-
 function clearAll() {
-  if (!confirm('Weet je zeker dat je alle ritten én instellingen wilt wissen?')) return;
-  localStorage.removeItem(STORAGE_KEY);
-  loadSettings();
-  render();
-  showToast('Alles gewist.', 'info');
+  if(!confirm('Alles wissen (ritten + instellingen)?'))return;
+  localStorage.removeItem(STORAGE_KEY); loadSettings(); render(); showToast('Alles gewist.','info');
 }
 
-// ── File upload ───────────────────────────────────────────────────
-function handleDrop(e) {
-  e.preventDefault();
-  document.getElementById('uploadArea').classList.remove('drag-over');
-  const file = e.dataTransfer.files[0];
-  if (file) handleFile(file);
-}
-
+function handleDrop(e) { e.preventDefault(); document.getElementById('uploadArea').classList.remove('drag-over'); if(e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]); }
 function handleFile(file) {
-  if (!file) return;
+  if(!file) return;
   const ext = file.name.split('.').pop().toLowerCase();
-  if (ext === 'csv') {
-    const reader = new FileReader();
-    reader.onload = e => parseCsv(e.target.result);
-    reader.readAsText(file, 'UTF-8');
-  } else if (ext === 'xlsx' || ext === 'xls') {
-    const reader = new FileReader();
-    reader.onload = e => parseExcel(e.target.result);
-    reader.readAsArrayBuffer(file);
-  } else {
-    showUploadMsg('Niet-ondersteund bestandstype. Gebruik .csv, .xlsx of .xls.', 'error');
-  }
+  if (ext==='csv') { const r=new FileReader(); r.onload=e=>parseCsv(e.target.result); r.readAsText(file,'UTF-8'); }
+  else if (ext==='xlsx'||ext==='xls') { const r=new FileReader(); r.onload=e=>parseExcel(e.target.result); r.readAsArrayBuffer(file); }
+  else { showUploadMsg('Niet-ondersteund type. Gebruik .csv, .xlsx of .xls.','error'); }
   document.getElementById('fileInput').value = '';
 }
-
 function parseCsv(text) {
-  const sep   = text.indexOf(';') !== -1 ? ';' : ',';
-  const lines = text.split(/\r?\n/).filter(l => l.trim());
-  if (lines.length < 2) { showUploadMsg('Bestand is leeg of heeft geen dataregels.', 'error'); return; }
-
-  const headers = lines[0].split(sep).map(h => h.trim().toLowerCase().replace(/['"]/g, ''));
-  const rows = lines.slice(1).map(l => {
-    const cells = l.split(sep).map(c => c.trim().replace(/^["']|["']$/g, ''));
-    return headers.reduce((obj, h, i) => { obj[h] = cells[i] || ''; return obj; }, {});
+  const sep = text.indexOf(';')!==-1?';':',';
+  const lines = text.split(/\r?\n/).filter(l=>l.trim());
+  if(lines.length<2){showUploadMsg('Bestand leeg.','error');return;}
+  const hdr = lines[0].split(sep).map(h=>h.trim().toLowerCase().replace(/['"]/g,''));
+  const rows = lines.slice(1).map(l=>{const c=l.split(sep).map(x=>x.trim().replace(/^["']|["']$/g,''));return hdr.reduce((o,h,i)=>{o[h]=c[i]||'';return o;},{});});
+  importRows(rows,hdr);
+}
+function parseExcel(buf) {
+  try{const wb=XLSX.read(buf,{type:'array'});const ws=wb.Sheets[wb.SheetNames[0]];const rows=XLSX.utils.sheet_to_json(ws,{raw:false,defval:''});const hdr=rows.length?Object.keys(rows[0]).map(k=>k.toLowerCase()):[];const norm=rows.map(r=>{const o={};Object.entries(r).forEach(([k,v])=>{o[k.toLowerCase()]=v;});return o;});importRows(norm,hdr);}
+  catch(e){showUploadMsg('Kan niet lezen: '+e.message,'error');}
+}
+function findCol(hdr,cands){for(const c of cands){const m=hdr.find(h=>h===c||h.includes(c));if(m)return m;}return null;}
+function importRows(rows,hdr) {
+  const dc=findCol(hdr,['date','datum','dag']), kc=findCol(hdr,['distance','km','kilometers','afstand','kilometer']);
+  if(!dc||!kc){showUploadMsg(`Kolommen niet herkend (${hdr.join(', ')}). Verwacht: "Date" en "Distance".`,'error');return;}
+  const d=getData(),{leaseStart,leaseEnd}=d.settings;
+  let added=0,skip=0,oor=0;
+  rows.forEach(row=>{
+    const rd=row[dc],rk=row[kc]; if(!rd||!rk){skip++;return;}
+    const iso=parseDate(rd),km=parseFloat(String(rk).replace(',','.'));
+    if(!iso||isNaN(km)||km<=0){skip++;return;}
+    if(leaseStart&&iso<leaseStart){oor++;return;}
+    if(leaseEnd&&iso>leaseEnd){oor++;return;}
+    d.trips.push({id:genId(),date:iso,km}); added++;
   });
-  importRows(rows, headers);
+  save(d); render();
+  let msg=`${added} rit${added!==1?'ten':''} geimporteerd.`;
+  if(oor) msg+=` ${oor} buiten leaseperiode.`;
+  if(skip) msg+=` ${skip} overgeslagen.`;
+  showUploadMsg(msg,'success');
+  if(added>0) showToast(msg,'success');
 }
-
-function parseExcel(buffer) {
-  try {
-    const wb = XLSX.read(buffer, { type: 'array' });
-    const ws = wb.Sheets[wb.SheetNames[0]];
-    const rows = XLSX.utils.sheet_to_json(ws, { raw: false, defval: '' });
-    const headers = rows.length ? Object.keys(rows[0]).map(k => k.toLowerCase()) : [];
-    const normalised = rows.map(r => {
-      const obj = {};
-      Object.entries(r).forEach(([k, v]) => { obj[k.toLowerCase()] = v; });
-      return obj;
-    });
-    importRows(normalised, headers);
-  } catch (err) {
-    showUploadMsg('Kan Excel-bestand niet lezen: ' + err.message, 'error');
-  }
-}
-
-function findCol(headers, candidates) {
-  for (const c of candidates) {
-    const m = headers.find(h => h === c || h.includes(c));
-    if (m) return m;
-  }
-  return null;
-}
-
-function importRows(rows, headers) {
-  const dateCol = findCol(headers, ['date', 'datum', 'dag']);
-  const kmCol   = findCol(headers, ['distance', 'km', 'kilometers', 'afstand', 'kilometer']);
-
-  if (!dateCol || !kmCol) {
-    showUploadMsg(
-      `Kolommen niet herkend. Gevonden: ${headers.join(', ')}. Verwacht: "Date" en "Distance".`,
-      'error'
-    );
-    return;
-  }
-
-  const d = getData();
-  const { leaseStart, leaseEnd } = d.settings;
-  let added = 0, skipped = 0, outOfRange = 0;
-
-  rows.forEach(row => {
-    const rawDate = row[dateCol];
-    const rawKm   = row[kmCol];
-    if (!rawDate || !rawKm) { skipped++; return; }
-
-    const isoDate = parseDate(rawDate);
-    const km      = parseFloat(String(rawKm).replace(',', '.'));
-
-    if (!isoDate || isNaN(km) || km <= 0) { skipped++; return; }
-
-    // Filter: only within lease period
-    if (leaseStart && isoDate < leaseStart) { outOfRange++; return; }
-    if (leaseEnd   && isoDate > leaseEnd)   { outOfRange++; return; }
-
-    d.trips.push({ id: genId(), date: isoDate, km });
-    added++;
-  });
-
-  save(d);
-  render();
-
-  let msg = `${added} rit${added !== 1 ? 'ten' : ''} geïmporteerd.`;
-  if (outOfRange) msg += ` ${outOfRange} buiten leaseperiode genegeerd.`;
-  if (skipped)    msg += ` ${skipped} overgeslagen (lege/ongeldige rijen).`;
-
-  showUploadMsg(msg, 'success');
-  if (added > 0) showToast(msg, 'success');
-}
-
 function parseDate(raw) {
-  if (!raw) return null;
-  const s = String(raw).trim();
-
-  // ISO YYYY-MM-DD
-  if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
-
-  // DD-MM-YYYY or DD/MM/YYYY
-  const dmy = s.match(/^(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{4})$/);
-  if (dmy) return `${dmy[3]}-${dmy[2].padStart(2,'0')}-${dmy[1].padStart(2,'0')}`;
-
-  // Excel serial
-  const num = parseFloat(s);
-  if (!isNaN(num) && num > 10000 && num < 100000) {
-    const p = XLSX.SSF.parse_date_code(num);
-    if (p) return `${p.y}-${String(p.m).padStart(2,'0')}-${String(p.d).padStart(2,'0')}`;
-  }
-
-  // Native parse fallback
-  const p = new Date(s);
-  if (!isNaN(p)) return p.toISOString().slice(0, 10);
+  if(!raw) return null; const s=String(raw).trim();
+  if(/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+  const dmy=s.match(/^(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{4})$/);
+  if(dmy) return `${dmy[3]}-${dmy[2].padStart(2,'0')}-${dmy[1].padStart(2,'0')}`;
+  const num=parseFloat(s);
+  if(!isNaN(num)&&num>10000&&num<100000){const p=XLSX.SSF.parse_date_code(num);if(p)return `${p.y}-${String(p.m).padStart(2,'0')}-${String(p.d).padStart(2,'0')}`;}
+  const p=new Date(s); if(!isNaN(p)) return p.toISOString().slice(0,10);
   return null;
 }
-
-// ── Export CSV ────────────────────────────────────────────────────
 function exportCsv() {
-  const { trips } = getData();
-  if (!trips.length) { showToast('Geen ritten om te exporteren.', 'error'); return; }
-
-  const sorted = [...trips].sort((a, b) => (a.date || '').localeCompare(b.date || ''));
-  const rows   = [['Date', 'Distance']].concat(sorted.map(t => [t.date, t.km]));
-  const csv    = rows.map(r => r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(',')).join('\r\n');
-  const blob   = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
-  const url    = URL.createObjectURL(blob);
-  const a      = document.createElement('a');
-  a.href = url; a.download = 'kilometer_registratie.csv'; a.click();
-  URL.revokeObjectURL(url);
+  const{trips}=getData(); if(!trips.length){showToast('Geen ritten.','error');return;}
+  const sorted=[...trips].sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+  const rows=[['Date','Distance']].concat(sorted.map(t=>[t.date,t.km]));
+  const csv=rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\r\n');
+  const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});
+  const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='kilometer_registratie.csv';a.click();URL.revokeObjectURL(url);
 }
 
-// ── UI helpers ────────────────────────────────────────────────────
 let toastTimer;
-function showToast(msg, type = 'info') {
-  const el = document.getElementById('toast');
-  el.textContent = msg;
-  el.className   = 'toast ' + type + ' show';
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => el.classList.remove('show'), 3500);
-}
+function showToast(msg,type='info'){const el=document.getElementById('toast');el.textContent=msg;el.className='toast '+type+' show';clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),3500);}
+function showUploadMsg(msg,type='success'){const el=document.getElementById('uploadPreview');el.textContent=msg;el.className='upload-msg '+type;el.style.display='block';}
+function genId(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7);}
 
-function showUploadMsg(msg, type = 'success') {
-  const el = document.getElementById('uploadPreview');
-  el.textContent = msg;
-  el.className   = 'upload-preview' + (type === 'success' ? '' : type === 'warn' ? ' warn' : ' error');
-  el.style.display = 'block';
-}
-
-function genId() {
-  return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
-}
-
-// ── Init ──────────────────────────────────────────────────────────
-loadSettings();
-render();
-setInterval(renderHeader, 60000);
+loadSettings(); render(); setInterval(renderHeader, 60000);
 </script>
 </body>
 </html>
