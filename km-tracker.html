@@ -51,8 +51,6 @@
     overflow: hidden;
     padding: 0;
   }
-
-  /* Sky with stars */
   .scene::before {
     content: '';
     position: absolute;
@@ -89,7 +87,49 @@
   }
   .header-content h1 .highlight { color: var(--road-line); }
   .header-content .subtitle { font-size: 13px; color: var(--text-dim); margin-top: 2px; }
-  .header-date { font-size: 13px; color: var(--text-dim); text-align: right; }
+
+  .header-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+  }
+  .header-date { font-size: 13px; color: var(--text-dim); }
+  .header-actions { display: flex; align-items: center; gap: 8px; }
+
+  /* Language switch */
+  .lang-switch {
+    background: rgba(255,255,255,.07);
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 12px;
+    font-weight: 700;
+    font-family: inherit;
+    color: var(--text-dim);
+    cursor: pointer;
+    transition: all .15s;
+    letter-spacing: .5px;
+  }
+  .lang-switch:hover { background: rgba(255,255,255,.12); color: var(--text-bright); }
+
+  /* Info button */
+  .info-btn {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.07);
+    border: 1px solid rgba(255,255,255,.12);
+    color: var(--text-dim);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all .15s;
+    flex-shrink: 0;
+  }
+  .info-btn:hover { background: var(--accent-glow); border-color: var(--accent); color: var(--accent); }
+  .info-btn svg { width: 15px; height: 15px; }
 
   /* ── Road surface ── */
   .road {
@@ -101,7 +141,6 @@
     border-bottom: 3px solid var(--road-line);
     overflow: hidden;
   }
-  /* Dashed center line */
   .road::before {
     content: '';
     position: absolute;
@@ -114,7 +153,6 @@
     opacity: .5;
     animation: roadScroll 3s linear infinite;
   }
-  /* Shoulder lines */
   .road::after {
     content: '';
     position: absolute;
@@ -137,7 +175,6 @@
   }
   .car-svg.lane-top    { top: 6px;  }
   .car-svg.lane-bottom { top: 44px; }
-  /* Use individual properties so .car-N duration/delay is not overridden by shorthand */
   .car-svg { animation-timing-function: linear; animation-iteration-count: infinite; }
   .car-svg.right { animation-name: driveRight; }
   .car-svg.left  { animation-name: driveLeft; transform: scaleX(-1); }
@@ -183,7 +220,7 @@
   }
 
   /* ═══════════════════════════════════════════════
-     HERO CARD (over/onder budget)
+     HERO CARD
      ═══════════════════════════════════════════════ */
   .hero {
     border-radius: 18px;
@@ -205,74 +242,27 @@
     border: 1px solid rgba(255,255,255,.1);
     pointer-events: none;
   }
-  .hero.ok {
-    background: linear-gradient(135deg, #065f46 0%, #047857 50%, #059669 100%);
-    box-shadow: 0 4px 30px rgba(5,150,105,.3), inset 0 1px 0 rgba(255,255,255,.1);
-  }
-  .hero.over {
-    background: linear-gradient(135deg, #7f1d1d 0%, #b91c1c 50%, #dc2626 100%);
-    box-shadow: 0 4px 30px rgba(220,38,38,.3), inset 0 1px 0 rgba(255,255,255,.1);
-  }
-  .hero.idle {
-    background: var(--bg-card);
-    border: 2px dashed rgba(255,255,255,.12);
-  }
+  .hero.ok   { background: linear-gradient(135deg, #065f46 0%, #047857 50%, #059669 100%); box-shadow: 0 4px 30px rgba(5,150,105,.3), inset 0 1px 0 rgba(255,255,255,.1); }
+  .hero.over { background: linear-gradient(135deg, #7f1d1d 0%, #b91c1c 50%, #dc2626 100%); box-shadow: 0 4px 30px rgba(220,38,38,.3),  inset 0 1px 0 rgba(255,255,255,.1); }
+  .hero.idle { background: var(--bg-card); border: 2px dashed rgba(255,255,255,.12); }
   .hero.idle::before { display: none; }
 
-  .hero-eyebrow {
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    opacity: .7;
-    margin-bottom: 6px;
-  }
-  .hero-number {
-    font-size: 64px;
-    font-weight: 900;
-    line-height: 1;
-    letter-spacing: -3px;
-    text-shadow: 0 2px 12px rgba(0,0,0,.3);
-  }
-  .hero-number .unit {
-    font-size: 24px;
-    font-weight: 600;
-    letter-spacing: 0;
-    margin-left: 4px;
-    opacity: .7;
-  }
-  .hero-desc {
-    font-size: 15px;
-    font-weight: 600;
-    margin-top: 8px;
-    opacity: .85;
-  }
-  .hero-icon {
-    width: 90px;
-    height: 90px;
-    border-radius: 50%;
-    background: rgba(255,255,255,.12);
-    backdrop-filter: blur(8px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-  }
+  .hero-eyebrow { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; opacity: .7; margin-bottom: 6px; }
+  .hero-number  { font-size: 64px; font-weight: 900; line-height: 1; letter-spacing: -3px; text-shadow: 0 2px 12px rgba(0,0,0,.3); }
+  .hero-number .unit { font-size: 24px; font-weight: 600; letter-spacing: 0; margin-left: 4px; opacity: .7; }
+  .hero-desc    { font-size: 15px; font-weight: 600; margin-top: 8px; opacity: .85; }
+  .hero-icon    { width: 90px; height: 90px; border-radius: 50%; background: rgba(255,255,255,.12); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .hero-icon svg { width: 44px; height: 44px; }
 
   /* ═══════════════════════════════════════════════
      GLASS STAT CARDS
      ═══════════════════════════════════════════════ */
-  .stats-row {
-    display: grid;
-    gap: 14px;
-    margin-bottom: 14px;
-  }
-  .stats-row.four { grid-template-columns: repeat(4, 1fr); }
+  .stats-row { display: grid; gap: 14px; margin-bottom: 14px; }
+  .stats-row.four  { grid-template-columns: repeat(4, 1fr); }
   .stats-row.three { grid-template-columns: repeat(3, 1fr); }
-  @media (max-width: 950px) { .stats-row.four { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 950px) { .stats-row.four  { grid-template-columns: 1fr 1fr; } }
   @media (max-width: 700px) { .stats-row.three { grid-template-columns: 1fr; } }
-  @media (max-width: 500px) { .stats-row.four { grid-template-columns: 1fr; } }
+  @media (max-width: 500px) { .stats-row.four  { grid-template-columns: 1fr; } }
 
   .stat {
     background: var(--bg-card);
@@ -285,14 +275,7 @@
     transition: border-color .2s, transform .2s;
   }
   .stat:hover { transform: translateY(-2px); border-color: rgba(255,255,255,.18); }
-  .stat .indicator {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 3px;
-    height: 100%;
-    border-radius: 0 3px 3px 0;
-  }
+  .stat .indicator { position: absolute; top: 0; left: 0; width: 3px; height: 100%; border-radius: 0 3px 3px 0; }
   .stat .indicator.blue   { background: var(--accent); }
   .stat .indicator.green  { background: var(--green); }
   .stat .indicator.red    { background: var(--red); }
@@ -300,20 +283,14 @@
   .stat .indicator.yellow { background: var(--road-line); }
 
   .stat-lbl { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .8px; color: var(--text-dim); margin-bottom: 6px; }
-  .stat-val { font-size: 28px; font-weight: 800; line-height: 1.1; color: var(--text-bright); }
+  .stat-val  { font-size: 28px; font-weight: 800; line-height: 1.1; color: var(--text-bright); }
   .stat-val.green { color: var(--green); }
   .stat-val.red   { color: var(--red); }
   .stat-val.amber { color: var(--amber); }
-  .stat-sub { font-size: 11px; color: var(--text-dim); margin-top: 4px; }
+  .stat-sub  { font-size: 11px; color: var(--text-dim); margin-top: 4px; }
 
   /* ── Progress ── */
-  .progress-card {
-    background: var(--bg-card);
-    border: 1px solid var(--glass-border);
-    border-radius: var(--radius);
-    padding: 18px 22px;
-    margin-bottom: 0;
-  }
+  .progress-card { background: var(--bg-card); border: 1px solid var(--glass-border); border-radius: var(--radius); padding: 18px 22px; margin-bottom: 0; }
   .progress-head { display: flex; justify-content: space-between; font-size: 11px; font-weight: 600; color: var(--text-dim); margin-bottom: 8px; }
   .progress-track { height: 8px; background: rgba(255,255,255,.06); border-radius: 99px; overflow: hidden; }
   .progress-bar   { height: 100%; border-radius: 99px; transition: width .5s cubic-bezier(.4,0,.2,1); background: var(--green); }
@@ -321,26 +298,14 @@
   .progress-bar.danger  { background: var(--red); }
 
   /* ═══════════════════════════════════════════════
-     GLASS CARD (settings, upload, table)
+     GLASS CARD
      ═══════════════════════════════════════════════ */
-  .card {
-    background: var(--bg-card);
-    backdrop-filter: blur(12px);
-    border: 1px solid var(--glass-border);
-    border-radius: var(--radius);
-    padding: 22px 26px;
-  }
+  .card { background: var(--bg-card); backdrop-filter: blur(12px); border: 1px solid var(--glass-border); border-radius: var(--radius); padding: 22px 26px; }
 
   /* ── Forms ── */
-  .form-row { display: flex; gap: 16px; flex-wrap: wrap; align-items: flex-end; }
+  .form-row   { display: flex; gap: 16px; flex-wrap: wrap; align-items: flex-end; }
   .form-group { display: flex; flex-direction: column; gap: 5px; }
-  .form-group label {
-    font-size: 10px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: .8px;
-    color: var(--text-dim);
-  }
+  .form-group label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .8px; color: var(--text-dim); }
   input[type="number"], input[type="date"] {
     background: rgba(255,255,255,.06);
     border: 1px solid rgba(255,255,255,.12);
@@ -352,70 +317,29 @@
     outline: none;
     transition: border-color .2s, box-shadow .2s;
   }
-  input[type="number"]:focus, input[type="date"]:focus {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px var(--accent-glow);
-  }
+  input[type="number"]:focus, input[type="date"]:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
   input[type="number"] { width: 150px; }
   input[type="date"]   { width: 160px; }
-  /* Fix dark date picker icon */
   input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(.7); cursor: pointer; }
 
   /* ── Buttons ── */
-  .btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 9px 18px;
-    border-radius: 8px;
-    font-size: 13px;
-    font-weight: 600;
-    font-family: inherit;
-    cursor: pointer;
-    border: none;
-    transition: all .15s;
-    white-space: nowrap;
-  }
+  .btn { display: inline-flex; align-items: center; gap: 6px; padding: 9px 18px; border-radius: 8px; font-size: 13px; font-weight: 600; font-family: inherit; cursor: pointer; border: none; transition: all .15s; white-space: nowrap; }
   .btn:active { transform: scale(.97); }
-  .btn-ghost {
-    background: rgba(255,255,255,.06);
-    color: var(--text);
-    border: 1px solid rgba(255,255,255,.1);
-  }
+  .btn-ghost { background: rgba(255,255,255,.06); color: var(--text); border: 1px solid rgba(255,255,255,.1); }
   .btn-ghost:hover { background: rgba(255,255,255,.1); }
-  .btn-danger-outline {
-    background: var(--red-dim);
-    color: var(--red);
-    border: 1px solid rgba(239,68,68,.3);
-  }
+  .btn-danger-outline { background: var(--red-dim); color: var(--red); border: 1px solid rgba(239,68,68,.3); }
   .btn-danger-outline:hover { background: rgba(239,68,68,.25); }
   .btn-sm { padding: 6px 12px; font-size: 12px; }
 
   /* ── Upload ── */
-  .upload-zone {
-    border: 2px dashed rgba(255,255,255,.12);
-    border-radius: 12px;
-    padding: 28px;
-    text-align: center;
-    cursor: pointer;
-    transition: border-color .2s, background .2s;
-  }
-  .upload-zone:hover, .upload-zone.drag-over {
-    border-color: var(--accent);
-    background: var(--accent-glow);
-  }
+  .upload-zone { border: 2px dashed rgba(255,255,255,.12); border-radius: 12px; padding: 28px; text-align: center; cursor: pointer; transition: border-color .2s, background .2s; }
+  .upload-zone:hover, .upload-zone.drag-over { border-color: var(--accent); background: var(--accent-glow); }
   .upload-zone input[type="file"] { display: none; }
   .upload-zone .icon { font-size: 32px; margin-bottom: 8px; opacity: .6; }
   .upload-zone p     { font-size: 13px; color: var(--text-dim); }
   .upload-zone small { font-size: 11px; color: rgba(255,255,255,.25); }
 
-  .upload-msg {
-    margin-top: 12px;
-    padding: 10px 16px;
-    border-radius: 8px;
-    font-size: 13px;
-    display: none;
-  }
+  .upload-msg { margin-top: 12px; padding: 10px 16px; border-radius: 8px; font-size: 13px; display: none; }
   .upload-msg.success { background: var(--green-dim); color: var(--green); border: 1px solid rgba(34,197,94,.25); }
   .upload-msg.warn    { background: var(--amber-dim); color: var(--amber); border: 1px solid rgba(245,158,11,.25); }
   .upload-msg.error   { background: var(--red-dim);   color: var(--red);   border: 1px solid rgba(239,68,68,.25); }
@@ -424,17 +348,7 @@
   .table-card { padding: 0; overflow: hidden; }
   .table-wrap { overflow-x: auto; }
   table { width: 100%; border-collapse: collapse; }
-  thead th {
-    text-align: left;
-    padding: 12px 16px;
-    font-size: 10px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: .8px;
-    color: var(--text-dim);
-    border-bottom: 1px solid rgba(255,255,255,.06);
-    background: rgba(255,255,255,.02);
-  }
+  thead th { text-align: left; padding: 12px 16px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .8px; color: var(--text-dim); border-bottom: 1px solid rgba(255,255,255,.06); background: rgba(255,255,255,.02); }
   tbody tr { border-bottom: 1px solid rgba(255,255,255,.04); transition: background .1s; }
   tbody tr:hover { background: rgba(255,255,255,.03); }
   tbody td { padding: 11px 16px; font-size: 13px; color: var(--text-dim); }
@@ -442,37 +356,105 @@
   .empty-row { text-align: center; padding: 40px; color: rgba(255,255,255,.2); font-size: 13px; }
 
   /* ── Toast ── */
-  .toast {
+  .toast { position: fixed; bottom: 28px; right: 28px; padding: 13px 22px; border-radius: 10px; font-size: 13px; font-weight: 600; font-family: inherit; box-shadow: 0 8px 30px rgba(0,0,0,.4); z-index: 9999; transition: opacity .3s, transform .3s; opacity: 0; transform: translateY(12px); pointer-events: none; backdrop-filter: blur(16px); max-width: 400px; }
+  .toast.show    { opacity: 1; transform: translateY(0); }
+  .toast.success { background: rgba(34,197,94,.9);  color: #fff; }
+  .toast.error   { background: rgba(239,68,68,.9);   color: #fff; }
+  .toast.info    { background: rgba(59,130,246,.9);  color: #fff; }
+
+  /* ═══════════════════════════════════════════════
+     INFO MODAL
+     ═══════════════════════════════════════════════ */
+  .modal-overlay {
     position: fixed;
-    bottom: 28px;
-    right: 28px;
-    padding: 13px 22px;
-    border-radius: 10px;
-    font-size: 13px;
-    font-weight: 600;
-    font-family: inherit;
-    box-shadow: 0 8px 30px rgba(0,0,0,.4);
-    z-index: 9999;
-    transition: opacity .3s, transform .3s;
+    inset: 0;
+    background: rgba(0,0,0,.65);
+    backdrop-filter: blur(6px);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
     opacity: 0;
-    transform: translateY(12px);
     pointer-events: none;
-    backdrop-filter: blur(16px);
-    max-width: 400px;
+    transition: opacity .2s;
   }
-  .toast.show { opacity: 1; transform: translateY(0); }
-  .toast.success { background: rgba(34,197,94,.9); color: #fff; }
-  .toast.error   { background: rgba(239,68,68,.9); color: #fff; }
-  .toast.info    { background: rgba(59,130,246,.9); color: #fff; }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+
+  .modal {
+    background: #1a2035;
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 18px;
+    padding: 32px 36px;
+    max-width: 480px;
+    width: 100%;
+    box-shadow: 0 24px 60px rgba(0,0,0,.6);
+    transform: translateY(16px) scale(.97);
+    transition: transform .2s;
+  }
+  .modal-overlay.open .modal { transform: translateY(0) scale(1); }
+
+  .modal-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .modal-header-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: var(--accent-glow);
+    border: 1px solid rgba(59,130,246,.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .modal-header-icon svg { width: 18px; height: 18px; color: var(--accent); }
+  .modal-title { font-size: 17px; font-weight: 800; color: var(--text-bright); }
+  .modal-subtitle { font-size: 12px; color: var(--text-dim); margin-top: 1px; }
+
+  .modal-steps { list-style: none; display: flex; flex-direction: column; gap: 14px; margin-bottom: 28px; }
+  .modal-steps li {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.55;
+  }
+  .modal-steps li strong { color: var(--text-bright); }
+  .step-num {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--accent-glow);
+    border: 1px solid rgba(59,130,246,.35);
+    color: var(--accent);
+    font-size: 11px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .modal-footer { display: flex; justify-content: flex-end; }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { background: #2563eb; }
 
   /* ── Responsive ── */
   @media (max-width: 768px) {
     .header-content { flex-direction: column; gap: 8px; padding: 20px 20px 16px; }
-    .container { padding: 20px 14px 60px; }
+    .header-right   { align-items: flex-start; }
+    .container      { padding: 20px 14px 60px; }
     .hero { padding: 24px; flex-direction: column; text-align: center; }
     .hero-number { font-size: 48px; }
     .hero-icon { width: 64px; height: 64px; }
     .hero-icon svg { width: 32px; height: 32px; }
+    .modal { padding: 24px 20px; }
   }
 </style>
 </head>
@@ -482,13 +464,24 @@
 <div class="scene">
   <div class="header-content">
     <div>
-      <h1>Km <span class="highlight">Registratie</span></h1>
-      <div class="subtitle">Zakelijke en prive kilometer administratie</div>
+      <h1 id="headerTitle">Km <span class="highlight">Registratie</span></h1>
+      <div class="subtitle" id="headerSubtitle">Zakelijke en privé kilometer administratie</div>
     </div>
-    <div class="header-date" id="headerDate"></div>
+    <div class="header-right">
+      <div class="header-date" id="headerDate"></div>
+      <div class="header-actions">
+        <button class="lang-switch" id="langSwitch" onclick="toggleLang()">EN</button>
+        <button class="info-btn" onclick="openInfo()" id="infoBtnTitle" title="Hoe werkt het?">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="16" x2="12" y2="12"/>
+            <line x1="12" y1="8" x2="12.01" y2="8"/>
+          </svg>
+        </button>
+      </div>
+    </div>
   </div>
   <div class="road">
-    <!-- Car 1: blue sedan going right, top lane -->
     <svg class="car-svg lane-top right car-1" width="70" height="30" viewBox="0 0 70 30">
       <rect x="5" y="10" width="60" height="14" rx="5" fill="#3b82f6"/>
       <rect x="15" y="3" width="30" height="12" rx="4" fill="#60a5fa"/>
@@ -497,9 +490,8 @@
       <circle cx="17" cy="26" r="5" fill="#1e293b"/><circle cx="17" cy="26" r="3" fill="#475569"/>
       <circle cx="53" cy="26" r="5" fill="#1e293b"/><circle cx="53" cy="26" r="3" fill="#475569"/>
       <rect x="60" y="14" width="6" height="3" rx="1" fill="#fbbf24" opacity=".8"/>
-      <rect x="4" y="14" width="5" height="3" rx="1" fill="#ef4444" opacity=".8"/>
+      <rect x="4"  y="14" width="5" height="3" rx="1" fill="#ef4444" opacity=".8"/>
     </svg>
-    <!-- Car 2: red SUV going left, bottom lane -->
     <svg class="car-svg lane-bottom left car-2" width="76" height="32" viewBox="0 0 76 32">
       <rect x="5" y="10" width="66" height="16" rx="5" fill="#dc2626"/>
       <rect x="16" y="2" width="36" height="14" rx="5" fill="#ef4444"/>
@@ -508,9 +500,8 @@
       <circle cx="18" cy="28" r="5.5" fill="#1e293b"/><circle cx="18" cy="28" r="3.5" fill="#475569"/>
       <circle cx="58" cy="28" r="5.5" fill="#1e293b"/><circle cx="58" cy="28" r="3.5" fill="#475569"/>
       <rect x="66" y="15" width="6" height="3" rx="1" fill="#fbbf24" opacity=".8"/>
-      <rect x="4" y="15" width="5" height="3" rx="1" fill="#ef4444" opacity=".6"/>
+      <rect x="4"  y="15" width="5" height="3" rx="1" fill="#ef4444" opacity=".6"/>
     </svg>
-    <!-- Car 3: green compact going right, top lane -->
     <svg class="car-svg lane-top right car-3" width="60" height="26" viewBox="0 0 60 26">
       <rect x="4" y="9" width="52" height="12" rx="4" fill="#22c55e"/>
       <rect x="14" y="3" width="24" height="10" rx="3" fill="#4ade80"/>
@@ -520,7 +511,6 @@
       <circle cx="46" cy="23" r="4.5" fill="#1e293b"/><circle cx="46" cy="23" r="2.5" fill="#475569"/>
       <rect x="52" y="12" width="5" height="2.5" rx="1" fill="#fbbf24" opacity=".8"/>
     </svg>
-    <!-- Car 4: white van going left, bottom lane -->
     <svg class="car-svg lane-bottom left car-4" width="82" height="34" viewBox="0 0 82 34">
       <rect x="5" y="6" width="72" height="20" rx="4" fill="#e2e8f0"/>
       <rect x="8" y="2" width="26" height="14" rx="3" fill="#f1f5f9"/>
@@ -533,37 +523,58 @@
   </div>
 </div>
 
+<!-- ═══ INFO MODAL ═══ -->
+<div class="modal-overlay" id="infoModal" onclick="closeInfoOnBg(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-header-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/>
+          <line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>
+        </svg>
+      </div>
+      <div>
+        <div class="modal-title" id="modalTitle">Hoe werkt het?</div>
+        <div class="modal-subtitle" id="modalSubtitle">CSV exporteren vanuit IBS</div>
+      </div>
+    </div>
+    <ol class="modal-steps" id="modalSteps"></ol>
+    <div class="modal-footer">
+      <button class="btn btn-primary" onclick="closeInfo()" id="modalCloseBtn">Sluiten</button>
+    </div>
+  </div>
+</div>
+
 <div class="container">
 
   <!-- ═══ INSTELLINGEN ═══ -->
-  <div class="section-label">Instellingen</div>
+  <div class="section-label" id="lblSettings">Instellingen</div>
   <div class="card">
     <div class="form-row">
       <div class="form-group">
-        <label for="leaseStart">Leasedatum start</label>
+        <label for="leaseStart" id="lblLeaseStart">Leasedatum start</label>
         <input type="date" id="leaseStart" oninput="saveSettings(); render()">
       </div>
       <div class="form-group">
-        <label for="leaseEnd">Leasedatum einde</label>
+        <label for="leaseEnd" id="lblLeaseEnd">Leasedatum einde</label>
         <input type="date" id="leaseEnd" oninput="saveSettings(); render()">
       </div>
       <div class="form-group">
-        <label for="totalKm">Huidige km-stand auto</label>
+        <label for="totalKm" id="lblTotalKm">Huidige km-stand auto</label>
         <input type="number" id="totalKm" min="0" step="1" placeholder="bijv. 24500" oninput="saveSettings(); render()">
       </div>
       <div class="form-group" style="justify-content:flex-end">
-        <button class="btn btn-ghost btn-sm" onclick="clearAll()">Alles wissen</button>
+        <button class="btn btn-ghost btn-sm" onclick="clearAll()" id="btnClearAll">Alles wissen</button>
       </div>
     </div>
   </div>
 
   <!-- ═══ DASHBOARD ═══ -->
-  <div class="section-label">Dashboard</div>
+  <div class="section-label" id="lblDashboard">Dashboard</div>
 
-  <!-- HERO -->
   <div class="hero idle" id="heroCard">
     <div>
-      <div class="hero-eyebrow" id="heroEyebrow">Prive km t.o.v. budget t/m vandaag</div>
+      <div class="hero-eyebrow" id="heroEyebrow">Privé km t.o.v. budget t/m vandaag</div>
       <div class="hero-number" id="heroValue">—<span class="unit">km</span></div>
       <div class="hero-desc" id="heroDesc">Vul km-stand en leasedatum in om te beginnen</div>
     </div>
@@ -574,60 +585,57 @@
     </div>
   </div>
 
-  <!-- STATS ROW 1 -->
   <div class="stats-row four">
     <div class="stat">
       <div class="indicator blue"></div>
-      <div class="stat-lbl">Verstreken dagen</div>
+      <div class="stat-lbl" id="lblDays">Verstreken dagen</div>
       <div class="stat-val" id="statDays">—</div>
       <div class="stat-sub" id="statDaysSub">stel leasedatum in</div>
     </div>
     <div class="stat" id="statBudgetCard">
       <div class="indicator blue"></div>
-      <div class="stat-lbl">Prive budget t/m vandaag</div>
+      <div class="stat-lbl" id="lblBudget">Privé budget t/m vandaag</div>
       <div class="stat-val" id="statBudget">—</div>
-      <div class="stat-sub">km toegestaan (41/dag)</div>
+      <div class="stat-sub" id="lblBudgetSub">km toegestaan (41/dag)</div>
     </div>
     <div class="stat">
       <div class="indicator blue"></div>
-      <div class="stat-lbl">Zakelijke km geregistreerd</div>
+      <div class="stat-lbl" id="lblBusiness">Zakelijke km geregistreerd</div>
       <div class="stat-val" id="statBusiness">0</div>
       <div class="stat-sub" id="statBusinessSub">0 ritten</div>
     </div>
     <div class="stat" id="statPrivateCard">
       <div class="indicator"></div>
-      <div class="stat-lbl">Werkelijk prive km</div>
+      <div class="stat-lbl" id="lblPrivate">Werkelijk privé km</div>
       <div class="stat-val" id="statPrivate">—</div>
       <div class="stat-sub" id="statPrivateSub">totaal km - zakelijk</div>
     </div>
   </div>
 
-  <!-- STATS ROW 2 -->
   <div class="stats-row three">
     <div class="stat" id="statFiscalCard">
       <div class="indicator yellow"></div>
-      <div class="stat-lbl">Prive km resterend t/m 30 sep</div>
+      <div class="stat-lbl" id="lblFiscal">Privé km resterend t/m 30 sep</div>
       <div class="stat-val" id="statFiscal">—</div>
       <div class="stat-sub" id="statFiscalSub">fiscaal jaar</div>
     </div>
     <div class="stat" id="statLeaseRemCard">
       <div class="indicator yellow"></div>
-      <div class="stat-lbl">Prive km resterend t/m einde lease</div>
+      <div class="stat-lbl" id="lblLeaseRem">Privé km resterend t/m einde lease</div>
       <div class="stat-val" id="statLeaseRem">—</div>
       <div class="stat-sub" id="statLeaseRemSub">einde leasecontract</div>
     </div>
     <div class="stat" id="statRemainCard">
       <div class="indicator"></div>
-      <div class="stat-lbl">Resterende leasedagen</div>
+      <div class="stat-lbl" id="lblRemain">Resterende leasedagen</div>
       <div class="stat-val" id="statRemain">—</div>
       <div class="stat-sub" id="statRemainSub">stel einddatum in</div>
     </div>
   </div>
 
-  <!-- PROGRESS -->
   <div class="progress-card" id="progressCard" style="display:none">
     <div class="progress-head">
-      <span>Werkelijk prive km t.o.v. budget</span>
+      <span id="lblProgress">Werkelijk privé km t.o.v. budget</span>
       <span id="progressLabel"></span>
     </div>
     <div class="progress-track">
@@ -636,9 +644,9 @@
   </div>
 
   <!-- ═══ UPLOAD ═══ -->
-  <div class="section-label">Bestand uploaden</div>
+  <div class="section-label" id="lblUpload">Bestand uploaden</div>
   <div class="card">
-    <p style="font-size:13px; color:var(--text-dim); margin-bottom:14px">
+    <p id="uploadDesc" style="font-size:13px; color:var(--text-dim); margin-bottom:14px">
       Upload een CSV- of Excel-bestand met kolommen <strong style="color:var(--text)">Date</strong> en <strong style="color:var(--text)">Distance</strong>.
       Ritten buiten de leaseperiode worden automatisch genegeerd.
     </p>
@@ -652,7 +660,7 @@
           <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
         </svg>
       </div>
-      <p>Klik of sleep een bestand hierheen</p>
+      <p id="uploadClickText">Klik of sleep een bestand hierheen</p>
       <small>.csv, .xlsx, .xls</small>
     </div>
     <div class="upload-msg" id="uploadPreview"></div>
@@ -660,17 +668,17 @@
 
   <!-- ═══ RITTENLIJST ═══ -->
   <div class="section-label">
-    Rittenlijst
+    <span id="lblTrips">Rittenlijst</span>
     <span id="tripCount" style="font-weight:500; color:rgba(255,255,255,.2)"></span>
     <div style="margin-left:auto; display:flex; gap:8px; flex-shrink:0">
-      <button class="btn btn-danger-outline btn-sm" onclick="deleteAllTrips()">Verwijder alles</button>
+      <button class="btn btn-danger-outline btn-sm" onclick="deleteAllTrips()" id="btnDeleteAll">Verwijder alles</button>
       <button class="btn btn-ghost btn-sm" onclick="exportCsv()">&#8659; CSV</button>
     </div>
   </div>
   <div class="card table-card">
     <div class="table-wrap">
       <table>
-        <thead><tr><th>Datum</th><th>Km</th><th></th></tr></thead>
+        <thead><tr><th id="thDate">Datum</th><th id="thKm">Km</th><th></th></tr></thead>
         <tbody id="tripTable"></tbody>
       </table>
     </div>
@@ -681,6 +689,7 @@
 <div class="toast" id="toast"></div>
 
 <script>
+/* ─── Storage ─── */
 const STORAGE_KEY   = 'km_tracker_v2';
 const DAILY_PRIVATE = 41;
 
@@ -691,6 +700,262 @@ function getData() {
   return { settings: d.settings || { leaseStart:'', leaseEnd:'', totalKm:'' }, trips: d.trips || [] };
 }
 
+/* ─── Language ─── */
+const LANG_KEY = 'km_lang';
+let lang = localStorage.getItem(LANG_KEY) || 'nl';
+
+const TRANSLATIONS = {
+  nl: {
+    pageTitle:        'Kilometer Registratie',
+    headerTitle:      'Km <span class="highlight">Registratie</span>',
+    headerSubtitle:   'Zakelijke en privé kilometer administratie',
+    infoBtnTitle:     'Hoe werkt het?',
+    langToggle:       'EN',
+    // modal
+    modalTitle:       'Hoe werkt het?',
+    modalSubtitle:    'CSV exporteren vanuit IBS',
+    modalSteps: [
+      'Ga naar <strong>Submit Expenses → KM &amp; HW</strong> in IBS',
+      'Ga naar <strong>Reports</strong>',
+      'Vink alle rapportages aan die je wilt exporteren',
+      'Klik op de <strong>Export</strong>-knop bovenaan (naast het prullenbak-icoon)',
+      'Sleep het gedownloade <strong>.CSV</strong>-bestand naar de uploadbox in deze tool',
+    ],
+    modalClose: 'Sluiten',
+    // sections
+    lblSettings:  'Instellingen',
+    lblDashboard: 'Dashboard',
+    lblUpload:    'Bestand uploaden',
+    lblTrips:     'Rittenlijst',
+    // form
+    lblLeaseStart: 'Leasedatum start',
+    lblLeaseEnd:   'Leasedatum einde',
+    lblTotalKm:    'Huidige km-stand auto',
+    totalKmPlaceholder: 'bijv. 24500',
+    btnClearAll:   'Alles wissen',
+    // stats labels
+    lblDays:      'Verstreken dagen',
+    lblBudget:    'Privé budget t/m vandaag',
+    lblBudgetSub: 'km toegestaan (41/dag)',
+    lblBusiness:  'Zakelijke km geregistreerd',
+    lblPrivate:   'Werkelijk privé km',
+    lblFiscal:    'Privé km resterend t/m 30 sep',
+    lblLeaseRem:  'Privé km resterend t/m einde lease',
+    lblRemain:    'Resterende leasedagen',
+    lblProgress:  'Werkelijk privé km t.o.v. budget',
+    // hero
+    heroEyebrow: 'Privé km t.o.v. budget t/m vandaag',
+    heroIdle:    'Vul km-stand en leasedatum in om te beginnen',
+    heroUnder:   (n) => `ONDER budget — nog ${n} km ruimte`,
+    heroOver:    (n) => `BOVEN budget — ${n} km te veel privé gereden`,
+    // dynamic stat subs
+    daysSub:        (total) => `van ${total} leasedagen`,
+    daysSubEmpty:   'stel leasedatum in',
+    businessSub:    (n) => `${n} rit${n !== 1 ? 'ten' : ''}`,
+    privateSubDef:  'totaal km - zakelijk',
+    privateUnder:   (n) => `${n} km onder budget`,
+    privateOver:    (n) => `${n} km boven budget`,
+    privateEmpty:   'vul km-stand in',
+    fiscalAvail:    (d) => `beschikbaar t/m ${d}`,
+    fiscalShort:    (d) => `km tekort t/m ${d}`,
+    fiscalEmpty:    (d) => d ? `t/m ${d}` : 'fiscaal jaar',
+    leaseRemAvail:  'beschikbaar t/m einde lease',
+    leaseRemShort:  'km tekort t/m einde lease',
+    leaseRemEmpty:  'stel einddatum in',
+    remainSub:      'tot einde lease',
+    remainWarning:  'bijna afgelopen!',
+    remainCaution:  'minder dan 3 maanden',
+    remainEmpty:    'stel einddatum in',
+    // upload
+    uploadDesc:  'Upload een CSV- of Excel-bestand met kolommen <strong style="color:var(--text)">Date</strong> en <strong style="color:var(--text)">Distance</strong>. Ritten buiten de leaseperiode worden automatisch genegeerd.',
+    uploadClick: 'Klik of sleep een bestand hierheen',
+    // table
+    thDate:      'Datum',
+    thKm:        'Km',
+    emptyTrips:  'Nog geen ritten geregistreerd',
+    btnDeleteAll:'Verwijder alles',
+    btnDelete:   'Verwijder',
+    // toasts
+    toastDeleted:    'Rit verwijderd.',
+    toastNoTrips:    'Geen ritten.',
+    toastAllDeleted: 'Alle ritten verwijderd.',
+    toastCleared:    'Alles gewist.',
+    confirmDeleteAll:(n) => `Alle ${n} ritten verwijderen?`,
+    confirmClearAll: 'Alles wissen (ritten + instellingen)?',
+    importResult: (added, oor, skip) => {
+      let m = `${added} rit${added !== 1 ? 'ten' : ''} geïmporteerd.`;
+      if (oor)  m += ` ${oor} buiten leaseperiode.`;
+      if (skip) m += ` ${skip} overgeslagen.`;
+      return m;
+    },
+    uploadBadType: 'Niet-ondersteund type. Gebruik .csv, .xlsx of .xls.',
+    uploadEmpty:   'Bestand leeg.',
+    uploadBadCols: (hdr) => `Kolommen niet herkend (${hdr.join(', ')}). Verwacht: "Date" en "Distance".`,
+    uploadReadErr: (msg) => `Kan niet lezen: ${msg}`,
+    locale: 'nl-NL',
+  },
+  en: {
+    pageTitle:        'Mileage Tracker',
+    headerTitle:      'Mileage <span class="highlight">Tracker</span>',
+    headerSubtitle:   'Business and private mileage administration',
+    infoBtnTitle:     'How does it work?',
+    langToggle:       'NL',
+    // modal
+    modalTitle:       'How to use',
+    modalSubtitle:    'Export CSV from IBS',
+    modalSteps: [
+      'Go to <strong>Submit Expenses → KM &amp; HW</strong> in IBS',
+      'Go to <strong>Reports</strong>',
+      'Select all the reports you want to export',
+      'Click the <strong>Export</strong> button at the top (next to the trash icon)',
+      'Drag and drop the downloaded <strong>.CSV</strong> file into the upload box in this tool',
+    ],
+    modalClose: 'Close',
+    // sections
+    lblSettings:  'Settings',
+    lblDashboard: 'Dashboard',
+    lblUpload:    'Upload file',
+    lblTrips:     'Trip log',
+    // form
+    lblLeaseStart: 'Lease start date',
+    lblLeaseEnd:   'Lease end date',
+    lblTotalKm:    'Current odometer reading',
+    totalKmPlaceholder: 'e.g. 24500',
+    btnClearAll:   'Clear all',
+    // stats labels
+    lblDays:      'Days elapsed',
+    lblBudget:    'Private budget up to today',
+    lblBudgetSub: 'km allowed (41/day)',
+    lblBusiness:  'Business km registered',
+    lblPrivate:   'Actual private km',
+    lblFiscal:    'Private km remaining until 30 Sep',
+    lblLeaseRem:  'Private km remaining until lease end',
+    lblRemain:    'Remaining lease days',
+    lblProgress:  'Actual private km vs. budget',
+    // hero
+    heroEyebrow: 'Private km vs. budget up to today',
+    heroIdle:    'Enter your odometer reading and lease dates to get started',
+    heroUnder:   (n) => `UNDER budget — ${n} km remaining`,
+    heroOver:    (n) => `OVER budget — ${n} km too many private km`,
+    // dynamic stat subs
+    daysSub:        (total) => `of ${total} lease days`,
+    daysSubEmpty:   'set lease start date',
+    businessSub:    (n) => `${n} trip${n !== 1 ? 's' : ''}`,
+    privateSubDef:  'total km − business',
+    privateUnder:   (n) => `${n} km under budget`,
+    privateOver:    (n) => `${n} km over budget`,
+    privateEmpty:   'enter odometer reading',
+    fiscalAvail:    (d) => `available until ${d}`,
+    fiscalShort:    (d) => `km deficit until ${d}`,
+    fiscalEmpty:    (d) => d ? `until ${d}` : 'fiscal year',
+    leaseRemAvail:  'available until lease end',
+    leaseRemShort:  'km deficit until lease end',
+    leaseRemEmpty:  'set end date',
+    remainSub:      'until lease end',
+    remainWarning:  'almost up!',
+    remainCaution:  'less than 3 months',
+    remainEmpty:    'set end date',
+    // upload
+    uploadDesc:  'Upload a CSV or Excel file with columns <strong style="color:var(--text)">Date</strong> and <strong style="color:var(--text)">Distance</strong>. Trips outside the lease period are automatically ignored.',
+    uploadClick: 'Click or drag a file here',
+    // table
+    thDate:      'Date',
+    thKm:        'Km',
+    emptyTrips:  'No trips registered yet',
+    btnDeleteAll:'Delete all',
+    btnDelete:   'Delete',
+    // toasts
+    toastDeleted:    'Trip deleted.',
+    toastNoTrips:    'No trips.',
+    toastAllDeleted: 'All trips deleted.',
+    toastCleared:    'All data cleared.',
+    confirmDeleteAll:(n) => `Delete all ${n} trips?`,
+    confirmClearAll: 'Clear all data (trips + settings)?',
+    importResult: (added, oor, skip) => {
+      let m = `${added} trip${added !== 1 ? 's' : ''} imported.`;
+      if (oor)  m += ` ${oor} outside lease period.`;
+      if (skip) m += ` ${skip} skipped.`;
+      return m;
+    },
+    uploadBadType: 'Unsupported file type. Use .csv, .xlsx or .xls.',
+    uploadEmpty:   'File is empty.',
+    uploadBadCols: (hdr) => `Columns not recognized (${hdr.join(', ')}). Expected: "Date" and "Distance".`,
+    uploadReadErr: (msg) => `Could not read file: ${msg}`,
+    locale: 'en-US',
+  }
+};
+
+function T(key, ...args) {
+  const val = TRANSLATIONS[lang][key];
+  return typeof val === 'function' ? val(...args) : val;
+}
+
+function toggleLang() {
+  lang = lang === 'nl' ? 'en' : 'nl';
+  localStorage.setItem(LANG_KEY, lang);
+  document.documentElement.lang = lang;
+  applyTranslations();
+  render();
+}
+
+function applyTranslations() {
+  const tx = TRANSLATIONS[lang];
+  document.title = tx.pageTitle;
+  document.getElementById('headerTitle').innerHTML    = tx.headerTitle;
+  document.getElementById('headerSubtitle').textContent = tx.headerSubtitle;
+  document.getElementById('langSwitch').textContent   = tx.langToggle;
+  document.getElementById('infoBtnTitle').title       = tx.infoBtnTitle;
+  // modal
+  document.getElementById('modalTitle').textContent    = tx.modalTitle;
+  document.getElementById('modalSubtitle').textContent = tx.modalSubtitle;
+  document.getElementById('modalCloseBtn').textContent = tx.modalClose;
+  renderModalSteps();
+  // sections
+  document.getElementById('lblSettings').textContent  = tx.lblSettings;
+  document.getElementById('lblDashboard').textContent = tx.lblDashboard;
+  document.getElementById('lblUpload').textContent    = tx.lblUpload;
+  document.getElementById('lblTrips').textContent     = tx.lblTrips;
+  // form
+  document.getElementById('lblLeaseStart').textContent = tx.lblLeaseStart;
+  document.getElementById('lblLeaseEnd').textContent   = tx.lblLeaseEnd;
+  document.getElementById('lblTotalKm').textContent    = tx.lblTotalKm;
+  document.getElementById('totalKm').placeholder       = tx.totalKmPlaceholder;
+  document.getElementById('btnClearAll').textContent   = tx.btnClearAll;
+  // stat labels
+  document.getElementById('lblDays').textContent     = tx.lblDays;
+  document.getElementById('lblBudget').textContent   = tx.lblBudget;
+  document.getElementById('lblBudgetSub').textContent= tx.lblBudgetSub;
+  document.getElementById('lblBusiness').textContent = tx.lblBusiness;
+  document.getElementById('lblPrivate').textContent  = tx.lblPrivate;
+  document.getElementById('lblFiscal').textContent   = tx.lblFiscal;
+  document.getElementById('lblLeaseRem').textContent = tx.lblLeaseRem;
+  document.getElementById('lblRemain').textContent   = tx.lblRemain;
+  document.getElementById('lblProgress').textContent = tx.lblProgress;
+  // hero eyebrow
+  document.getElementById('heroEyebrow').textContent = tx.heroEyebrow;
+  // upload
+  document.getElementById('uploadDesc').innerHTML     = tx.uploadDesc;
+  document.getElementById('uploadClickText').textContent = tx.uploadClick;
+  // table
+  document.getElementById('thDate').textContent     = tx.thDate;
+  document.getElementById('thKm').textContent       = tx.thKm;
+  document.getElementById('btnDeleteAll').textContent= tx.btnDeleteAll;
+}
+
+function renderModalSteps() {
+  const steps = TRANSLATIONS[lang].modalSteps;
+  document.getElementById('modalSteps').innerHTML = steps.map((s, i) =>
+    `<li><span class="step-num">${i + 1}</span><span>${s}</span></li>`
+  ).join('');
+}
+
+/* ─── Modal ─── */
+function openInfo()  { document.getElementById('infoModal').classList.add('open'); }
+function closeInfo() { document.getElementById('infoModal').classList.remove('open'); }
+function closeInfoOnBg(e) { if (e.target === document.getElementById('infoModal')) closeInfo(); }
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeInfo(); });
+
+/* ─── Settings ─── */
 function loadSettings() {
   const { settings } = getData();
   document.getElementById('leaseStart').value = settings.leaseStart || '';
@@ -707,6 +972,7 @@ function saveSettings() {
   save(d);
 }
 
+/* ─── Calculations ─── */
 function calcStats() {
   const { settings, trips } = getData();
   const today = new Date(); today.setHours(0,0,0,0);
@@ -755,51 +1021,65 @@ function calcStats() {
   return s;
 }
 
+/* ─── Render ─── */
 function render() { renderHeader(); renderStats(); renderTable(); }
 
 function renderHeader() {
-  document.getElementById('headerDate').textContent = new Date().toLocaleDateString('nl-NL', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+  const locale = T('locale');
+  document.getElementById('headerDate').textContent =
+    new Date().toLocaleDateString(locale, { weekday:'long', year:'numeric', month:'long', day:'numeric' });
 }
-function fmt(n, abs) { if (n===null||n===undefined||isNaN(n)) return '—'; return Math.round(abs?Math.abs(n):n).toLocaleString('nl-NL'); }
-function fmtDate(iso) { if (!iso) return '—'; const [y,m,d] = iso.split('-'); return `${d}-${m}-${y}`; }
+
+function fmt(n, abs) {
+  if (n === null || n === undefined || isNaN(n)) return '—';
+  return Math.round(abs ? Math.abs(n) : n).toLocaleString(T('locale'));
+}
+function fmtDate(iso) {
+  if (!iso) return '—';
+  const [y, m, d] = iso.split('-');
+  return `${d}-${m}-${y}`;
+}
 
 function renderStats() {
   const s = calcStats();
 
   // Hero
-  const hero = document.getElementById('heroCard');
-  const hVal = document.getElementById('heroValue');
+  const hero  = document.getElementById('heroCard');
+  const hVal  = document.getElementById('heroValue');
   const hDesc = document.getElementById('heroDesc');
   const hIcon = document.getElementById('heroIcon');
   if (s.privateVsBudget !== null) {
     const abs = Math.abs(Math.round(s.privateVsBudget));
-    hVal.innerHTML = `${abs.toLocaleString('nl-NL')}<span class="unit">km</span>`;
+    const absStr = abs.toLocaleString(T('locale'));
+    hVal.innerHTML = `${absStr}<span class="unit">km</span>`;
     if (s.privateVsBudget >= 0) {
       hero.className = 'hero ok';
-      hDesc.textContent = `ONDER budget — nog ${abs.toLocaleString('nl-NL')} km ruimte`;
+      hDesc.textContent = T('heroUnder', absStr);
       hIcon.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>';
     } else {
       hero.className = 'hero over';
-      hDesc.textContent = `BOVEN budget — ${abs.toLocaleString('nl-NL')} km te veel prive gereden`;
+      hDesc.textContent = T('heroOver', absStr);
       hIcon.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>';
     }
   } else {
     hero.className = 'hero idle';
     hVal.innerHTML = '—<span class="unit">km</span>';
-    hDesc.textContent = 'Vul km-stand en leasedatum in om te beginnen';
+    hDesc.textContent = T('heroIdle');
     hIcon.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>';
   }
 
   // Days
   document.getElementById('statDays').textContent = s.elapsedDays !== null ? fmt(s.elapsedDays) : '—';
-  document.getElementById('statDaysSub').textContent = s.totalLeaseDays ? `van ${fmt(s.totalLeaseDays)} leasedagen` : 'stel leasedatum in';
+  document.getElementById('statDaysSub').textContent = s.totalLeaseDays
+    ? T('daysSub', fmt(s.totalLeaseDays))
+    : T('daysSubEmpty');
 
   // Budget
   document.getElementById('statBudget').textContent = s.privateBudget !== null ? fmt(s.privateBudget) : '—';
 
   // Business
   document.getElementById('statBusiness').textContent = fmt(s.businessKm);
-  document.getElementById('statBusinessSub').textContent = getData().trips.length + ' ritten';
+  document.getElementById('statBusinessSub').textContent = T('businessSub', getData().trips.length);
 
   // Actual private
   const pc = document.getElementById('statPrivateCard');
@@ -809,45 +1089,63 @@ function renderStats() {
   if (s.actualPrivate !== null) {
     pv.textContent = fmt(s.actualPrivate);
     if (s.privateVsBudget !== null) {
-      if (s.privateVsBudget >= 0) { pi.className='indicator green'; pv.className='stat-val green'; ps.textContent=`${fmt(s.privateVsBudget)} km onder budget`; }
-      else { pi.className='indicator red'; pv.className='stat-val red'; ps.textContent=`${fmt(s.privateVsBudget,true)} km boven budget`; }
-    } else { pi.className='indicator'; pv.className='stat-val'; ps.textContent='totaal km - zakelijk'; }
-  } else { pi.className='indicator'; pv.className='stat-val'; pv.textContent='—'; ps.textContent=s.totalKm===null?'vul km-stand in':'totaal km - zakelijk'; }
+      if (s.privateVsBudget >= 0) {
+        pi.className = 'indicator green'; pv.className = 'stat-val green';
+        ps.textContent = T('privateUnder', fmt(s.privateVsBudget));
+      } else {
+        pi.className = 'indicator red'; pv.className = 'stat-val red';
+        ps.textContent = T('privateOver', fmt(s.privateVsBudget, true));
+      }
+    } else { pi.className = 'indicator'; pv.className = 'stat-val'; ps.textContent = T('privateSubDef'); }
+  } else {
+    pi.className = 'indicator'; pv.className = 'stat-val'; pv.textContent = '—';
+    ps.textContent = s.totalKm === null ? T('privateEmpty') : T('privateSubDef');
+  }
 
   // Fiscal
-  const fc = document.getElementById('statFiscalCard'); const fv = document.getElementById('statFiscal'); const fs = document.getElementById('statFiscalSub'); const fi = fc.querySelector('.indicator');
+  const fc = document.getElementById('statFiscalCard');
+  const fv = document.getElementById('statFiscal');
+  const fs = document.getElementById('statFiscalSub');
+  const fi = fc.querySelector('.indicator');
   if (s.privateRemainingFiscal !== null) {
     fv.textContent = fmt(s.privateRemainingFiscal, true);
-    if (s.privateRemainingFiscal >= 0) { fi.className='indicator yellow'; fv.className='stat-val'; fs.textContent=`beschikbaar t/m ${s.fiscalEndDisplay}`; }
-    else { fi.className='indicator red'; fv.className='stat-val red'; fs.textContent=`km tekort t/m ${s.fiscalEndDisplay}`; }
-  } else { fv.textContent='—'; fv.className='stat-val'; fs.textContent=s.fiscalEndDisplay?`t/m ${s.fiscalEndDisplay}`:'fiscaal jaar'; }
+    if (s.privateRemainingFiscal >= 0) { fi.className='indicator yellow'; fv.className='stat-val'; fs.textContent=T('fiscalAvail', s.fiscalEndDisplay); }
+    else { fi.className='indicator red'; fv.className='stat-val red'; fs.textContent=T('fiscalShort', s.fiscalEndDisplay); }
+  } else { fv.textContent='—'; fv.className='stat-val'; fs.textContent=T('fiscalEmpty', s.fiscalEndDisplay); }
 
   // Lease remaining
-  const lc = document.getElementById('statLeaseRemCard'); const lv = document.getElementById('statLeaseRem'); const ls = document.getElementById('statLeaseRemSub'); const li = lc.querySelector('.indicator');
+  const lc = document.getElementById('statLeaseRemCard');
+  const lv = document.getElementById('statLeaseRem');
+  const ls = document.getElementById('statLeaseRemSub');
+  const li = lc.querySelector('.indicator');
   if (s.privateRemainingLease !== null) {
     lv.textContent = fmt(s.privateRemainingLease, true);
-    if (s.privateRemainingLease >= 0) { li.className='indicator yellow'; lv.className='stat-val'; ls.textContent='beschikbaar t/m einde lease'; }
-    else { li.className='indicator red'; lv.className='stat-val red'; ls.textContent='km tekort t/m einde lease'; }
-  } else { lv.textContent='—'; lv.className='stat-val'; ls.textContent='stel einddatum in'; }
+    if (s.privateRemainingLease >= 0) { li.className='indicator yellow'; lv.className='stat-val'; ls.textContent=T('leaseRemAvail'); }
+    else { li.className='indicator red'; lv.className='stat-val red'; ls.textContent=T('leaseRemShort'); }
+  } else { lv.textContent='—'; lv.className='stat-val'; ls.textContent=T('leaseRemEmpty'); }
 
   // Remain days
-  const rc = document.getElementById('statRemainCard'); const rv = document.getElementById('statRemain'); const rs = document.getElementById('statRemainSub'); const ri = rc.querySelector('.indicator');
+  const rc = document.getElementById('statRemainCard');
+  const rv = document.getElementById('statRemain');
+  const rs = document.getElementById('statRemainSub');
+  const ri = rc.querySelector('.indicator');
   if (s.remainDays !== null) {
     rv.textContent = fmt(s.remainDays);
-    if (s.remainDays < 30) { ri.className='indicator red'; rs.textContent='bijna afgelopen!'; }
-    else if (s.remainDays < 90) { ri.className='indicator amber'; rs.textContent='minder dan 3 maanden'; }
-    else { ri.className='indicator'; rs.textContent='tot einde lease'; }
-  } else { ri.className='indicator'; rv.textContent='—'; rs.textContent='stel einddatum in'; }
+    if      (s.remainDays < 30) { ri.className='indicator red';   rs.textContent=T('remainWarning'); }
+    else if (s.remainDays < 90) { ri.className='indicator amber'; rs.textContent=T('remainCaution'); }
+    else                         { ri.className='indicator';       rs.textContent=T('remainSub'); }
+  } else { ri.className='indicator'; rv.textContent='—'; rs.textContent=T('remainEmpty'); }
 
   // Progress
   const prog = document.getElementById('progressCard');
   if (s.privateRatio !== null) {
     prog.style.display = 'block';
-    const pct = Math.min(s.privateRatio, 100);
+    const pct  = Math.min(s.privateRatio, 100);
     const fill = document.getElementById('progressFill');
-    fill.style.width = pct + '%';
-    fill.className = 'progress-bar' + (s.privateRatio >= 100 ? ' danger' : s.privateRatio >= 80 ? ' warning' : '');
-    document.getElementById('progressLabel').textContent = fmt(s.actualPrivate)+' / '+fmt(s.privateBudget)+' km ('+Math.round(s.privateRatio)+'%)';
+    fill.style.width  = pct + '%';
+    fill.className    = 'progress-bar' + (s.privateRatio >= 100 ? ' danger' : s.privateRatio >= 80 ? ' warning' : '');
+    document.getElementById('progressLabel').textContent =
+      fmt(s.actualPrivate) + ' / ' + fmt(s.privateBudget) + ' km (' + Math.round(s.privateRatio) + '%)';
   } else { prog.style.display = 'none'; }
 }
 
@@ -855,93 +1153,126 @@ function renderTable() {
   const { trips } = getData();
   document.getElementById('tripCount').textContent = trips.length ? `(${trips.length})` : '';
   const tb = document.getElementById('tripTable');
-  if (!trips.length) { tb.innerHTML = '<tr><td colspan="3" class="empty-row">Nog geen ritten geregistreerd</td></tr>'; return; }
-  const sorted = [...trips].sort((a,b) => (b.date||'').localeCompare(a.date||''));
+  if (!trips.length) {
+    tb.innerHTML = `<tr><td colspan="3" class="empty-row">${T('emptyTrips')}</td></tr>`;
+    return;
+  }
+  const sorted = [...trips].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
   tb.innerHTML = sorted.map(t => `<tr>
     <td>${fmtDate(t.date)}</td>
-    <td class="km">${parseFloat(t.km).toLocaleString('nl-NL',{minimumFractionDigits:0,maximumFractionDigits:1})} km</td>
-    <td style="text-align:right"><button class="btn btn-danger-outline btn-sm" onclick="deleteTrip('${t.id}')">Verwijder</button></td>
+    <td class="km">${parseFloat(t.km).toLocaleString(T('locale'), {minimumFractionDigits:0, maximumFractionDigits:1})} km</td>
+    <td style="text-align:right"><button class="btn btn-danger-outline btn-sm" onclick="deleteTrip('${t.id}')">${T('btnDelete')}</button></td>
   </tr>`).join('');
 }
 
-function deleteTrip(id) { const d=getData(); d.trips=d.trips.filter(t=>t.id!==id); save(d); render(); showToast('Rit verwijderd.','info'); }
+/* ─── Actions ─── */
+function deleteTrip(id) {
+  const d = getData(); d.trips = d.trips.filter(t => t.id !== id); save(d);
+  render(); showToast(T('toastDeleted'), 'info');
+}
 function deleteAllTrips() {
-  const{trips}=getData(); if(!trips.length){showToast('Geen ritten.','error');return;}
-  if(!confirm(`Alle ${trips.length} ritten verwijderen?`))return;
-  const d=getData(); d.trips=[]; save(d); render(); showToast('Alle ritten verwijderd.','info');
+  const { trips } = getData();
+  if (!trips.length) { showToast(T('toastNoTrips'), 'error'); return; }
+  if (!confirm(T('confirmDeleteAll', trips.length))) return;
+  const d = getData(); d.trips = []; save(d); render(); showToast(T('toastAllDeleted'), 'info');
 }
 function clearAll() {
-  if(!confirm('Alles wissen (ritten + instellingen)?'))return;
-  localStorage.removeItem(STORAGE_KEY); loadSettings(); render(); showToast('Alles gewist.','info');
+  if (!confirm(T('confirmClearAll'))) return;
+  localStorage.removeItem(STORAGE_KEY); loadSettings(); render(); showToast(T('toastCleared'), 'info');
 }
 
-function handleDrop(e) { e.preventDefault(); document.getElementById('uploadArea').classList.remove('drag-over'); if(e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]); }
+/* ─── File handling ─── */
+function handleDrop(e) {
+  e.preventDefault();
+  document.getElementById('uploadArea').classList.remove('drag-over');
+  if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
+}
 function handleFile(file) {
-  if(!file) return;
+  if (!file) return;
   const ext = file.name.split('.').pop().toLowerCase();
-  if (ext==='csv') { const r=new FileReader(); r.onload=e=>parseCsv(e.target.result); r.readAsText(file,'UTF-8'); }
-  else if (ext==='xlsx'||ext==='xls') { const r=new FileReader(); r.onload=e=>parseExcel(e.target.result); r.readAsArrayBuffer(file); }
-  else { showUploadMsg('Niet-ondersteund type. Gebruik .csv, .xlsx of .xls.','error'); }
+  if      (ext === 'csv')              { const r = new FileReader(); r.onload = e => parseCsv(e.target.result);    r.readAsText(file, 'UTF-8'); }
+  else if (ext === 'xlsx' || ext === 'xls') { const r = new FileReader(); r.onload = e => parseExcel(e.target.result); r.readAsArrayBuffer(file); }
+  else { showUploadMsg(T('uploadBadType'), 'error'); }
   document.getElementById('fileInput').value = '';
 }
 function parseCsv(text) {
-  const sep = text.indexOf(';')!==-1?';':',';
-  const lines = text.split(/\r?\n/).filter(l=>l.trim());
-  if(lines.length<2){showUploadMsg('Bestand leeg.','error');return;}
-  const hdr = lines[0].split(sep).map(h=>h.trim().toLowerCase().replace(/['"]/g,''));
-  const rows = lines.slice(1).map(l=>{const c=l.split(sep).map(x=>x.trim().replace(/^["']|["']$/g,''));return hdr.reduce((o,h,i)=>{o[h]=c[i]||'';return o;},{});});
-  importRows(rows,hdr);
+  const sep   = text.indexOf(';') !== -1 ? ';' : ',';
+  const lines = text.split(/\r?\n/).filter(l => l.trim());
+  if (lines.length < 2) { showUploadMsg(T('uploadEmpty'), 'error'); return; }
+  const hdr  = lines[0].split(sep).map(h => h.trim().toLowerCase().replace(/['"]/g, ''));
+  const rows = lines.slice(1).map(l => { const c = l.split(sep).map(x => x.trim().replace(/^["']|["']$/g, '')); return hdr.reduce((o, h, i) => { o[h] = c[i] || ''; return o; }, {}); });
+  importRows(rows, hdr);
 }
 function parseExcel(buf) {
-  try{const wb=XLSX.read(buf,{type:'array'});const ws=wb.Sheets[wb.SheetNames[0]];const rows=XLSX.utils.sheet_to_json(ws,{raw:false,defval:''});const hdr=rows.length?Object.keys(rows[0]).map(k=>k.toLowerCase()):[];const norm=rows.map(r=>{const o={};Object.entries(r).forEach(([k,v])=>{o[k.toLowerCase()]=v;});return o;});importRows(norm,hdr);}
-  catch(e){showUploadMsg('Kan niet lezen: '+e.message,'error');}
+  try {
+    const wb   = XLSX.read(buf, { type:'array' });
+    const ws   = wb.Sheets[wb.SheetNames[0]];
+    const rows = XLSX.utils.sheet_to_json(ws, { raw:false, defval:'' });
+    const hdr  = rows.length ? Object.keys(rows[0]).map(k => k.toLowerCase()) : [];
+    const norm = rows.map(r => { const o = {}; Object.entries(r).forEach(([k,v]) => { o[k.toLowerCase()] = v; }); return o; });
+    importRows(norm, hdr);
+  } catch(e) { showUploadMsg(T('uploadReadErr', e.message), 'error'); }
 }
-function findCol(hdr,cands){for(const c of cands){const m=hdr.find(h=>h===c||h.includes(c));if(m)return m;}return null;}
-function importRows(rows,hdr) {
-  const dc=findCol(hdr,['date','datum','dag']), kc=findCol(hdr,['distance','km','kilometers','afstand','kilometer']);
-  if(!dc||!kc){showUploadMsg(`Kolommen niet herkend (${hdr.join(', ')}). Verwacht: "Date" en "Distance".`,'error');return;}
-  const d=getData(),{leaseStart,leaseEnd}=d.settings;
-  let added=0,skip=0,oor=0;
-  rows.forEach(row=>{
-    const rd=row[dc],rk=row[kc]; if(!rd||!rk){skip++;return;}
-    const iso=parseDate(rd),km=parseFloat(String(rk).replace(',','.'));
-    if(!iso||isNaN(km)||km<=0){skip++;return;}
-    if(leaseStart&&iso<leaseStart){oor++;return;}
-    if(leaseEnd&&iso>leaseEnd){oor++;return;}
-    d.trips.push({id:genId(),date:iso,km}); added++;
+function findCol(hdr, cands) { for (const c of cands) { const m = hdr.find(h => h === c || h.includes(c)); if (m) return m; } return null; }
+function importRows(rows, hdr) {
+  const dc = findCol(hdr, ['date','datum','dag']);
+  const kc = findCol(hdr, ['distance','km','kilometers','afstand','kilometer']);
+  if (!dc || !kc) { showUploadMsg(T('uploadBadCols', hdr), 'error'); return; }
+  const d = getData(); const { leaseStart, leaseEnd } = d.settings;
+  let added = 0, skip = 0, oor = 0;
+  rows.forEach(row => {
+    const rd = row[dc], rk = row[kc]; if (!rd || !rk) { skip++; return; }
+    const iso = parseDate(rd), km = parseFloat(String(rk).replace(',', '.'));
+    if (!iso || isNaN(km) || km <= 0) { skip++; return; }
+    if (leaseStart && iso < leaseStart) { oor++; return; }
+    if (leaseEnd   && iso > leaseEnd)   { oor++; return; }
+    d.trips.push({ id: genId(), date: iso, km }); added++;
   });
   save(d); render();
-  let msg=`${added} rit${added!==1?'ten':''} geimporteerd.`;
-  if(oor) msg+=` ${oor} buiten leaseperiode.`;
-  if(skip) msg+=` ${skip} overgeslagen.`;
-  showUploadMsg(msg,'success');
-  if(added>0) showToast(msg,'success');
+  const msg = T('importResult', added, oor, skip);
+  showUploadMsg(msg, 'success');
+  if (added > 0) showToast(msg, 'success');
 }
 function parseDate(raw) {
-  if(!raw) return null; const s=String(raw).trim();
-  if(/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
-  const dmy=s.match(/^(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{4})$/);
-  if(dmy) return `${dmy[3]}-${dmy[2].padStart(2,'0')}-${dmy[1].padStart(2,'0')}`;
-  const num=parseFloat(s);
-  if(!isNaN(num)&&num>10000&&num<100000){const p=XLSX.SSF.parse_date_code(num);if(p)return `${p.y}-${String(p.m).padStart(2,'0')}-${String(p.d).padStart(2,'0')}`;}
-  const p=new Date(s); if(!isNaN(p)) return p.toISOString().slice(0,10);
+  if (!raw) return null;
+  const s = String(raw).trim();
+  if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+  const dmy = s.match(/^(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{4})$/);
+  if (dmy) return `${dmy[3]}-${dmy[2].padStart(2,'0')}-${dmy[1].padStart(2,'0')}`;
+  const num = parseFloat(s);
+  if (!isNaN(num) && num > 10000 && num < 100000) { const p = XLSX.SSF.parse_date_code(num); if (p) return `${p.y}-${String(p.m).padStart(2,'0')}-${String(p.d).padStart(2,'0')}`; }
+  const p = new Date(s); if (!isNaN(p)) return p.toISOString().slice(0,10);
   return null;
 }
 function exportCsv() {
-  const{trips}=getData(); if(!trips.length){showToast('Geen ritten.','error');return;}
-  const sorted=[...trips].sort((a,b)=>(a.date||'').localeCompare(b.date||''));
-  const rows=[['Date','Distance']].concat(sorted.map(t=>[t.date,t.km]));
-  const csv=rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\r\n');
-  const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});
-  const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='kilometer_registratie.csv';a.click();URL.revokeObjectURL(url);
+  const { trips } = getData(); if (!trips.length) { showToast(T('toastNoTrips'), 'error'); return; }
+  const sorted = [...trips].sort((a, b) => (a.date || '').localeCompare(b.date || ''));
+  const rows = [['Date','Distance']].concat(sorted.map(t => [t.date, t.km]));
+  const csv  = rows.map(r => r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(',')).join('\r\n');
+  const blob = new Blob(['\uFEFF' + csv], { type:'text/csv;charset=utf-8;' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a'); a.href = url; a.download = 'kilometer_registratie.csv'; a.click();
+  URL.revokeObjectURL(url);
 }
 
+/* ─── Toast / Upload msg ─── */
 let toastTimer;
-function showToast(msg,type='info'){const el=document.getElementById('toast');el.textContent=msg;el.className='toast '+type+' show';clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),3500);}
-function showUploadMsg(msg,type='success'){const el=document.getElementById('uploadPreview');el.textContent=msg;el.className='upload-msg '+type;el.style.display='block';}
-function genId(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7);}
+function showToast(msg, type='info') {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.className = 'toast ' + type + ' show';
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => el.classList.remove('show'), 3500);
+}
+function showUploadMsg(msg, type='success') {
+  const el = document.getElementById('uploadPreview');
+  el.textContent = msg; el.className = 'upload-msg ' + type; el.style.display = 'block';
+}
+function genId() { return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
 
-loadSettings(); render(); setInterval(renderHeader, 60000);
+/* ─── Init ─── */
+applyTranslations();
+loadSettings();
+render();
+setInterval(renderHeader, 60000);
 </script>
 </body>
 </html>
