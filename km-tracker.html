@@ -135,22 +135,22 @@
     z-index: 2;
     filter: drop-shadow(0 4px 8px rgba(0,0,0,.5));
   }
-  .car-svg.lane-top    { top: 8px;  }
-  .car-svg.lane-bottom { top: 42px; }
+  .car-svg.lane-top    { top: 6px;  }
+  .car-svg.lane-bottom { top: 44px; }
   .car-svg.right { animation: driveRight linear infinite; }
-  .car-svg.left  { animation: driveLeft  linear infinite; }
-  .car-1 { animation-duration: 8s;  animation-delay: 0s; }
-  .car-2 { animation-duration: 12s; animation-delay: -4s; }
-  .car-3 { animation-duration: 10s; animation-delay: -7s; }
-  .car-4 { animation-duration: 14s; animation-delay: -2s; }
+  .car-svg.left  { animation: driveLeft  linear infinite; transform: scaleX(-1); }
+  .car-1 { animation-duration: 9s;  animation-delay:  0s;  }
+  .car-2 { animation-duration: 13s; animation-delay: -3s;  }
+  .car-3 { animation-duration: 11s; animation-delay: -6s;  }
+  .car-4 { animation-duration: 15s; animation-delay: -9s;  }
 
   @keyframes driveRight {
-    from { left: -100px; }
-    to   { left: calc(100% + 100px); }
+    from { left: -120px; }
+    to   { left: calc(100% + 120px); }
   }
   @keyframes driveLeft {
-    from { right: -100px; }
-    to   { right: calc(100% + 100px); }
+    from { left: calc(100% + 120px); }
+    to   { left: -120px; }
   }
 
   /* ═══════════════════════════════════════════════
