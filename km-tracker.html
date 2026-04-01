@@ -445,6 +445,32 @@
   .btn-primary { background: var(--accent); color: #fff; }
   .btn-primary:hover { background: #2563eb; }
 
+  /* ─── Monthly Chart ─── */
+  .chart-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; flex-wrap: wrap; gap: 10px; }
+  .chart-title-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .8px; color: var(--text-dim); }
+  .time-toggle { display: flex; gap: 5px; }
+  .time-btn { padding: 4px 13px; border-radius: 6px; font-size: 12px; font-weight: 700; font-family: inherit; cursor: pointer; border: 1px solid rgba(255,255,255,.1); background: rgba(255,255,255,.05); color: var(--text-dim); transition: all .15s; letter-spacing: .3px; }
+  .time-btn:hover { background: rgba(255,255,255,.1); color: var(--text); }
+  .time-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .chart-wrap { position: relative; width: 100%; overflow: hidden; }
+  .chart-svg { width: 100%; display: block; overflow: visible; }
+  .chart-divider { height: 1px; background: rgba(255,255,255,.06); margin: 22px 0; }
+  text.chart-lbl { font-size: 11px; font-weight: 600; fill: rgba(255,255,255,.38); font-family: 'Inter', sans-serif; }
+  text.chart-val { font-size: 10px; font-weight: 700; fill: rgba(255,255,255,.65); font-family: 'Inter', sans-serif; }
+  text.chart-empty { font-size: 13px; fill: rgba(255,255,255,.2); font-family: 'Inter', sans-serif; }
+  text.legend-lbl { font-size: 10px; font-weight: 600; fill: rgba(255,255,255,.45); font-family: 'Inter', sans-serif; }
+
+  /* ─── Insights ─── */
+  .insight-list { display: flex; flex-direction: column; gap: 10px; }
+  .insight-item { display: flex; align-items: flex-start; gap: 12px; padding: 13px 14px; border-radius: 10px; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07); font-size: 13px; line-height: 1.55; color: var(--text); }
+  .insight-icon { width: 28px; height: 28px; border-radius: 8px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; margin-top: 1px; }
+  .insight-icon.blue  { background: var(--accent-glow); color: var(--accent); }
+  .insight-icon.green { background: var(--green-dim);   color: var(--green); }
+  .insight-icon.red   { background: var(--red-dim);     color: var(--red); }
+  .insight-icon.amber { background: var(--amber-dim);   color: var(--amber); }
+  .insight-icon svg   { width: 14px; height: 14px; }
+  .insight-text strong { color: var(--text-bright); }
+
   /* ── Responsive ── */
   @media (max-width: 768px) {
     .header-content { flex-direction: column; gap: 8px; padding: 20px 20px 16px; }
@@ -673,6 +699,11 @@
     <div style="margin-left:auto; display:flex; gap:8px; flex-shrink:0">
       <button class="btn btn-danger-outline btn-sm" onclick="deleteAllTrips()" id="btnDeleteAll">Verwijder alles</button>
       <button class="btn btn-ghost btn-sm" onclick="exportCsv()">&#8659; CSV</button>
+      <button class="btn btn-ghost btn-sm" onclick="exportJson()" id="btnExportJson">&#8659; JSON</button>
+      <label class="btn btn-ghost btn-sm" style="cursor:pointer" id="btnImportJsonLabel">
+        <span id="btnImportJsonText">&#8657; JSON</span>
+        <input type="file" id="jsonFileInput" accept=".json" style="display:none" onchange="handleJsonFile(this.files[0])">
+      </label>
     </div>
   </div>
   <div class="card table-card">
@@ -683,6 +714,37 @@
       </table>
     </div>
   </div>
+
+
+  <!-- ═══ MAANDOVERZICHT ═══ -->
+  <div class="section-label"><span id="lblMonthly">Maandoverzicht</span></div>
+  <div class="card">
+    <div class="chart-header">
+      <div class="chart-title-label" id="lblBarChart">Zakelijke km per maand</div>
+      <div class="time-toggle">
+        <button class="time-btn" data-period="3m"  onclick="setMonthlyPeriod('3m')">3M</button>
+        <button class="time-btn active" data-period="6m"  onclick="setMonthlyPeriod('6m')">6M</button>
+        <button class="time-btn" data-period="12m" onclick="setMonthlyPeriod('12m')">12M</button>
+        <button class="time-btn" data-period="all" onclick="setMonthlyPeriod('all')" id="btnPeriodAll">Alles</button>
+      </div>
+    </div>
+    <div class="chart-wrap">
+      <svg id="barChart" class="chart-svg" viewBox="0 0 820 200" preserveAspectRatio="xMidYMid meet"></svg>
+    </div>
+    <div class="chart-divider"></div>
+    <div class="chart-title-label" id="lblLineChart" style="margin-bottom:12px">Cumulatief zakelijke km</div>
+    <div class="chart-wrap">
+      <svg id="lineChart" class="chart-svg" viewBox="0 0 820 170" preserveAspectRatio="xMidYMid meet"></svg>
+    </div>
+  </div>
+
+  <!-- ═══ PROGNOSE ═══ -->
+  <div class="section-label" id="lblForecast">Prognose einde lease</div>
+  <div class="stats-row four" id="forecastRow"></div>
+
+  <!-- ═══ INZICHTEN ═══ -->
+  <div class="section-label" id="lblInsights">Inzichten</div>
+  <div class="card" id="insightsCard" style="min-height:60px"></div>
 
 </div>
 
@@ -792,6 +854,38 @@ const TRANSLATIONS = {
     uploadEmpty:   'Bestand leeg.',
     uploadBadCols: (hdr) => `Kolommen niet herkend (${hdr.join(', ')}). Verwacht: "Date" en "Distance".`,
     uploadReadErr: (msg) => `Kan niet lezen: ${msg}`,
+    // charts
+    chartEmpty:     'Geen gegevens voor deze periode',
+    chartActual:    'Werkelijk',
+    chartProjected: 'Prognose',
+    // monthly
+    lblMonthly:     'Maandoverzicht',
+    lblBarChart:    'Zakelijke km per maand',
+    lblLineChart:   'Cumulatief zakelijke km',
+    periodAll:      'Alles',
+    // forecast
+    lblForecast:    'Prognose einde lease',
+    forecastEmpty:  'Stel leasedatum start én einde in om de prognose te zien.',
+    forecastPace:   'Gem. zakelijk km/dag',
+    forecastPaceKm: 'gemiddelde t/m vandaag',
+    forecastBusiness: 'Prognose zakelijke km',
+    forecastAtLeaseEnd: 'bij einde leasecontract',
+    forecastMargin: 'Prognose privé marge',
+    forecastPrivateBudget: (b) => `budget: ${b} km`,
+    forecastPenalty: 'Verwachte boete',
+    forecastPenaltyRate: '€ 0,10 per km te veel',
+    // json backup
+    jsonImportOk:   (n) => `${n} ritten hersteld uit back-up.`,
+    jsonImportErr:  (msg) => `Importfout: ${msg}`,
+    // insights
+    lblInsights:    'Inzichten',
+    insightsEmpty:  'Voeg ritten toe om inzichten te zien.',
+    insightAvg:     (km) => `Gemiddeld <strong>${km} km</strong> zakelijk per maand.`,
+    insightBusiest: (m, km) => `Drukste maand: <strong>${m}</strong> met <strong>${km} km</strong> zakelijk.`,
+    insightPace:    (n) => `Huidig tempo: <strong>${n} km/dag</strong> zakelijk.`,
+    insightOver:    (km, pen) => `Op dit tempo rijd je de lease uit met <strong>${km} km te veel privé</strong>. Verwachte boete: <strong>${pen}</strong>.`,
+    insightUnder:   (km) => `Op dit tempo eindig je de lease met <strong>${km} km privé over</strong> — geen boete.`,
+    insightFix:     (n) => `Om de boete te vermijden heb je <strong>${n} extra zakelijke km/dag</strong> nodig.`,
     locale: 'nl-NL',
   },
   en: {
@@ -881,6 +975,38 @@ const TRANSLATIONS = {
     uploadEmpty:   'File is empty.',
     uploadBadCols: (hdr) => `Columns not recognized (${hdr.join(', ')}). Expected: "Date" and "Distance".`,
     uploadReadErr: (msg) => `Could not read file: ${msg}`,
+    // charts
+    chartEmpty:     'No data for this period',
+    chartActual:    'Actual',
+    chartProjected: 'Projected',
+    // monthly
+    lblMonthly:     'Monthly overview',
+    lblBarChart:    'Business km per month',
+    lblLineChart:   'Cumulative business km',
+    periodAll:      'All',
+    // forecast
+    lblForecast:    'End of lease forecast',
+    forecastEmpty:  'Set lease start and end dates to see the forecast.',
+    forecastPace:   'Avg. business km/day',
+    forecastPaceKm: 'average up to today',
+    forecastBusiness: 'Projected business km',
+    forecastAtLeaseEnd: 'at lease end',
+    forecastMargin: 'Projected private margin',
+    forecastPrivateBudget: (b) => `budget: ${b} km`,
+    forecastPenalty: 'Expected penalty',
+    forecastPenaltyRate: '€ 0.10 per excess km',
+    // json backup
+    jsonImportOk:   (n) => `${n} trips restored from backup.`,
+    jsonImportErr:  (msg) => `Import error: ${msg}`,
+    // insights
+    lblInsights:    'Insights',
+    insightsEmpty:  'Add trips to see insights.',
+    insightAvg:     (km) => `Average of <strong>${km} km</strong> business per month.`,
+    insightBusiest: (m, km) => `Busiest month: <strong>${m}</strong> with <strong>${km} km</strong> business.`,
+    insightPace:    (n) => `Current pace: <strong>${n} km/day</strong> business.`,
+    insightOver:    (km, pen) => `At this pace you'll end the lease <strong>${km} km over</strong> on private km. Expected penalty: <strong>${pen}</strong>.`,
+    insightUnder:   (km) => `At this pace you'll end the lease <strong>${km} km under</strong> budget — no penalty.`,
+    insightFix:     (n) => `To avoid a penalty you need <strong>${n} extra business km/day</strong>.`,
     locale: 'en-US',
   }
 };
@@ -939,7 +1065,14 @@ function applyTranslations() {
   // table
   document.getElementById('thDate').textContent     = tx.thDate;
   document.getElementById('thKm').textContent       = tx.thKm;
-  document.getElementById('btnDeleteAll').textContent= tx.btnDeleteAll;
+  document.getElementById('btnDeleteAll').textContent = tx.btnDeleteAll;
+  // new sections
+  document.getElementById('lblMonthly').textContent   = tx.lblMonthly;
+  document.getElementById('lblBarChart').textContent  = tx.lblBarChart;
+  document.getElementById('lblLineChart').textContent = tx.lblLineChart;
+  document.getElementById('btnPeriodAll').textContent = tx.periodAll;
+  document.getElementById('lblForecast').textContent  = tx.lblForecast;
+  document.getElementById('lblInsights').textContent  = tx.lblInsights;
 }
 
 function renderModalSteps() {
@@ -1022,7 +1155,7 @@ function calcStats() {
 }
 
 /* ─── Render ─── */
-function render() { renderHeader(); renderStats(); renderTable(); }
+function render() { renderHeader(); renderStats(); renderTable(); renderMonthly(); renderForecast(); renderInsights(); }
 
 function renderHeader() {
   const locale = T('locale');
@@ -1267,6 +1400,297 @@ function showUploadMsg(msg, type='success') {
   el.textContent = msg; el.className = 'upload-msg ' + type; el.style.display = 'block';
 }
 function genId() { return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+
+/* ─── Monthly Overview ─── */
+let monthlyPeriod = '6m';
+
+function setMonthlyPeriod(p) {
+  monthlyPeriod = p;
+  document.querySelectorAll('.time-btn').forEach(b => b.classList.toggle('active', b.dataset.period === p));
+  renderMonthly();
+}
+
+function getMonthlyData(period) {
+  const { trips, settings } = getData();
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  let startDate;
+  if      (period === '3m')  { startDate = new Date(today); startDate.setMonth(startDate.getMonth() - 3); }
+  else if (period === '6m')  { startDate = new Date(today); startDate.setMonth(startDate.getMonth() - 6); }
+  else if (period === '12m') { startDate = new Date(today); startDate.setMonth(startDate.getMonth() - 12); }
+  else {
+    startDate = settings.leaseStart
+      ? new Date(settings.leaseStart)
+      : new Date(today.getFullYear() - 1, today.getMonth(), 1);
+  }
+  startDate.setDate(1); startDate.setHours(0, 0, 0, 0);
+
+  // Fill all months in range with 0
+  const months = {};
+  const cur = new Date(startDate);
+  while (cur <= today) {
+    months[`${cur.getFullYear()}-${String(cur.getMonth() + 1).padStart(2, '0')}`] = 0;
+    cur.setMonth(cur.getMonth() + 1);
+  }
+  // Aggregate trips
+  trips.forEach(t => {
+    if (!t.date) return;
+    const d = new Date(t.date); d.setHours(0, 0, 0, 0);
+    if (d < startDate || d > today) return;
+    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+    if (key in months) months[key] += parseFloat(t.km) || 0;
+  });
+  return Object.entries(months).sort((a, b) => a[0].localeCompare(b[0]));
+}
+
+function renderBarChart(data) {
+  const svg = document.getElementById('barChart');
+  const W = 820, H = 200;
+  const ml = 55, mr = 15, mt = 24, mb = 46;
+  const dw = W - ml - mr, dh = H - mt - mb;
+  const n = data.length;
+  if (!n) { svg.innerHTML = `<text x="${W/2}" y="${H/2}" class="chart-empty" text-anchor="middle">${T('chartEmpty')}</text>`; return; }
+  const maxVal = Math.max(...data.map(([, v]) => v), 1);
+  const roundMax = Math.ceil(maxVal / 50) * 50;
+  const gap = dw / n;
+  const barW = Math.min(gap * 0.62, 44);
+  let out = '';
+  // Gridlines + Y labels
+  for (let i = 0; i <= 4; i++) {
+    const y = mt + dh * (1 - i / 4);
+    out += `<line x1="${ml}" y1="${y.toFixed(1)}" x2="${W-mr}" y2="${y.toFixed(1)}" stroke="rgba(255,255,255,.07)" stroke-width="1"/>`;
+    out += `<text x="${ml-6}" y="${(y+4).toFixed(1)}" text-anchor="end" class="chart-lbl">${Math.round((i/4)*roundMax)}</text>`;
+  }
+  // Bars
+  data.forEach(([key, val], i) => {
+    const cx = ml + i * gap + gap / 2;
+    const barH = Math.max((val / roundMax) * dh, val > 0 ? 2 : 0);
+    const x = (cx - barW / 2).toFixed(1), y = (mt + dh - barH).toFixed(1);
+    const [yr, mo] = key.split('-');
+    const moLbl = new Date(+yr, +mo - 1, 1).toLocaleDateString(T('locale'), { month: 'short' });
+    out += `<rect x="${x}" y="${y}" width="${barW.toFixed(1)}" height="${Math.max(barH, val > 0 ? 2 : 0).toFixed(1)}" rx="3" fill="${val > 0 ? 'var(--accent)' : 'rgba(255,255,255,.06)'}"/>`;
+    if (barH > 18 && val > 0) out += `<text x="${cx.toFixed(1)}" y="${(mt+dh-barH-5).toFixed(1)}" text-anchor="middle" class="chart-val">${Math.round(val)}</text>`;
+    out += `<text x="${cx.toFixed(1)}" y="${(mt+dh+16).toFixed(1)}" text-anchor="middle" class="chart-lbl">${moLbl}</text>`;
+    if (mo === '01' || i === 0) out += `<text x="${cx.toFixed(1)}" y="${(mt+dh+30).toFixed(1)}" text-anchor="middle" class="chart-lbl">${yr}</text>`;
+  });
+  out += `<line x1="${ml}" y1="${mt}" x2="${ml}" y2="${mt+dh}" stroke="rgba(255,255,255,.15)" stroke-width="1"/>`;
+  out += `<line x1="${ml}" y1="${mt+dh}" x2="${W-mr}" y2="${mt+dh}" stroke="rgba(255,255,255,.15)" stroke-width="1"/>`;
+  svg.innerHTML = out;
+}
+
+function renderLineChart(data) {
+  const svg = document.getElementById('lineChart');
+  const W = 820, H = 170;
+  const ml = 55, mr = 15, mt = 20, mb = 42;
+  const dw = W - ml - mr, dh = H - mt - mb;
+  const n = data.length;
+  if (!n) { svg.innerHTML = `<text x="${W/2}" y="${H/2}" class="chart-empty" text-anchor="middle">${T('chartEmpty')}</text>`; return; }
+
+  let cum = 0;
+  const cumData = data.map(([key, val]) => { cum += val; return [key, cum]; });
+  const maxVal = Math.max(cum, 1);
+  const roundMax = Math.ceil(maxVal / 50) * 50;
+  const xOf = i => ml + (n > 1 ? (i / (n - 1)) * dw : dw / 2);
+  const yOf = v => mt + dh - (v / roundMax) * dh;
+
+  let out = '';
+  // Gridlines + Y labels
+  for (let i = 0; i <= 4; i++) {
+    const y = mt + dh * (1 - i / 4);
+    out += `<line x1="${ml}" y1="${y.toFixed(1)}" x2="${W-mr}" y2="${y.toFixed(1)}" stroke="rgba(255,255,255,.07)" stroke-width="1"/>`;
+    out += `<text x="${ml-6}" y="${(y+4).toFixed(1)}" text-anchor="end" class="chart-lbl">${Math.round((i/4)*roundMax)}</text>`;
+  }
+
+  if (n >= 2) {
+    // Dashed projection to lease end
+    const { settings } = getData();
+    if (settings.leaseEnd) {
+      const lastD = new Date(cumData[n-1][0] + '-01');
+      const endD  = new Date(settings.leaseEnd); endD.setHours(0,0,0,0);
+      if (endD > lastD) {
+        const monthsLeft = Math.round((endD - lastD) / (30.44 * 86400000));
+        const slope = (cumData[n-1][1] - cumData[0][1]) / Math.max(n - 1, 1);
+        const projVal = cumData[n-1][1] + slope * monthsLeft;
+        const projRoundMax = Math.max(roundMax, Math.ceil(projVal / 50) * 50);
+        const projY = mt + dh - (projVal / projRoundMax) * dh;
+        const lx = xOf(n - 1), ly = yOf(cumData[n-1][1]);
+        out += `<line x1="${lx.toFixed(1)}" y1="${ly.toFixed(1)}" x2="${(W-mr).toFixed(1)}" y2="${Math.max(mt, projY).toFixed(1)}" stroke="var(--amber)" stroke-width="1.5" stroke-dasharray="5,4" opacity=".65"/>`;
+        out += `<circle cx="${W-mr-85}" cy="${H-7}" r="4" fill="var(--amber)" opacity=".65"/>`;
+        out += `<text x="${W-mr-77}" y="${H-3}" class="legend-lbl">${T('chartProjected')}</text>`;
+      }
+    }
+    // Fill + line
+    const pts = cumData.map(([,v], i) => `${xOf(i).toFixed(1)},${yOf(v).toFixed(1)}`).join(' ');
+    out += `<polygon points="${xOf(0).toFixed(1)},${(mt+dh).toFixed(1)} ${pts} ${xOf(n-1).toFixed(1)},${(mt+dh).toFixed(1)}" fill="var(--accent)" opacity=".08"/>`;
+    const path = cumData.map(([,v], i) => `${i===0?'M':'L'}${xOf(i).toFixed(1)},${yOf(v).toFixed(1)}`).join(' ');
+    out += `<path d="${path}" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>`;
+    cumData.forEach(([,v], i) => {
+      out += `<circle cx="${xOf(i).toFixed(1)}" cy="${yOf(v).toFixed(1)}" r="3.5" fill="var(--accent)" stroke="var(--bg)" stroke-width="1.5"/>`;
+    });
+    // X labels
+    const skip = Math.max(1, Math.ceil(n / 10));
+    cumData.forEach(([key], i) => {
+      if (i % skip !== 0 && i !== n - 1) return;
+      const [yr, mo] = key.split('-');
+      const lbl = new Date(+yr, +mo - 1, 1).toLocaleDateString(T('locale'), { month: 'short' });
+      out += `<text x="${xOf(i).toFixed(1)}" y="${(mt+dh+14).toFixed(1)}" text-anchor="middle" class="chart-lbl">${lbl}</text>`;
+      if (mo === '01' || i === 0) out += `<text x="${xOf(i).toFixed(1)}" y="${(mt+dh+27).toFixed(1)}" text-anchor="middle" class="chart-lbl">${yr}</text>`;
+    });
+    out += `<circle cx="${ml}" cy="${H-7}" r="4" fill="var(--accent)"/>`;
+    out += `<text x="${ml+8}" y="${H-3}" class="legend-lbl">${T('chartActual')}</text>`;
+  }
+
+  out += `<line x1="${ml}" y1="${mt}" x2="${ml}" y2="${mt+dh}" stroke="rgba(255,255,255,.15)" stroke-width="1"/>`;
+  out += `<line x1="${ml}" y1="${mt+dh}" x2="${W-mr}" y2="${mt+dh}" stroke="rgba(255,255,255,.15)" stroke-width="1"/>`;
+  svg.innerHTML = out;
+}
+
+function renderMonthly() {
+  const data = getMonthlyData(monthlyPeriod);
+  renderBarChart(data);
+  renderLineChart(data);
+}
+
+/* ─── Forecast ─── */
+const PENALTY_RATE = 0.10;
+
+function calcForecast() {
+  const { settings, trips } = getData();
+  if (!settings.leaseStart || !settings.leaseEnd) return null;
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const st = new Date(settings.leaseStart); st.setHours(0, 0, 0, 0);
+  const en = new Date(settings.leaseEnd);   en.setHours(0, 0, 0, 0);
+  const elapsedDays    = Math.max(1, Math.floor((today - st) / 86400000) + 1);
+  const totalLeaseDays = Math.max(1, Math.floor((en - st) / 86400000) + 1);
+  const remainDays     = Math.max(0, Math.floor((en - today) / 86400000));
+  const businessKm     = trips.reduce((s, t) => s + (parseFloat(t.km) || 0), 0);
+  const avgDailyBiz    = businessKm / elapsedDays;
+  const projBizKm      = businessKm + avgDailyBiz * remainDays;
+  const totalBudget    = DAILY_PRIVATE * totalLeaseDays;
+  const rawTotal       = parseFloat(settings.totalKm);
+  const hasTotal       = !isNaN(rawTotal) && settings.totalKm !== '';
+  let projPrivateKm = null, projVsBudget = null, projPenalty = null;
+  if (hasTotal) {
+    const actualPrivate = rawTotal - businessKm;
+    projPrivateKm       = actualPrivate + (actualPrivate / elapsedDays) * remainDays;
+    projVsBudget        = totalBudget - projPrivateKm;
+    projPenalty         = Math.max(0, -projVsBudget) * PENALTY_RATE;
+  }
+  return { avgDailyBiz, projBizKm, projPrivateKm, projVsBudget, projPenalty, totalBudget, elapsedDays, totalLeaseDays, remainDays, businessKm };
+}
+
+function renderForecast() {
+  const f = calcForecast();
+  const row = document.getElementById('forecastRow');
+  const locale = T('locale');
+  if (!f) {
+    row.innerHTML = `<div class="stat" style="grid-column:1/-1"><div style="font-size:13px;color:var(--text-dim);padding:4px 0">${T('forecastEmpty')}</div></div>`;
+    return;
+  }
+  const vb = f.projVsBudget, pen = f.projPenalty;
+  const vbColor  = vb  === null ? '' : vb  >= 0 ? 'green' : 'red';
+  const penColor = pen === null ? '' : pen === 0 ? 'green' : 'red';
+  const vbStr  = vb  === null ? '—' : `${vb >= 0 ? '+' : ''}${Math.round(vb).toLocaleString(locale)} km`;
+  const penStr = pen === null ? '—' : `€ ${pen.toLocaleString(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  row.innerHTML = `
+    <div class="stat"><div class="indicator blue"></div>
+      <div class="stat-lbl">${T('forecastPace')}</div>
+      <div class="stat-val">${f.avgDailyBiz.toFixed(1)}</div>
+      <div class="stat-sub">${T('forecastPaceKm')}</div>
+    </div>
+    <div class="stat"><div class="indicator blue"></div>
+      <div class="stat-lbl">${T('forecastBusiness')}</div>
+      <div class="stat-val">${Math.round(f.projBizKm).toLocaleString(locale)}</div>
+      <div class="stat-sub">${T('forecastAtLeaseEnd')}</div>
+    </div>
+    <div class="stat"><div class="indicator ${vbColor}"></div>
+      <div class="stat-lbl">${T('forecastMargin')}</div>
+      <div class="stat-val ${vbColor}">${vbStr}</div>
+      <div class="stat-sub">${T('forecastPrivateBudget', Math.round(f.totalBudget).toLocaleString(locale))}</div>
+    </div>
+    <div class="stat"><div class="indicator ${penColor}"></div>
+      <div class="stat-lbl">${T('forecastPenalty')}</div>
+      <div class="stat-val ${penColor}">${penStr}</div>
+      <div class="stat-sub">${T('forecastPenaltyRate')}</div>
+    </div>`;
+}
+
+/* ─── Insights ─── */
+function renderInsights() {
+  const { trips } = getData();
+  const card = document.getElementById('insightsCard');
+  const locale = T('locale');
+  const f = calcForecast();
+  const insights = [];
+
+  if (trips.length > 0) {
+    const byMonth = {};
+    trips.forEach(t => { if (!t.date) return; const k = t.date.slice(0,7); byMonth[k] = (byMonth[k]||0) + (parseFloat(t.km)||0); });
+    const entries = Object.entries(byMonth).sort((a,b) => a[0].localeCompare(b[0]));
+    if (entries.length > 0) {
+      const avg = entries.reduce((s,[,v]) => s+v, 0) / entries.length;
+      insights.push({ icon: 'blue', text: T('insightAvg', Math.round(avg).toLocaleString(locale)) });
+      const busiest = entries.reduce((b,c) => c[1] > b[1] ? c : b, entries[0]);
+      const [bY, bM] = busiest[0].split('-');
+      const bName = new Date(+bY, +bM-1, 1).toLocaleDateString(locale, { month:'long', year:'numeric' });
+      insights.push({ icon: 'amber', text: T('insightBusiest', bName, Math.round(busiest[1]).toLocaleString(locale)) });
+    }
+  }
+
+  if (f) {
+    insights.push({ icon: 'blue', text: T('insightPace', f.avgDailyBiz.toFixed(1)) });
+    if (f.projVsBudget !== null) {
+      const over = f.projVsBudget < 0;
+      const penFmt = over ? `€ ${f.projPenalty.toLocaleString(locale, { minimumFractionDigits:2, maximumFractionDigits:2 })}` : null;
+      insights.push({
+        icon: over ? 'red' : 'green',
+        text: over
+          ? T('insightOver', Math.abs(Math.round(f.projVsBudget)).toLocaleString(locale), penFmt)
+          : T('insightUnder', Math.abs(Math.round(f.projVsBudget)).toLocaleString(locale))
+      });
+      if (over && f.remainDays > 0) {
+        const extraPerDay = Math.ceil(Math.abs(f.projVsBudget) / f.remainDays);
+        insights.push({ icon: 'amber', text: T('insightFix', extraPerDay.toLocaleString(locale)) });
+      }
+    }
+  }
+
+  if (!insights.length) {
+    card.innerHTML = `<div style="font-size:13px;color:var(--text-dim);text-align:center;padding:20px 0">${T('insightsEmpty')}</div>`;
+    return;
+  }
+  const icons = {
+    blue:  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>`,
+    green: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>`,
+    red:   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`,
+    amber: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`,
+  };
+  card.innerHTML = `<div class="insight-list">${insights.map(ins =>
+    `<div class="insight-item"><div class="insight-icon ${ins.icon}">${icons[ins.icon]}</div><div class="insight-text">${ins.text}</div></div>`
+  ).join('')}</div>`;
+}
+
+/* ─── JSON backup ─── */
+function exportJson() {
+  const data = getData();
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json;charset=utf-8;' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a'); a.href = url; a.download = 'km_tracker_backup.json'; a.click();
+  URL.revokeObjectURL(url);
+}
+function handleJsonFile(file) {
+  if (!file) return;
+  const r = new FileReader();
+  r.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (!data.settings || !Array.isArray(data.trips)) throw new Error(lang === 'nl' ? 'Ongeldig formaat' : 'Invalid format');
+      save(data); loadSettings(); render();
+      showToast(T('jsonImportOk', data.trips.length), 'success');
+    } catch(err) { showToast(T('jsonImportErr', err.message), 'error'); }
+  };
+  r.readAsText(file, 'UTF-8');
+  document.getElementById('jsonFileInput').value = '';
+}
 
 /* ─── Init ─── */
 applyTranslations();
