@@ -471,6 +471,13 @@
   .insight-icon svg   { width: 14px; height: 14px; }
   .insight-text strong { color: var(--text-bright); }
 
+  /* ─── Collapsible sections ─── */
+  .section-label { cursor: pointer; user-select: none; }
+  .chevron { flex-shrink: 0; transition: transform .22s; color: rgba(255,255,255,.3); width: 15px; height: 15px; order: 99; margin-left: 8px; }
+  .section-label::after { order: 98; }
+  .section-label.collapsed .chevron { transform: rotate(-90deg); }
+  .sec-body.collapsed { display: none; }
+
   /* ── Responsive ── */
   @media (max-width: 768px) {
     .header-content { flex-direction: column; gap: 8px; padding: 20px 20px 16px; }
@@ -574,129 +581,185 @@
 <div class="container">
 
   <!-- ═══ INSTELLINGEN ═══ -->
-  <div class="section-label" id="lblSettings">Instellingen</div>
-  <div class="card">
-    <div class="form-row">
-      <div class="form-group">
-        <label for="leaseStart" id="lblLeaseStart">Leasedatum start</label>
-        <input type="date" id="leaseStart" oninput="saveSettings(); render()">
-      </div>
-      <div class="form-group">
-        <label for="leaseEnd" id="lblLeaseEnd">Leasedatum einde</label>
-        <input type="date" id="leaseEnd" oninput="saveSettings(); render()">
-      </div>
-      <div class="form-group">
-        <label for="totalKm" id="lblTotalKm">Huidige km-stand auto</label>
-        <input type="number" id="totalKm" min="0" step="1" placeholder="bijv. 24500" oninput="saveSettings(); render()">
-      </div>
-      <div class="form-group" style="justify-content:flex-end">
-        <button class="btn btn-ghost btn-sm" onclick="clearAll()" id="btnClearAll">Alles wissen</button>
+  <div class="section-label" onclick="toggleSection('sec-settings')">
+    <span id="lblSettings">Instellingen</span>
+    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+  </div>
+  <div class="sec-body" id="sec-settings">
+    <div class="card">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="leaseStart" id="lblLeaseStart">Leasedatum start</label>
+          <input type="date" id="leaseStart" oninput="saveSettings(); render()">
+        </div>
+        <div class="form-group">
+          <label for="leaseEnd" id="lblLeaseEnd">Leasedatum einde</label>
+          <input type="date" id="leaseEnd" oninput="saveSettings(); render()">
+        </div>
+        <div class="form-group">
+          <label for="totalKm" id="lblTotalKm">Huidige km-stand auto</label>
+          <input type="number" id="totalKm" min="0" step="1" placeholder="bijv. 24500" oninput="saveSettings(); render()">
+        </div>
+        <div class="form-group" style="justify-content:flex-end">
+          <button class="btn btn-ghost btn-sm" onclick="clearAll()" id="btnClearAll">Alles wissen</button>
+        </div>
       </div>
     </div>
   </div>
 
   <!-- ═══ DASHBOARD ═══ -->
-  <div class="section-label" id="lblDashboard">Dashboard</div>
-
-  <div class="hero idle" id="heroCard">
-    <div>
-      <div class="hero-eyebrow" id="heroEyebrow">Privé km t.o.v. budget t/m vandaag</div>
-      <div class="hero-number" id="heroValue">—<span class="unit">km</span></div>
-      <div class="hero-desc" id="heroDesc">Vul km-stand en leasedatum in om te beginnen</div>
+  <div class="section-label" onclick="toggleSection('sec-dashboard')">
+    <span id="lblDashboard">Dashboard</span>
+    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+  </div>
+  <div class="sec-body" id="sec-dashboard">
+    <div class="hero idle" id="heroCard">
+      <div>
+        <div class="hero-eyebrow" id="heroEyebrow">Privé km t.o.v. budget t/m vandaag</div>
+        <div class="hero-number" id="heroValue">—<span class="unit">km</span></div>
+        <div class="hero-desc" id="heroDesc">Vul km-stand en leasedatum in om te beginnen</div>
+      </div>
+      <div class="hero-icon" id="heroIcon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
+        </svg>
+      </div>
     </div>
-    <div class="hero-icon" id="heroIcon">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
-      </svg>
+    <div class="stats-row four">
+      <div class="stat">
+        <div class="indicator blue"></div>
+        <div class="stat-lbl" id="lblDays">Verstreken dagen</div>
+        <div class="stat-val" id="statDays">—</div>
+        <div class="stat-sub" id="statDaysSub">stel leasedatum in</div>
+      </div>
+      <div class="stat" id="statBudgetCard">
+        <div class="indicator blue"></div>
+        <div class="stat-lbl" id="lblBudget">Privé budget t/m vandaag</div>
+        <div class="stat-val" id="statBudget">—</div>
+        <div class="stat-sub" id="lblBudgetSub">km toegestaan (41/dag)</div>
+      </div>
+      <div class="stat">
+        <div class="indicator blue"></div>
+        <div class="stat-lbl" id="lblBusiness">Zakelijke km geregistreerd</div>
+        <div class="stat-val" id="statBusiness">0</div>
+        <div class="stat-sub" id="statBusinessSub">0 ritten</div>
+      </div>
+      <div class="stat" id="statPrivateCard">
+        <div class="indicator"></div>
+        <div class="stat-lbl" id="lblPrivate">Werkelijk privé km</div>
+        <div class="stat-val" id="statPrivate">—</div>
+        <div class="stat-sub" id="statPrivateSub">totaal km - zakelijk</div>
+      </div>
+    </div>
+    <div class="stats-row three">
+      <div class="stat" id="statFiscalCard">
+        <div class="indicator yellow"></div>
+        <div class="stat-lbl" id="lblFiscal">Privé km resterend t/m 30 sep</div>
+        <div class="stat-val" id="statFiscal">—</div>
+        <div class="stat-sub" id="statFiscalSub">fiscaal jaar</div>
+      </div>
+      <div class="stat" id="statLeaseRemCard">
+        <div class="indicator yellow"></div>
+        <div class="stat-lbl" id="lblLeaseRem">Privé km resterend t/m einde lease</div>
+        <div class="stat-val" id="statLeaseRem">—</div>
+        <div class="stat-sub" id="statLeaseRemSub">einde leasecontract</div>
+      </div>
+      <div class="stat" id="statRemainCard">
+        <div class="indicator"></div>
+        <div class="stat-lbl" id="lblRemain">Resterende leasedagen</div>
+        <div class="stat-val" id="statRemain">—</div>
+        <div class="stat-sub" id="statRemainSub">stel einddatum in</div>
+      </div>
+    </div>
+    <div class="progress-card" id="progressCard" style="display:none">
+      <div class="progress-head">
+        <span id="lblProgress">Werkelijk privé km t.o.v. budget</span>
+        <span id="progressLabel"></span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-bar" id="progressFill" style="width:0%"></div>
+      </div>
     </div>
   </div>
 
-  <div class="stats-row four">
-    <div class="stat">
-      <div class="indicator blue"></div>
-      <div class="stat-lbl" id="lblDays">Verstreken dagen</div>
-      <div class="stat-val" id="statDays">—</div>
-      <div class="stat-sub" id="statDaysSub">stel leasedatum in</div>
-    </div>
-    <div class="stat" id="statBudgetCard">
-      <div class="indicator blue"></div>
-      <div class="stat-lbl" id="lblBudget">Privé budget t/m vandaag</div>
-      <div class="stat-val" id="statBudget">—</div>
-      <div class="stat-sub" id="lblBudgetSub">km toegestaan (41/dag)</div>
-    </div>
-    <div class="stat">
-      <div class="indicator blue"></div>
-      <div class="stat-lbl" id="lblBusiness">Zakelijke km geregistreerd</div>
-      <div class="stat-val" id="statBusiness">0</div>
-      <div class="stat-sub" id="statBusinessSub">0 ritten</div>
-    </div>
-    <div class="stat" id="statPrivateCard">
-      <div class="indicator"></div>
-      <div class="stat-lbl" id="lblPrivate">Werkelijk privé km</div>
-      <div class="stat-val" id="statPrivate">—</div>
-      <div class="stat-sub" id="statPrivateSub">totaal km - zakelijk</div>
+  <!-- ═══ MAANDOVERZICHT ═══ -->
+  <div class="section-label" onclick="toggleSection('sec-monthly')">
+    <span id="lblMonthly">Maandoverzicht</span>
+    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+  </div>
+  <div class="sec-body" id="sec-monthly">
+    <div class="card">
+      <div class="chart-header">
+        <div class="chart-title-label" id="lblBarChart">Geschatte privé km per maand</div>
+        <div class="time-toggle">
+          <button class="time-btn" data-period="3m"  onclick="setMonthlyPeriod('3m')">3M</button>
+          <button class="time-btn active" data-period="6m"  onclick="setMonthlyPeriod('6m')">6M</button>
+          <button class="time-btn" data-period="12m" onclick="setMonthlyPeriod('12m')">12M</button>
+          <button class="time-btn" data-period="all" onclick="setMonthlyPeriod('all')" id="btnPeriodAll">Alles</button>
+        </div>
+      </div>
+      <div class="chart-wrap">
+        <svg id="barChart" class="chart-svg" viewBox="0 0 820 210" preserveAspectRatio="xMidYMid meet"></svg>
+      </div>
+      <div class="chart-divider"></div>
+      <div class="chart-title-label" id="lblLineChart" style="margin-bottom:12px">Cumulatief privé km vs budget</div>
+      <div class="chart-wrap">
+        <svg id="lineChart" class="chart-svg" viewBox="0 0 820 180" preserveAspectRatio="xMidYMid meet"></svg>
+      </div>
     </div>
   </div>
 
-  <div class="stats-row three">
-    <div class="stat" id="statFiscalCard">
-      <div class="indicator yellow"></div>
-      <div class="stat-lbl" id="lblFiscal">Privé km resterend t/m 30 sep</div>
-      <div class="stat-val" id="statFiscal">—</div>
-      <div class="stat-sub" id="statFiscalSub">fiscaal jaar</div>
-    </div>
-    <div class="stat" id="statLeaseRemCard">
-      <div class="indicator yellow"></div>
-      <div class="stat-lbl" id="lblLeaseRem">Privé km resterend t/m einde lease</div>
-      <div class="stat-val" id="statLeaseRem">—</div>
-      <div class="stat-sub" id="statLeaseRemSub">einde leasecontract</div>
-    </div>
-    <div class="stat" id="statRemainCard">
-      <div class="indicator"></div>
-      <div class="stat-lbl" id="lblRemain">Resterende leasedagen</div>
-      <div class="stat-val" id="statRemain">—</div>
-      <div class="stat-sub" id="statRemainSub">stel einddatum in</div>
-    </div>
+  <!-- ═══ PROGNOSE ═══ -->
+  <div class="section-label" onclick="toggleSection('sec-forecast')">
+    <span id="lblForecast">Prognose einde lease</span>
+    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+  </div>
+  <div class="sec-body" id="sec-forecast">
+    <div class="stats-row four" id="forecastRow"></div>
   </div>
 
-  <div class="progress-card" id="progressCard" style="display:none">
-    <div class="progress-head">
-      <span id="lblProgress">Werkelijk privé km t.o.v. budget</span>
-      <span id="progressLabel"></span>
-    </div>
-    <div class="progress-track">
-      <div class="progress-bar" id="progressFill" style="width:0%"></div>
-    </div>
+  <!-- ═══ INZICHTEN ═══ -->
+  <div class="section-label" onclick="toggleSection('sec-insights')">
+    <span id="lblInsights">Inzichten</span>
+    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+  </div>
+  <div class="sec-body" id="sec-insights">
+    <div class="card" id="insightsCard" style="min-height:60px"></div>
   </div>
 
   <!-- ═══ UPLOAD ═══ -->
-  <div class="section-label" id="lblUpload">Bestand uploaden</div>
-  <div class="card">
-    <p id="uploadDesc" style="font-size:13px; color:var(--text-dim); margin-bottom:14px">
-      Upload een CSV- of Excel-bestand met kolommen <strong style="color:var(--text)">Date</strong> en <strong style="color:var(--text)">Distance</strong>.
-      Ritten buiten de leaseperiode worden automatisch genegeerd.
-    </p>
-    <div class="upload-zone" id="uploadArea" onclick="document.getElementById('fileInput').click()"
-         ondragover="event.preventDefault(); this.classList.add('drag-over')"
-         ondragleave="this.classList.remove('drag-over')"
-         ondrop="handleDrop(event)">
-      <input type="file" id="fileInput" accept=".csv,.xlsx,.xls" onchange="handleFile(this.files[0])">
-      <div class="icon">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="opacity:.5">
-          <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
-        </svg>
+  <div class="section-label" onclick="toggleSection('sec-upload')">
+    <span id="lblUpload">Bestand uploaden</span>
+    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+  </div>
+  <div class="sec-body" id="sec-upload">
+    <div class="card">
+      <p id="uploadDesc" style="font-size:13px; color:var(--text-dim); margin-bottom:14px">
+        Upload een CSV- of Excel-bestand met kolommen <strong style="color:var(--text)">Date</strong> en <strong style="color:var(--text)">Distance</strong>.
+        Ritten buiten de leaseperiode worden automatisch genegeerd.
+      </p>
+      <div class="upload-zone" id="uploadArea" onclick="document.getElementById('fileInput').click()"
+           ondragover="event.preventDefault(); this.classList.add('drag-over')"
+           ondragleave="this.classList.remove('drag-over')"
+           ondrop="handleDrop(event)">
+        <input type="file" id="fileInput" accept=".csv,.xlsx,.xls" onchange="handleFile(this.files[0])">
+        <div class="icon">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="opacity:.5">
+            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+          </svg>
+        </div>
+        <p id="uploadClickText">Klik of sleep een bestand hierheen</p>
+        <small>.csv, .xlsx, .xls</small>
       </div>
-      <p id="uploadClickText">Klik of sleep een bestand hierheen</p>
-      <small>.csv, .xlsx, .xls</small>
+      <div class="upload-msg" id="uploadPreview"></div>
     </div>
-    <div class="upload-msg" id="uploadPreview"></div>
   </div>
 
   <!-- ═══ RITTENLIJST ═══ -->
-  <div class="section-label">
+  <div class="section-label" onclick="toggleSection('sec-trips')">
     <span id="lblTrips">Rittenlijst</span>
-    <span id="tripCount" style="font-weight:500; color:rgba(255,255,255,.2)"></span>
-    <div style="margin-left:auto; display:flex; gap:8px; flex-shrink:0">
+    <span id="tripCount" style="font-weight:500; color:rgba(255,255,255,.2); cursor:default" onclick="event.stopPropagation()"></span>
+    <div style="margin-left:auto; display:flex; gap:8px; flex-shrink:0" onclick="event.stopPropagation()">
       <button class="btn btn-danger-outline btn-sm" onclick="deleteAllTrips()" id="btnDeleteAll">Verwijder alles</button>
       <button class="btn btn-ghost btn-sm" onclick="exportCsv()">&#8659; CSV</button>
       <button class="btn btn-ghost btn-sm" onclick="exportJson()" id="btnExportJson">&#8659; JSON</button>
@@ -705,46 +768,18 @@
         <input type="file" id="jsonFileInput" accept=".json" style="display:none" onchange="handleJsonFile(this.files[0])">
       </label>
     </div>
+    <svg class="chevron" style="margin-left:8px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
   </div>
-  <div class="card table-card">
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th id="thDate">Datum</th><th id="thKm">Km</th><th></th></tr></thead>
-        <tbody id="tripTable"></tbody>
-      </table>
-    </div>
-  </div>
-
-
-  <!-- ═══ MAANDOVERZICHT ═══ -->
-  <div class="section-label"><span id="lblMonthly">Maandoverzicht</span></div>
-  <div class="card">
-    <div class="chart-header">
-      <div class="chart-title-label" id="lblBarChart">Zakelijke km per maand</div>
-      <div class="time-toggle">
-        <button class="time-btn" data-period="3m"  onclick="setMonthlyPeriod('3m')">3M</button>
-        <button class="time-btn active" data-period="6m"  onclick="setMonthlyPeriod('6m')">6M</button>
-        <button class="time-btn" data-period="12m" onclick="setMonthlyPeriod('12m')">12M</button>
-        <button class="time-btn" data-period="all" onclick="setMonthlyPeriod('all')" id="btnPeriodAll">Alles</button>
+  <div class="sec-body" id="sec-trips">
+    <div class="card table-card">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th id="thDate">Datum</th><th id="thKm">Km</th><th></th></tr></thead>
+          <tbody id="tripTable"></tbody>
+        </table>
       </div>
     </div>
-    <div class="chart-wrap">
-      <svg id="barChart" class="chart-svg" viewBox="0 0 820 200" preserveAspectRatio="xMidYMid meet"></svg>
-    </div>
-    <div class="chart-divider"></div>
-    <div class="chart-title-label" id="lblLineChart" style="margin-bottom:12px">Cumulatief zakelijke km</div>
-    <div class="chart-wrap">
-      <svg id="lineChart" class="chart-svg" viewBox="0 0 820 170" preserveAspectRatio="xMidYMid meet"></svg>
-    </div>
   </div>
-
-  <!-- ═══ PROGNOSE ═══ -->
-  <div class="section-label" id="lblForecast">Prognose einde lease</div>
-  <div class="stats-row four" id="forecastRow"></div>
-
-  <!-- ═══ INZICHTEN ═══ -->
-  <div class="section-label" id="lblInsights">Inzichten</div>
-  <div class="card" id="insightsCard" style="min-height:60px"></div>
 
 </div>
 
@@ -855,20 +890,24 @@ const TRANSLATIONS = {
     uploadBadCols: (hdr) => `Kolommen niet herkend (${hdr.join(', ')}). Verwacht: "Date" en "Distance".`,
     uploadReadErr: (msg) => `Kan niet lezen: ${msg}`,
     // charts
-    chartEmpty:     'Geen gegevens voor deze periode',
-    chartActual:    'Werkelijk',
-    chartProjected: 'Prognose',
+    chartEmpty:       'Geen gegevens voor deze periode',
+    chartActual:      'Werkelijk',
+    chartPrivate:     'Privé km',
+    chartBudget:      'Budget (41/dag)',
+    chartProjected:   'Prognose',
+    chartUnderBudget: 'Onder budget',
+    chartOverBudget:  'Boven budget',
     // monthly
     lblMonthly:     'Maandoverzicht',
-    lblBarChart:    'Zakelijke km per maand',
-    lblLineChart:   'Cumulatief zakelijke km',
+    lblBarChart:    'Geschatte privé km per maand',
+    lblLineChart:   'Cumulatief privé km vs budget',
     periodAll:      'Alles',
     // forecast
     lblForecast:    'Prognose einde lease',
     forecastEmpty:  'Stel leasedatum start én einde in om de prognose te zien.',
-    forecastPace:   'Gem. zakelijk km/dag',
-    forecastPaceKm: 'gemiddelde t/m vandaag',
-    forecastBusiness: 'Prognose zakelijke km',
+    forecastPace:   'Gem. privé km/dag',
+    forecastPaceKm: 'budget: 41 km/dag',
+    forecastBusiness: 'Prognose privé km',
     forecastAtLeaseEnd: 'bij einde leasecontract',
     forecastMargin: 'Prognose privé marge',
     forecastPrivateBudget: (b) => `budget: ${b} km`,
@@ -879,13 +918,13 @@ const TRANSLATIONS = {
     jsonImportErr:  (msg) => `Importfout: ${msg}`,
     // insights
     lblInsights:    'Inzichten',
-    insightsEmpty:  'Voeg ritten toe om inzichten te zien.',
-    insightAvg:     (km) => `Gemiddeld <strong>${km} km</strong> zakelijk per maand.`,
-    insightBusiest: (m, km) => `Drukste maand: <strong>${m}</strong> met <strong>${km} km</strong> zakelijk.`,
-    insightPace:    (n) => `Huidig tempo: <strong>${n} km/dag</strong> zakelijk.`,
-    insightOver:    (km, pen) => `Op dit tempo rijd je de lease uit met <strong>${km} km te veel privé</strong>. Verwachte boete: <strong>${pen}</strong>.`,
-    insightUnder:   (km) => `Op dit tempo eindig je de lease met <strong>${km} km privé over</strong> — geen boete.`,
-    insightFix:     (n) => `Om de boete te vermijden heb je <strong>${n} extra zakelijke km/dag</strong> nodig.`,
+    insightsEmpty:     'Voeg ritten toe om inzichten te zien.',
+    insightAvg:        (km) => `Gemiddeld <strong>${km} zakelijke km</strong> geregistreerd per maand.`,
+    insightBusiest:    (m, km) => `Drukste registratiemaand: <strong>${m}</strong> met <strong>${km} zakelijke km</strong>.`,
+    insightPrivatePace:(n) => `Jouw gem. privé km/dag is <strong>${n} km</strong> (budget: <strong>41 km</strong>).`,
+    insightOver:       (km, pen) => `Op dit tempo rijd je de lease uit met <strong>${km} km te veel privé</strong>. Verwachte boete: <strong>${pen}</strong>.`,
+    insightUnder:      (km) => `Op dit tempo eindig je de lease met <strong>${km} km privé over</strong> — geen boete verwacht.`,
+    insightFix:        (n) => `Om de boete te vermijden moet je <strong>${n} km/dag minder privé rijden</strong>.`,
     locale: 'nl-NL',
   },
   en: {
@@ -976,20 +1015,24 @@ const TRANSLATIONS = {
     uploadBadCols: (hdr) => `Columns not recognized (${hdr.join(', ')}). Expected: "Date" and "Distance".`,
     uploadReadErr: (msg) => `Could not read file: ${msg}`,
     // charts
-    chartEmpty:     'No data for this period',
-    chartActual:    'Actual',
-    chartProjected: 'Projected',
+    chartEmpty:       'No data for this period',
+    chartActual:      'Actual',
+    chartPrivate:     'Private km',
+    chartBudget:      'Budget (41/day)',
+    chartProjected:   'Projected',
+    chartUnderBudget: 'Under budget',
+    chartOverBudget:  'Over budget',
     // monthly
     lblMonthly:     'Monthly overview',
-    lblBarChart:    'Business km per month',
-    lblLineChart:   'Cumulative business km',
+    lblBarChart:    'Estimated private km per month',
+    lblLineChart:   'Cumulative private km vs budget',
     periodAll:      'All',
     // forecast
     lblForecast:    'End of lease forecast',
     forecastEmpty:  'Set lease start and end dates to see the forecast.',
-    forecastPace:   'Avg. business km/day',
-    forecastPaceKm: 'average up to today',
-    forecastBusiness: 'Projected business km',
+    forecastPace:   'Avg. private km/day',
+    forecastPaceKm: 'budget: 41 km/day',
+    forecastBusiness: 'Projected private km',
     forecastAtLeaseEnd: 'at lease end',
     forecastMargin: 'Projected private margin',
     forecastPrivateBudget: (b) => `budget: ${b} km`,
@@ -1000,13 +1043,13 @@ const TRANSLATIONS = {
     jsonImportErr:  (msg) => `Import error: ${msg}`,
     // insights
     lblInsights:    'Insights',
-    insightsEmpty:  'Add trips to see insights.',
-    insightAvg:     (km) => `Average of <strong>${km} km</strong> business per month.`,
-    insightBusiest: (m, km) => `Busiest month: <strong>${m}</strong> with <strong>${km} km</strong> business.`,
-    insightPace:    (n) => `Current pace: <strong>${n} km/day</strong> business.`,
-    insightOver:    (km, pen) => `At this pace you'll end the lease <strong>${km} km over</strong> on private km. Expected penalty: <strong>${pen}</strong>.`,
-    insightUnder:   (km) => `At this pace you'll end the lease <strong>${km} km under</strong> budget — no penalty.`,
-    insightFix:     (n) => `To avoid a penalty you need <strong>${n} extra business km/day</strong>.`,
+    insightsEmpty:     'Add trips to see insights.',
+    insightAvg:        (km) => `Average of <strong>${km} business km</strong> registered per month.`,
+    insightBusiest:    (m, km) => `Busiest registration month: <strong>${m}</strong> with <strong>${km} business km</strong>.`,
+    insightPrivatePace:(n) => `Your avg. private km/day is <strong>${n} km</strong> (budget: <strong>41 km</strong>).`,
+    insightOver:       (km, pen) => `At this pace you'll end the lease <strong>${km} km over</strong> on private km. Expected penalty: <strong>${pen}</strong>.`,
+    insightUnder:      (km) => `At this pace you'll end the lease <strong>${km} km under</strong> budget — no penalty expected.`,
+    insightFix:        (n) => `To avoid a penalty you need to drive <strong>${n} fewer private km/day</strong>.`,
     locale: 'en-US',
   }
 };
@@ -1401,6 +1444,14 @@ function showUploadMsg(msg, type='success') {
 }
 function genId() { return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
 
+/* ─── Collapsible ─── */
+function toggleSection(bodyId) {
+  const body  = document.getElementById(bodyId);
+  const label = body.previousElementSibling;
+  const collapsed = body.classList.toggle('collapsed');
+  label.classList.toggle('collapsed', collapsed);
+}
+
 /* ─── Monthly Overview ─── */
 let monthlyPeriod = '6m';
 
@@ -1413,65 +1464,106 @@ function setMonthlyPeriod(p) {
 function getMonthlyData(period) {
   const { trips, settings } = getData();
   const today = new Date(); today.setHours(0, 0, 0, 0);
+  const leaseStartD = settings.leaseStart ? new Date(settings.leaseStart) : null;
   let startDate;
   if      (period === '3m')  { startDate = new Date(today); startDate.setMonth(startDate.getMonth() - 3); }
   else if (period === '6m')  { startDate = new Date(today); startDate.setMonth(startDate.getMonth() - 6); }
   else if (period === '12m') { startDate = new Date(today); startDate.setMonth(startDate.getMonth() - 12); }
-  else {
-    startDate = settings.leaseStart
-      ? new Date(settings.leaseStart)
-      : new Date(today.getFullYear() - 1, today.getMonth(), 1);
-  }
+  else { startDate = leaseStartD || new Date(today.getFullYear() - 1, today.getMonth(), 1); }
   startDate.setDate(1); startDate.setHours(0, 0, 0, 0);
 
-  // Fill all months in range with 0
   const months = {};
   const cur = new Date(startDate);
   while (cur <= today) {
-    months[`${cur.getFullYear()}-${String(cur.getMonth() + 1).padStart(2, '0')}`] = 0;
+    const key = `${cur.getFullYear()}-${String(cur.getMonth() + 1).padStart(2, '0')}`;
+    const daysInMonth = new Date(cur.getFullYear(), cur.getMonth() + 1, 0).getDate();
+    months[key] = { business: 0, days: daysInMonth };
     cur.setMonth(cur.getMonth() + 1);
   }
-  // Aggregate trips
   trips.forEach(t => {
     if (!t.date) return;
     const d = new Date(t.date); d.setHours(0, 0, 0, 0);
     if (d < startDate || d > today) return;
     const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
-    if (key in months) months[key] += parseFloat(t.km) || 0;
+    if (key in months) months[key].business += parseFloat(t.km) || 0;
   });
-  return Object.entries(months).sort((a, b) => a[0].localeCompare(b[0]));
+
+  // Calculate per-day total km rate for private km estimation
+  const rawTotal = parseFloat(settings.totalKm);
+  const hasTotal = !isNaN(rawTotal) && settings.totalKm !== '';
+  const elapsedDays = leaseStartD ? Math.max(1, Math.floor((today - leaseStartD) / 86400000) + 1) : null;
+  const totalBizKm = trips.reduce((s, t) => s + (parseFloat(t.km) || 0), 0);
+  // avgTotalPerDay: total km driven per day on average (estimated)
+  const avgTotalPerDay = (hasTotal && elapsedDays) ? rawTotal / elapsedDays : null;
+
+  return Object.entries(months)
+    .sort((a, b) => a[0].localeCompare(b[0]))
+    .map(([key, { business, days }]) => {
+      const budgetKm = DAILY_PRIVATE * days;
+      // estimated private km = (avg total km/day × days) - business km that month
+      const privateKm = avgTotalPerDay !== null ? Math.max(0, avgTotalPerDay * days - business) : null;
+      return { key, business, days, budgetKm, privateKm };
+    });
 }
 
 function renderBarChart(data) {
   const svg = document.getElementById('barChart');
-  const W = 820, H = 200;
-  const ml = 55, mr = 15, mt = 24, mb = 46;
+  const W = 820, H = 210;
+  const ml = 62, mr = 15, mt = 24, mb = 48;
   const dw = W - ml - mr, dh = H - mt - mb;
   const n = data.length;
   if (!n) { svg.innerHTML = `<text x="${W/2}" y="${H/2}" class="chart-empty" text-anchor="middle">${T('chartEmpty')}</text>`; return; }
-  const maxVal = Math.max(...data.map(([, v]) => v), 1);
-  const roundMax = Math.ceil(maxVal / 50) * 50;
+
+  const usePrivate = data[0].privateKm !== null;
+  const vals = data.map(d => usePrivate ? d.privateKm : d.business);
+  const maxBudget = Math.max(...data.map(d => d.budgetKm));
+  const rawMax = usePrivate ? Math.max(...vals, maxBudget, 1) : Math.max(...vals, 1);
+  const roundMax = Math.ceil(rawMax / 100) * 100;
   const gap = dw / n;
   const barW = Math.min(gap * 0.62, 44);
   let out = '';
+
   // Gridlines + Y labels
   for (let i = 0; i <= 4; i++) {
     const y = mt + dh * (1 - i / 4);
     out += `<line x1="${ml}" y1="${y.toFixed(1)}" x2="${W-mr}" y2="${y.toFixed(1)}" stroke="rgba(255,255,255,.07)" stroke-width="1"/>`;
     out += `<text x="${ml-6}" y="${(y+4).toFixed(1)}" text-anchor="end" class="chart-lbl">${Math.round((i/4)*roundMax)}</text>`;
   }
+
+  // Budget reference line (for private km view)
+  if (usePrivate) {
+    const budgetY = mt + dh - (DAILY_PRIVATE / (roundMax / data[0].days) / data[0].days * dh);
+    // simpler: average budget line at 41 × 30.44
+    const avgBudget = DAILY_PRIVATE * 30.44;
+    const budgetLineY = (mt + dh - (avgBudget / roundMax) * dh).toFixed(1);
+    out += `<line x1="${ml}" y1="${budgetLineY}" x2="${W-mr}" y2="${budgetLineY}" stroke="var(--amber)" stroke-width="1.5" stroke-dasharray="6,4" opacity=".6"/>`;
+    out += `<text x="${W-mr+3}" y="${(parseFloat(budgetLineY)+4).toFixed(1)}" class="chart-lbl" opacity=".7">41/d</text>`;
+  }
+
   // Bars
-  data.forEach(([key, val], i) => {
+  data.forEach(({ key, business, days, budgetKm, privateKm }, i) => {
+    const val = usePrivate ? privateKm : business;
     const cx = ml + i * gap + gap / 2;
     const barH = Math.max((val / roundMax) * dh, val > 0 ? 2 : 0);
     const x = (cx - barW / 2).toFixed(1), y = (mt + dh - barH).toFixed(1);
     const [yr, mo] = key.split('-');
     const moLbl = new Date(+yr, +mo - 1, 1).toLocaleDateString(T('locale'), { month: 'short' });
-    out += `<rect x="${x}" y="${y}" width="${barW.toFixed(1)}" height="${Math.max(barH, val > 0 ? 2 : 0).toFixed(1)}" rx="3" fill="${val > 0 ? 'var(--accent)' : 'rgba(255,255,255,.06)'}"/>`;
+    const isOver = usePrivate && val > budgetKm;
+    const fill = usePrivate ? (isOver ? 'var(--red)' : 'var(--green)') : (val > 0 ? 'var(--accent)' : 'rgba(255,255,255,.06)');
+    out += `<rect x="${x}" y="${y}" width="${barW.toFixed(1)}" height="${Math.max(barH, val > 0 ? 2 : 0).toFixed(1)}" rx="3" fill="${fill}" opacity=".75"/>`;
     if (barH > 18 && val > 0) out += `<text x="${cx.toFixed(1)}" y="${(mt+dh-barH-5).toFixed(1)}" text-anchor="middle" class="chart-val">${Math.round(val)}</text>`;
     out += `<text x="${cx.toFixed(1)}" y="${(mt+dh+16).toFixed(1)}" text-anchor="middle" class="chart-lbl">${moLbl}</text>`;
     if (mo === '01' || i === 0) out += `<text x="${cx.toFixed(1)}" y="${(mt+dh+30).toFixed(1)}" text-anchor="middle" class="chart-lbl">${yr}</text>`;
   });
+
+  // Legend
+  if (usePrivate) {
+    out += `<rect x="${ml}" y="${H-9}" width="10" height="10" rx="2" fill="var(--green)" opacity=".75"/>`;
+    out += `<text x="${ml+14}" y="${H-1}" class="legend-lbl">${T('chartUnderBudget')}</text>`;
+    out += `<rect x="${ml+100}" y="${H-9}" width="10" height="10" rx="2" fill="var(--red)" opacity=".75"/>`;
+    out += `<text x="${ml+114}" y="${H-1}" class="legend-lbl">${T('chartOverBudget')}</text>`;
+  }
+
   out += `<line x1="${ml}" y1="${mt}" x2="${ml}" y2="${mt+dh}" stroke="rgba(255,255,255,.15)" stroke-width="1"/>`;
   out += `<line x1="${ml}" y1="${mt+dh}" x2="${W-mr}" y2="${mt+dh}" stroke="rgba(255,255,255,.15)" stroke-width="1"/>`;
   svg.innerHTML = out;
@@ -1479,20 +1571,49 @@ function renderBarChart(data) {
 
 function renderLineChart(data) {
   const svg = document.getElementById('lineChart');
-  const W = 820, H = 170;
-  const ml = 55, mr = 15, mt = 20, mb = 42;
+  const W = 820, H = 180;
+  const ml = 62, mr = 15, mt = 20, mb = 44;
   const dw = W - ml - mr, dh = H - mt - mb;
   const n = data.length;
   if (!n) { svg.innerHTML = `<text x="${W/2}" y="${H/2}" class="chart-empty" text-anchor="middle">${T('chartEmpty')}</text>`; return; }
 
-  let cum = 0;
-  const cumData = data.map(([key, val]) => { cum += val; return [key, cum]; });
-  const maxVal = Math.max(cum, 1);
-  const roundMax = Math.ceil(maxVal / 50) * 50;
+  const usePrivate = data[0].privateKm !== null;
+
+  // Build cumulative actual + budget lines
+  let cumPriv = 0, cumBudget = 0, cumBiz = 0;
+  const cumData = data.map(({ key, business, days, privateKm }) => {
+    cumBiz    += business;
+    cumBudget += DAILY_PRIVATE * days;
+    if (usePrivate) cumPriv += privateKm;
+    return { key, cumPriv: usePrivate ? cumPriv : null, cumBudget, cumBiz };
+  });
+
+  // Determine scale: include projections
+  const { settings } = getData();
+  let projPrivEnd = null, projBudgetEnd = null;
+  if (settings.leaseEnd) {
+    const lastD = new Date(cumData[n-1].key + '-01');
+    const endD  = new Date(settings.leaseEnd); endD.setHours(0,0,0,0);
+    if (endD > lastD) {
+      const monthsLeft = Math.max(1, Math.round((endD - lastD) / (30.44 * 86400000)));
+      if (usePrivate) {
+        const slope = cumPriv / Math.max(n, 1);
+        projPrivEnd = cumPriv + slope * monthsLeft;
+      }
+      projBudgetEnd = cumBudget + DAILY_PRIVATE * monthsLeft * 30.44;
+    }
+  }
+
+  const maxCumVal = usePrivate
+    ? Math.max(cumPriv, cumBudget, projPrivEnd || 0, projBudgetEnd || 0, 1)
+    : Math.max(cumBiz, 1);
+  const roundMax = Math.ceil(maxCumVal / 100) * 100;
+
   const xOf = i => ml + (n > 1 ? (i / (n - 1)) * dw : dw / 2);
-  const yOf = v => mt + dh - (v / roundMax) * dh;
+  const yOf = v => Math.min(mt + dh, Math.max(mt, mt + dh - (v / roundMax) * dh));
 
   let out = '';
+
   // Gridlines + Y labels
   for (let i = 0; i <= 4; i++) {
     const y = mt + dh * (1 - i / 4);
@@ -1500,43 +1621,70 @@ function renderLineChart(data) {
     out += `<text x="${ml-6}" y="${(y+4).toFixed(1)}" text-anchor="end" class="chart-lbl">${Math.round((i/4)*roundMax)}</text>`;
   }
 
-  if (n >= 2) {
-    // Dashed projection to lease end
-    const { settings } = getData();
+  if (n >= 1) {
+    const lastX = xOf(n - 1);
+
+    // Projection lines (dashed) to lease end
     if (settings.leaseEnd) {
-      const lastD = new Date(cumData[n-1][0] + '-01');
+      const lastD = new Date(cumData[n-1].key + '-01');
       const endD  = new Date(settings.leaseEnd); endD.setHours(0,0,0,0);
       if (endD > lastD) {
-        const monthsLeft = Math.round((endD - lastD) / (30.44 * 86400000));
-        const slope = (cumData[n-1][1] - cumData[0][1]) / Math.max(n - 1, 1);
-        const projVal = cumData[n-1][1] + slope * monthsLeft;
-        const projRoundMax = Math.max(roundMax, Math.ceil(projVal / 50) * 50);
-        const projY = mt + dh - (projVal / projRoundMax) * dh;
-        const lx = xOf(n - 1), ly = yOf(cumData[n-1][1]);
-        out += `<line x1="${lx.toFixed(1)}" y1="${ly.toFixed(1)}" x2="${(W-mr).toFixed(1)}" y2="${Math.max(mt, projY).toFixed(1)}" stroke="var(--amber)" stroke-width="1.5" stroke-dasharray="5,4" opacity=".65"/>`;
-        out += `<circle cx="${W-mr-85}" cy="${H-7}" r="4" fill="var(--amber)" opacity=".65"/>`;
-        out += `<text x="${W-mr-77}" y="${H-3}" class="legend-lbl">${T('chartProjected')}</text>`;
+        const projX = W - mr;
+        // Budget projection
+        if (projBudgetEnd !== null) {
+          const ly = yOf(cumBudget), py = yOf(projBudgetEnd);
+          out += `<line x1="${lastX.toFixed(1)}" y1="${ly.toFixed(1)}" x2="${projX}" y2="${py.toFixed(1)}" stroke="var(--amber)" stroke-width="1.5" stroke-dasharray="5,4" opacity=".55"/>`;
+        }
+        // Private projection
+        if (usePrivate && projPrivEnd !== null) {
+          const ly = yOf(cumPriv), py = yOf(projPrivEnd);
+          out += `<line x1="${lastX.toFixed(1)}" y1="${ly.toFixed(1)}" x2="${projX}" y2="${py.toFixed(1)}" stroke="var(--green)" stroke-width="1.5" stroke-dasharray="5,4" opacity=".55"/>`;
+        }
       }
     }
-    // Fill + line
-    const pts = cumData.map(([,v], i) => `${xOf(i).toFixed(1)},${yOf(v).toFixed(1)}`).join(' ');
-    out += `<polygon points="${xOf(0).toFixed(1)},${(mt+dh).toFixed(1)} ${pts} ${xOf(n-1).toFixed(1)},${(mt+dh).toFixed(1)}" fill="var(--accent)" opacity=".08"/>`;
-    const path = cumData.map(([,v], i) => `${i===0?'M':'L'}${xOf(i).toFixed(1)},${yOf(v).toFixed(1)}`).join(' ');
-    out += `<path d="${path}" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>`;
-    cumData.forEach(([,v], i) => {
-      out += `<circle cx="${xOf(i).toFixed(1)}" cy="${yOf(v).toFixed(1)}" r="3.5" fill="var(--accent)" stroke="var(--bg)" stroke-width="1.5"/>`;
-    });
+
+    if (usePrivate) {
+      // Budget line (amber)
+      const budgetPts = cumData.map(({ cumBudget: v }, i) => `${xOf(i).toFixed(1)},${yOf(v).toFixed(1)}`).join(' ');
+      out += `<polyline points="${budgetPts}" fill="none" stroke="var(--amber)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity=".7"/>`;
+      // Private fill + line (green)
+      const privPts = cumData.map(({ cumPriv: v }, i) => `${xOf(i).toFixed(1)},${yOf(v).toFixed(1)}`).join(' ');
+      out += `<polygon points="${xOf(0).toFixed(1)},${(mt+dh).toFixed(1)} ${privPts} ${xOf(n-1).toFixed(1)},${(mt+dh).toFixed(1)}" fill="var(--green)" opacity=".07"/>`;
+      out += `<polyline points="${privPts}" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>`;
+      cumData.forEach(({ cumPriv: v }, i) => {
+        out += `<circle cx="${xOf(i).toFixed(1)}" cy="${yOf(v).toFixed(1)}" r="3.5" fill="var(--green)" stroke="var(--bg)" stroke-width="1.5"/>`;
+      });
+    } else {
+      // Business km line (blue)
+      const bizPts = cumData.map(({ cumBiz: v }, i) => `${xOf(i).toFixed(1)},${yOf(v).toFixed(1)}`).join(' ');
+      out += `<polygon points="${xOf(0).toFixed(1)},${(mt+dh).toFixed(1)} ${bizPts} ${xOf(n-1).toFixed(1)},${(mt+dh).toFixed(1)}" fill="var(--accent)" opacity=".07"/>`;
+      out += `<polyline points="${bizPts}" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>`;
+      cumData.forEach(({ cumBiz: v }, i) => {
+        out += `<circle cx="${xOf(i).toFixed(1)}" cy="${yOf(v).toFixed(1)}" r="3.5" fill="var(--accent)" stroke="var(--bg)" stroke-width="1.5"/>`;
+      });
+    }
+
     // X labels
     const skip = Math.max(1, Math.ceil(n / 10));
-    cumData.forEach(([key], i) => {
+    cumData.forEach(({ key }, i) => {
       if (i % skip !== 0 && i !== n - 1) return;
       const [yr, mo] = key.split('-');
       const lbl = new Date(+yr, +mo - 1, 1).toLocaleDateString(T('locale'), { month: 'short' });
       out += `<text x="${xOf(i).toFixed(1)}" y="${(mt+dh+14).toFixed(1)}" text-anchor="middle" class="chart-lbl">${lbl}</text>`;
-      if (mo === '01' || i === 0) out += `<text x="${xOf(i).toFixed(1)}" y="${(mt+dh+27).toFixed(1)}" text-anchor="middle" class="chart-lbl">${yr}</text>`;
+      if (mo === '01' || i === 0) out += `<text x="${xOf(i).toFixed(1)}" y="${(mt+dh+28).toFixed(1)}" text-anchor="middle" class="chart-lbl">${yr}</text>`;
     });
-    out += `<circle cx="${ml}" cy="${H-7}" r="4" fill="var(--accent)"/>`;
-    out += `<text x="${ml+8}" y="${H-3}" class="legend-lbl">${T('chartActual')}</text>`;
+
+    // Legend
+    const lc = usePrivate ? 'var(--green)' : 'var(--accent)';
+    const ll = usePrivate ? T('chartPrivate') : T('chartActual');
+    out += `<circle cx="${ml}" cy="${H-8}" r="4" fill="${lc}"/>`;
+    out += `<text x="${ml+9}" y="${H-4}" class="legend-lbl">${ll}</text>`;
+    if (usePrivate) {
+      out += `<circle cx="${ml+120}" cy="${H-8}" r="4" fill="var(--amber)" opacity=".7"/>`;
+      out += `<text x="${ml+129}" y="${H-4}" class="legend-lbl">${T('chartBudget')}</text>`;
+      out += `<line x1="${ml+220}" y1="${H-8}" x2="${ml+236}" y2="${H-8}" stroke="var(--text-dim)" stroke-width="1.5" stroke-dasharray="4,3"/>`;
+      out += `<text x="${ml+240}" y="${H-4}" class="legend-lbl">${T('chartProjected')}</text>`;
+    }
   }
 
   out += `<line x1="${ml}" y1="${mt}" x2="${ml}" y2="${mt+dh}" stroke="rgba(255,255,255,.15)" stroke-width="1"/>`;
@@ -1568,14 +1716,15 @@ function calcForecast() {
   const totalBudget    = DAILY_PRIVATE * totalLeaseDays;
   const rawTotal       = parseFloat(settings.totalKm);
   const hasTotal       = !isNaN(rawTotal) && settings.totalKm !== '';
-  let projPrivateKm = null, projVsBudget = null, projPenalty = null;
+  let projPrivateKm = null, projVsBudget = null, projPenalty = null, avgDailyPriv = null;
   if (hasTotal) {
     const actualPrivate = rawTotal - businessKm;
-    projPrivateKm       = actualPrivate + (actualPrivate / elapsedDays) * remainDays;
+    avgDailyPriv        = actualPrivate / elapsedDays;
+    projPrivateKm       = actualPrivate + avgDailyPriv * remainDays;
     projVsBudget        = totalBudget - projPrivateKm;
     projPenalty         = Math.max(0, -projVsBudget) * PENALTY_RATE;
   }
-  return { avgDailyBiz, projBizKm, projPrivateKm, projVsBudget, projPenalty, totalBudget, elapsedDays, totalLeaseDays, remainDays, businessKm };
+  return { avgDailyBiz, avgDailyPriv, projBizKm, projPrivateKm, projVsBudget, projPenalty, totalBudget, elapsedDays, totalLeaseDays, remainDays, businessKm };
 }
 
 function renderForecast() {
@@ -1591,15 +1740,16 @@ function renderForecast() {
   const penColor = pen === null ? '' : pen === 0 ? 'green' : 'red';
   const vbStr  = vb  === null ? '—' : `${vb >= 0 ? '+' : ''}${Math.round(vb).toLocaleString(locale)} km`;
   const penStr = pen === null ? '—' : `€ ${pen.toLocaleString(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  const privPaceColor = f.avgDailyPriv !== null ? (f.avgDailyPriv <= DAILY_PRIVATE ? 'green' : 'red') : '';
   row.innerHTML = `
-    <div class="stat"><div class="indicator blue"></div>
+    <div class="stat"><div class="indicator ${privPaceColor}"></div>
       <div class="stat-lbl">${T('forecastPace')}</div>
-      <div class="stat-val">${f.avgDailyBiz.toFixed(1)}</div>
+      <div class="stat-val ${privPaceColor}">${f.avgDailyPriv !== null ? f.avgDailyPriv.toFixed(1) : '—'}</div>
       <div class="stat-sub">${T('forecastPaceKm')}</div>
     </div>
     <div class="stat"><div class="indicator blue"></div>
       <div class="stat-lbl">${T('forecastBusiness')}</div>
-      <div class="stat-val">${Math.round(f.projBizKm).toLocaleString(locale)}</div>
+      <div class="stat-val">${f.projPrivateKm !== null ? Math.round(f.projPrivateKm).toLocaleString(locale) : '—'}</div>
       <div class="stat-sub">${T('forecastAtLeaseEnd')}</div>
     </div>
     <div class="stat"><div class="indicator ${vbColor}"></div>
@@ -1637,7 +1787,10 @@ function renderInsights() {
   }
 
   if (f) {
-    insights.push({ icon: 'blue', text: T('insightPace', f.avgDailyBiz.toFixed(1)) });
+    if (f.avgDailyPriv !== null) {
+      const privIcon = f.avgDailyPriv <= DAILY_PRIVATE ? 'green' : 'red';
+      insights.push({ icon: privIcon, text: T('insightPrivatePace', f.avgDailyPriv.toFixed(1)) });
+    }
     if (f.projVsBudget !== null) {
       const over = f.projVsBudget < 0;
       const penFmt = over ? `€ ${f.projPenalty.toLocaleString(locale, { minimumFractionDigits:2, maximumFractionDigits:2 })}` : null;
@@ -1648,8 +1801,8 @@ function renderInsights() {
           : T('insightUnder', Math.abs(Math.round(f.projVsBudget)).toLocaleString(locale))
       });
       if (over && f.remainDays > 0) {
-        const extraPerDay = Math.ceil(Math.abs(f.projVsBudget) / f.remainDays);
-        insights.push({ icon: 'amber', text: T('insightFix', extraPerDay.toLocaleString(locale)) });
+        const fewerPerDay = Math.ceil(Math.abs(f.projVsBudget) / f.remainDays);
+        insights.push({ icon: 'amber', text: T('insightFix', fewerPerDay.toLocaleString(locale)) });
       }
     }
   }
