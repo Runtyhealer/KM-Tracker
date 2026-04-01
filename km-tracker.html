@@ -692,10 +692,9 @@
       <div class="chart-header">
         <div class="chart-title-label" id="lblBarChart">Geschatte privé km per maand</div>
         <div class="time-toggle">
-          <button class="time-btn" data-period="3m"  onclick="setMonthlyPeriod('3m')">3M</button>
           <button class="time-btn active" data-period="6m"  onclick="setMonthlyPeriod('6m')">6M</button>
           <button class="time-btn" data-period="12m" onclick="setMonthlyPeriod('12m')">12M</button>
-          <button class="time-btn" data-period="all" onclick="setMonthlyPeriod('all')" id="btnPeriodAll">Alles</button>
+          <button class="time-btn" data-period="48m" onclick="setMonthlyPeriod('48m')" id="btnPeriodAll">48M</button>
         </div>
       </div>
       <div class="chart-wrap">
@@ -919,8 +918,8 @@ const TRANSLATIONS = {
     // insights
     lblInsights:    'Inzichten',
     insightsEmpty:     'Voeg ritten toe om inzichten te zien.',
-    insightAvg:        (km) => `Gemiddeld <strong>${km} zakelijke km</strong> geregistreerd per maand.`,
-    insightBusiest:    (m, km) => `Drukste registratiemaand: <strong>${m}</strong> met <strong>${km} zakelijke km</strong>.`,
+    insightAvg:        (km) => `Gemiddeld <strong>${km} privé km</strong> per maand.`,
+    insightBusiest:    (m, km) => `Maand met meeste privé km: <strong>${m}</strong> met <strong>${km} km</strong>.`,
     insightPrivatePace:(n) => `Jouw gem. privé km/dag is <strong>${n} km</strong> (budget: <strong>41 km</strong>).`,
     insightOver:       (km, pen) => `Op dit tempo rijd je de lease uit met <strong>${km} km te veel privé</strong>. Verwachte boete: <strong>${pen}</strong>.`,
     insightUnder:      (km) => `Op dit tempo eindig je de lease met <strong>${km} km privé over</strong> — geen boete verwacht.`,
@@ -1044,8 +1043,8 @@ const TRANSLATIONS = {
     // insights
     lblInsights:    'Insights',
     insightsEmpty:     'Add trips to see insights.',
-    insightAvg:        (km) => `Average of <strong>${km} business km</strong> registered per month.`,
-    insightBusiest:    (m, km) => `Busiest registration month: <strong>${m}</strong> with <strong>${km} business km</strong>.`,
+    insightAvg:        (km) => `Average of <strong>${km} private km</strong> per month.`,
+    insightBusiest:    (m, km) => `Month with most private km: <strong>${m}</strong> with <strong>${km} km</strong>.`,
     insightPrivatePace:(n) => `Your avg. private km/day is <strong>${n} km</strong> (budget: <strong>41 km</strong>).`,
     insightOver:       (km, pen) => `At this pace you'll end the lease <strong>${km} km over</strong> on private km. Expected penalty: <strong>${pen}</strong>.`,
     insightUnder:      (km) => `At this pace you'll end the lease <strong>${km} km under</strong> budget — no penalty expected.`,
@@ -1465,104 +1464,125 @@ function getMonthlyData(period) {
   const { trips, settings } = getData();
   const today = new Date(); today.setHours(0, 0, 0, 0);
   const leaseStartD = settings.leaseStart ? new Date(settings.leaseStart) : null;
-  let startDate;
-  if      (period === '3m')  { startDate = new Date(today); startDate.setMonth(startDate.getMonth() - 3); }
-  else if (period === '6m')  { startDate = new Date(today); startDate.setMonth(startDate.getMonth() - 6); }
-  else if (period === '12m') { startDate = new Date(today); startDate.setMonth(startDate.getMonth() - 12); }
-  else { startDate = leaseStartD || new Date(today.getFullYear() - 1, today.getMonth(), 1); }
+
+  // Always start from lease start date
+  let startDate = leaseStartD ? new Date(leaseStartD) : new Date(today);
+  if (!leaseStartD) startDate.setFullYear(startDate.getFullYear() - 1);
   startDate.setDate(1); startDate.setHours(0, 0, 0, 0);
 
+  // End = today + projection window
+  let endDate = new Date(today);
+  if      (period === '6m')  { endDate.setMonth(endDate.getMonth() + 6); }
+  else if (period === '12m') { endDate.setMonth(endDate.getMonth() + 12); }
+  else if (period === '48m') { endDate.setMonth(endDate.getMonth() + 48); }
+  endDate.setDate(1);
+
+  // Cap end at lease end if set
+  if (settings.leaseEnd) {
+    const le = new Date(settings.leaseEnd); le.setDate(1);
+    if (le < endDate) endDate = le;
+  }
+
+  // Fill months
   const months = {};
   const cur = new Date(startDate);
-  while (cur <= today) {
+  while (cur <= endDate) {
     const key = `${cur.getFullYear()}-${String(cur.getMonth() + 1).padStart(2, '0')}`;
     const daysInMonth = new Date(cur.getFullYear(), cur.getMonth() + 1, 0).getDate();
-    months[key] = { business: 0, days: daysInMonth };
+    const firstOfMonth = new Date(cur.getFullYear(), cur.getMonth(), 1);
+    months[key] = { business: 0, days: daysInMonth, isFuture: firstOfMonth > today };
     cur.setMonth(cur.getMonth() + 1);
   }
+
+  // Aggregate actual trips
   trips.forEach(t => {
     if (!t.date) return;
     const d = new Date(t.date); d.setHours(0, 0, 0, 0);
-    if (d < startDate || d > today) return;
     const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
     if (key in months) months[key].business += parseFloat(t.km) || 0;
   });
 
-  // Calculate per-day total km rate for private km estimation
+  // Rates
   const rawTotal = parseFloat(settings.totalKm);
   const hasTotal = !isNaN(rawTotal) && settings.totalKm !== '';
-  const elapsedDays = leaseStartD ? Math.max(1, Math.floor((today - leaseStartD) / 86400000) + 1) : null;
+  const elapsedD = leaseStartD ? Math.max(1, Math.floor((today - leaseStartD) / 86400000) + 1) : 1;
   const totalBizKm = trips.reduce((s, t) => s + (parseFloat(t.km) || 0), 0);
-  // avgTotalPerDay: total km driven per day on average (estimated)
-  const avgTotalPerDay = (hasTotal && elapsedDays) ? rawTotal / elapsedDays : null;
+  const avgTotalPerDay = hasTotal ? rawTotal / elapsedD : null;
+  const avgPrivPerDay  = hasTotal ? (rawTotal - totalBizKm) / elapsedD : null;
 
   return Object.entries(months)
     .sort((a, b) => a[0].localeCompare(b[0]))
-    .map(([key, { business, days }]) => {
+    .map(([key, { business, days, isFuture }]) => {
       const budgetKm = DAILY_PRIVATE * days;
-      // estimated private km = (avg total km/day × days) - business km that month
-      const privateKm = avgTotalPerDay !== null ? Math.max(0, avgTotalPerDay * days - business) : null;
-      return { key, business, days, budgetKm, privateKm };
+      const privateKm    = (!isFuture && avgTotalPerDay !== null) ? Math.max(0, avgTotalPerDay * days - business) : null;
+      const projPrivateKm = (isFuture  && avgPrivPerDay  !== null) ? Math.max(0, avgPrivPerDay  * days)           : null;
+      return { key, business, days, budgetKm, privateKm, projPrivateKm, isFuture };
     });
 }
 
 function renderBarChart(data) {
   const svg = document.getElementById('barChart');
   const W = 820, H = 210;
-  const ml = 62, mr = 15, mt = 24, mb = 48;
+  const ml = 62, mr = 25, mt = 24, mb = 48;
   const dw = W - ml - mr, dh = H - mt - mb;
   const n = data.length;
   if (!n) { svg.innerHTML = `<text x="${W/2}" y="${H/2}" class="chart-empty" text-anchor="middle">${T('chartEmpty')}</text>`; return; }
 
-  const usePrivate = data[0].privateKm !== null;
-  const vals = data.map(d => usePrivate ? d.privateKm : d.business);
-  const maxBudget = Math.max(...data.map(d => d.budgetKm));
-  const rawMax = usePrivate ? Math.max(...vals, maxBudget, 1) : Math.max(...vals, 1);
-  const roundMax = Math.ceil(rawMax / 100) * 100;
+  // Collect all values for zoomed y-axis scale
+  const allVals = data.map(d => d.isFuture ? d.projPrivateKm : d.privateKm).filter(v => v !== null);
+  if (!allVals.length) { svg.innerHTML = `<text x="${W/2}" y="${H/2}" class="chart-empty" text-anchor="middle">${T('chartEmpty')}</text>`; return; }
+
+  const avgBudgetPerMonth = DAILY_PRIVATE * 30.44;
+  const minRaw = Math.min(...allVals, avgBudgetPerMonth);
+  const maxRaw = Math.max(...allVals, avgBudgetPerMonth);
+  const span = maxRaw - minRaw || 100;
+  const yMin = Math.max(0, Math.floor((minRaw - span * 0.15) / 100) * 100);
+  const yMax = Math.ceil((maxRaw + span * 0.08) / 100) * 100;
+  const yRange = yMax - yMin || 1;
+
   const gap = dw / n;
   const barW = Math.min(gap * 0.62, 44);
   let out = '';
 
   // Gridlines + Y labels
   for (let i = 0; i <= 4; i++) {
+    const v = yMin + (i / 4) * yRange;
     const y = mt + dh * (1 - i / 4);
     out += `<line x1="${ml}" y1="${y.toFixed(1)}" x2="${W-mr}" y2="${y.toFixed(1)}" stroke="rgba(255,255,255,.07)" stroke-width="1"/>`;
-    out += `<text x="${ml-6}" y="${(y+4).toFixed(1)}" text-anchor="end" class="chart-lbl">${Math.round((i/4)*roundMax)}</text>`;
+    out += `<text x="${ml-6}" y="${(y+4).toFixed(1)}" text-anchor="end" class="chart-lbl">${Math.round(v)}</text>`;
   }
 
-  // Budget reference line (for private km view)
-  if (usePrivate) {
-    const budgetY = mt + dh - (DAILY_PRIVATE / (roundMax / data[0].days) / data[0].days * dh);
-    // simpler: average budget line at 41 × 30.44
-    const avgBudget = DAILY_PRIVATE * 30.44;
-    const budgetLineY = (mt + dh - (avgBudget / roundMax) * dh).toFixed(1);
-    out += `<line x1="${ml}" y1="${budgetLineY}" x2="${W-mr}" y2="${budgetLineY}" stroke="var(--amber)" stroke-width="1.5" stroke-dasharray="6,4" opacity=".6"/>`;
-    out += `<text x="${W-mr+3}" y="${(parseFloat(budgetLineY)+4).toFixed(1)}" class="chart-lbl" opacity=".7">41/d</text>`;
-  }
+  // Budget reference line at 41/day × 30.44
+  const budgetLineY = (mt + dh - ((avgBudgetPerMonth - yMin) / yRange) * dh).toFixed(1);
+  out += `<line x1="${ml}" y1="${budgetLineY}" x2="${W-mr}" y2="${budgetLineY}" stroke="var(--amber)" stroke-width="1.5" stroke-dasharray="6,4" opacity=".6"/>`;
+  out += `<text x="${W-mr+3}" y="${(parseFloat(budgetLineY)+4).toFixed(1)}" class="chart-lbl" opacity=".7">41/d</text>`;
 
   // Bars
-  data.forEach(({ key, business, days, budgetKm, privateKm }, i) => {
-    const val = usePrivate ? privateKm : business;
+  data.forEach((d, i) => {
+    const { key, budgetKm, privateKm, projPrivateKm, isFuture } = d;
+    const val = isFuture ? projPrivateKm : privateKm;
+    if (val === null) return;
     const cx = ml + i * gap + gap / 2;
-    const barH = Math.max((val / roundMax) * dh, val > 0 ? 2 : 0);
-    const x = (cx - barW / 2).toFixed(1), y = (mt + dh - barH).toFixed(1);
+    const barH = Math.max(((val - yMin) / yRange) * dh, 2);
+    const x = (cx - barW / 2).toFixed(1);
+    const y = (mt + dh - barH).toFixed(1);
     const [yr, mo] = key.split('-');
     const moLbl = new Date(+yr, +mo - 1, 1).toLocaleDateString(T('locale'), { month: 'short' });
-    const isOver = usePrivate && val > budgetKm;
-    const fill = usePrivate ? (isOver ? 'var(--red)' : 'var(--green)') : (val > 0 ? 'var(--accent)' : 'rgba(255,255,255,.06)');
-    out += `<rect x="${x}" y="${y}" width="${barW.toFixed(1)}" height="${Math.max(barH, val > 0 ? 2 : 0).toFixed(1)}" rx="3" fill="${fill}" opacity=".75"/>`;
-    if (barH > 18 && val > 0) out += `<text x="${cx.toFixed(1)}" y="${(mt+dh-barH-5).toFixed(1)}" text-anchor="middle" class="chart-val">${Math.round(val)}</text>`;
+    const fill    = isFuture ? '#5b9bd5' : (val > budgetKm ? 'var(--red)' : 'var(--green)');
+    const opacity = isFuture ? '.35' : '.8';
+    out += `<rect x="${x}" y="${y}" width="${barW.toFixed(1)}" height="${barH.toFixed(1)}" rx="3" fill="${fill}" opacity="${opacity}"/>`;
+    if (barH > 18) out += `<text x="${cx.toFixed(1)}" y="${(mt+dh-barH-5).toFixed(1)}" text-anchor="middle" class="chart-val">${Math.round(val)}</text>`;
     out += `<text x="${cx.toFixed(1)}" y="${(mt+dh+16).toFixed(1)}" text-anchor="middle" class="chart-lbl">${moLbl}</text>`;
     if (mo === '01' || i === 0) out += `<text x="${cx.toFixed(1)}" y="${(mt+dh+30).toFixed(1)}" text-anchor="middle" class="chart-lbl">${yr}</text>`;
   });
 
   // Legend
-  if (usePrivate) {
-    out += `<rect x="${ml}" y="${H-9}" width="10" height="10" rx="2" fill="var(--green)" opacity=".75"/>`;
-    out += `<text x="${ml+14}" y="${H-1}" class="legend-lbl">${T('chartUnderBudget')}</text>`;
-    out += `<rect x="${ml+100}" y="${H-9}" width="10" height="10" rx="2" fill="var(--red)" opacity=".75"/>`;
-    out += `<text x="${ml+114}" y="${H-1}" class="legend-lbl">${T('chartOverBudget')}</text>`;
-  }
+  out += `<rect x="${ml}" y="${H-9}" width="10" height="10" rx="2" fill="var(--green)" opacity=".8"/>`;
+  out += `<text x="${ml+14}" y="${H-1}" class="legend-lbl">${T('chartUnderBudget')}</text>`;
+  out += `<rect x="${ml+120}" y="${H-9}" width="10" height="10" rx="2" fill="var(--red)" opacity=".8"/>`;
+  out += `<text x="${ml+134}" y="${H-1}" class="legend-lbl">${T('chartOverBudget')}</text>`;
+  out += `<rect x="${ml+230}" y="${H-9}" width="10" height="10" rx="2" fill="#5b9bd5" opacity=".35"/>`;
+  out += `<text x="${ml+244}" y="${H-1}" class="legend-lbl">${T('chartProjected')}</text>`;
 
   out += `<line x1="${ml}" y1="${mt}" x2="${ml}" y2="${mt+dh}" stroke="rgba(255,255,255,.15)" stroke-width="1"/>`;
   out += `<line x1="${ml}" y1="${mt+dh}" x2="${W-mr}" y2="${mt+dh}" stroke="rgba(255,255,255,.15)" stroke-width="1"/>`;
@@ -1577,37 +1597,21 @@ function renderLineChart(data) {
   const n = data.length;
   if (!n) { svg.innerHTML = `<text x="${W/2}" y="${H/2}" class="chart-empty" text-anchor="middle">${T('chartEmpty')}</text>`; return; }
 
-  const usePrivate = data[0].privateKm !== null;
-
-  // Build cumulative actual + budget lines
-  let cumPriv = 0, cumBudget = 0, cumBiz = 0;
-  const cumData = data.map(({ key, business, days, privateKm }) => {
-    cumBiz    += business;
-    cumBudget += DAILY_PRIVATE * days;
-    if (usePrivate) cumPriv += privateKm;
-    return { key, cumPriv: usePrivate ? cumPriv : null, cumBudget, cumBiz };
+  // Build cumulative points, tracking actual vs projected separately
+  let cumPriv = 0, cumBudget = 0;
+  let lastActualIdx = -1;
+  const cumData = data.map(({ key, budgetKm, privateKm, projPrivateKm, isFuture }, i) => {
+    cumBudget += budgetKm;
+    const privVal = isFuture ? projPrivateKm : privateKm;
+    if (privVal !== null) cumPriv += privVal;
+    if (!isFuture && privateKm !== null) lastActualIdx = i;
+    return { key, cumPriv: privVal !== null ? cumPriv : null, cumBudget, isFuture };
   });
 
-  // Determine scale: include projections
-  const { settings } = getData();
-  let projPrivEnd = null, projBudgetEnd = null;
-  if (settings.leaseEnd) {
-    const lastD = new Date(cumData[n-1].key + '-01');
-    const endD  = new Date(settings.leaseEnd); endD.setHours(0,0,0,0);
-    if (endD > lastD) {
-      const monthsLeft = Math.max(1, Math.round((endD - lastD) / (30.44 * 86400000)));
-      if (usePrivate) {
-        const slope = cumPriv / Math.max(n, 1);
-        projPrivEnd = cumPriv + slope * monthsLeft;
-      }
-      projBudgetEnd = cumBudget + DAILY_PRIVATE * monthsLeft * 30.44;
-    }
-  }
-
-  const maxCumVal = usePrivate
-    ? Math.max(cumPriv, cumBudget, projPrivEnd || 0, projBudgetEnd || 0, 1)
-    : Math.max(cumBiz, 1);
-  const roundMax = Math.ceil(maxCumVal / 100) * 100;
+  // Scale including all projected values
+  const maxCumBudget = cumData[n-1].cumBudget;
+  const maxCumPriv = cumData.reduce((m, d) => d.cumPriv !== null ? Math.max(m, d.cumPriv) : m, 0);
+  const roundMax = Math.ceil(Math.max(maxCumBudget, maxCumPriv, 1) / 100) * 100;
 
   const xOf = i => ml + (n > 1 ? (i / (n - 1)) * dw : dw / 2);
   const yOf = v => Math.min(mt + dh, Math.max(mt, mt + dh - (v / roundMax) * dh));
@@ -1621,71 +1625,52 @@ function renderLineChart(data) {
     out += `<text x="${ml-6}" y="${(y+4).toFixed(1)}" text-anchor="end" class="chart-lbl">${Math.round((i/4)*roundMax)}</text>`;
   }
 
-  if (n >= 1) {
-    const lastX = xOf(n - 1);
+  // Budget line (amber, solid, through all months)
+  const budgetPts = cumData.map(({ cumBudget: v }, i) => `${xOf(i).toFixed(1)},${yOf(v).toFixed(1)}`).join(' ');
+  out += `<polyline points="${budgetPts}" fill="none" stroke="var(--amber)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity=".7"/>`;
 
-    // Projection lines (dashed) to lease end
-    if (settings.leaseEnd) {
-      const lastD = new Date(cumData[n-1].key + '-01');
-      const endD  = new Date(settings.leaseEnd); endD.setHours(0,0,0,0);
-      if (endD > lastD) {
-        const projX = W - mr;
-        // Budget projection
-        if (projBudgetEnd !== null) {
-          const ly = yOf(cumBudget), py = yOf(projBudgetEnd);
-          out += `<line x1="${lastX.toFixed(1)}" y1="${ly.toFixed(1)}" x2="${projX}" y2="${py.toFixed(1)}" stroke="var(--amber)" stroke-width="1.5" stroke-dasharray="5,4" opacity=".55"/>`;
-        }
-        // Private projection
-        if (usePrivate && projPrivEnd !== null) {
-          const ly = yOf(cumPriv), py = yOf(projPrivEnd);
-          out += `<line x1="${lastX.toFixed(1)}" y1="${ly.toFixed(1)}" x2="${projX}" y2="${py.toFixed(1)}" stroke="var(--green)" stroke-width="1.5" stroke-dasharray="5,4" opacity=".55"/>`;
-        }
-      }
-    }
-
-    if (usePrivate) {
-      // Budget line (amber)
-      const budgetPts = cumData.map(({ cumBudget: v }, i) => `${xOf(i).toFixed(1)},${yOf(v).toFixed(1)}`).join(' ');
-      out += `<polyline points="${budgetPts}" fill="none" stroke="var(--amber)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity=".7"/>`;
-      // Private fill + line (green)
-      const privPts = cumData.map(({ cumPriv: v }, i) => `${xOf(i).toFixed(1)},${yOf(v).toFixed(1)}`).join(' ');
-      out += `<polygon points="${xOf(0).toFixed(1)},${(mt+dh).toFixed(1)} ${privPts} ${xOf(n-1).toFixed(1)},${(mt+dh).toFixed(1)}" fill="var(--green)" opacity=".07"/>`;
-      out += `<polyline points="${privPts}" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>`;
-      cumData.forEach(({ cumPriv: v }, i) => {
-        out += `<circle cx="${xOf(i).toFixed(1)}" cy="${yOf(v).toFixed(1)}" r="3.5" fill="var(--green)" stroke="var(--bg)" stroke-width="1.5"/>`;
-      });
-    } else {
-      // Business km line (blue)
-      const bizPts = cumData.map(({ cumBiz: v }, i) => `${xOf(i).toFixed(1)},${yOf(v).toFixed(1)}`).join(' ');
-      out += `<polygon points="${xOf(0).toFixed(1)},${(mt+dh).toFixed(1)} ${bizPts} ${xOf(n-1).toFixed(1)},${(mt+dh).toFixed(1)}" fill="var(--accent)" opacity=".07"/>`;
-      out += `<polyline points="${bizPts}" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>`;
-      cumData.forEach(({ cumBiz: v }, i) => {
-        out += `<circle cx="${xOf(i).toFixed(1)}" cy="${yOf(v).toFixed(1)}" r="3.5" fill="var(--accent)" stroke="var(--bg)" stroke-width="1.5"/>`;
-      });
-    }
-
-    // X labels
-    const skip = Math.max(1, Math.ceil(n / 10));
-    cumData.forEach(({ key }, i) => {
-      if (i % skip !== 0 && i !== n - 1) return;
-      const [yr, mo] = key.split('-');
-      const lbl = new Date(+yr, +mo - 1, 1).toLocaleDateString(T('locale'), { month: 'short' });
-      out += `<text x="${xOf(i).toFixed(1)}" y="${(mt+dh+14).toFixed(1)}" text-anchor="middle" class="chart-lbl">${lbl}</text>`;
-      if (mo === '01' || i === 0) out += `<text x="${xOf(i).toFixed(1)}" y="${(mt+dh+28).toFixed(1)}" text-anchor="middle" class="chart-lbl">${yr}</text>`;
+  // Actual private km line (solid green, up to lastActualIdx)
+  const actualPts = cumData
+    .map(({ cumPriv: v, isFuture }, i) => (!isFuture && v !== null) ? `${xOf(i).toFixed(1)},${yOf(v).toFixed(1)}` : null)
+    .filter(Boolean).join(' ');
+  if (actualPts) {
+    out += `<polyline points="${actualPts}" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>`;
+    cumData.forEach(({ cumPriv: v, isFuture }, i) => {
+      if (!isFuture && v !== null) out += `<circle cx="${xOf(i).toFixed(1)}" cy="${yOf(v).toFixed(1)}" r="3" fill="var(--green)" stroke="var(--bg)" stroke-width="1.5"/>`;
     });
+  }
 
-    // Legend
-    const lc = usePrivate ? 'var(--green)' : 'var(--accent)';
-    const ll = usePrivate ? T('chartPrivate') : T('chartActual');
-    out += `<circle cx="${ml}" cy="${H-8}" r="4" fill="${lc}"/>`;
-    out += `<text x="${ml+9}" y="${H-4}" class="legend-lbl">${ll}</text>`;
-    if (usePrivate) {
-      out += `<circle cx="${ml+120}" cy="${H-8}" r="4" fill="var(--amber)" opacity=".7"/>`;
-      out += `<text x="${ml+129}" y="${H-4}" class="legend-lbl">${T('chartBudget')}</text>`;
-      out += `<line x1="${ml+220}" y1="${H-8}" x2="${ml+236}" y2="${H-8}" stroke="var(--text-dim)" stroke-width="1.5" stroke-dasharray="4,3"/>`;
-      out += `<text x="${ml+240}" y="${H-4}" class="legend-lbl">${T('chartProjected')}</text>`;
+  // Projected line (dashed green, starting from last actual point)
+  if (lastActualIdx >= 0) {
+    const lastCum = cumData[lastActualIdx].cumPriv;
+    const projPts = [
+      `${xOf(lastActualIdx).toFixed(1)},${yOf(lastCum).toFixed(1)}`,
+      ...cumData
+        .map(({ cumPriv: v, isFuture }, i) => (isFuture && v !== null) ? `${xOf(i).toFixed(1)},${yOf(v).toFixed(1)}` : null)
+        .filter(Boolean)
+    ];
+    if (projPts.length > 1) {
+      out += `<polyline points="${projPts.join(' ')}" fill="none" stroke="var(--green)" stroke-width="2" stroke-dasharray="5,4" stroke-linecap="round" stroke-linejoin="round" opacity=".6"/>`;
     }
   }
+
+  // X labels
+  const skip = Math.max(1, Math.ceil(n / 10));
+  cumData.forEach(({ key }, i) => {
+    if (i % skip !== 0 && i !== n - 1) return;
+    const [yr, mo] = key.split('-');
+    const lbl = new Date(+yr, +mo - 1, 1).toLocaleDateString(T('locale'), { month: 'short' });
+    out += `<text x="${xOf(i).toFixed(1)}" y="${(mt+dh+14).toFixed(1)}" text-anchor="middle" class="chart-lbl">${lbl}</text>`;
+    if (mo === '01' || i === 0) out += `<text x="${xOf(i).toFixed(1)}" y="${(mt+dh+28).toFixed(1)}" text-anchor="middle" class="chart-lbl">${yr}</text>`;
+  });
+
+  // Legend
+  out += `<circle cx="${ml}" cy="${H-8}" r="4" fill="var(--green)"/>`;
+  out += `<text x="${ml+9}" y="${H-4}" class="legend-lbl">${T('chartPrivate')}</text>`;
+  out += `<circle cx="${ml+120}" cy="${H-8}" r="4" fill="var(--amber)" opacity=".7"/>`;
+  out += `<text x="${ml+129}" y="${H-4}" class="legend-lbl">${T('chartBudget')}</text>`;
+  out += `<line x1="${ml+220}" y1="${H-8}" x2="${ml+236}" y2="${H-8}" stroke="var(--green)" stroke-width="1.5" stroke-dasharray="4,3" opacity=".6"/>`;
+  out += `<text x="${ml+240}" y="${H-4}" class="legend-lbl">${T('chartProjected')}</text>`;
 
   out += `<line x1="${ml}" y1="${mt}" x2="${ml}" y2="${mt+dh}" stroke="rgba(255,255,255,.15)" stroke-width="1"/>`;
   out += `<line x1="${ml}" y1="${mt+dh}" x2="${W-mr}" y2="${mt+dh}" stroke="rgba(255,255,255,.15)" stroke-width="1"/>`;
@@ -1772,17 +1757,15 @@ function renderInsights() {
   const f = calcForecast();
   const insights = [];
 
-  if (trips.length > 0) {
-    const byMonth = {};
-    trips.forEach(t => { if (!t.date) return; const k = t.date.slice(0,7); byMonth[k] = (byMonth[k]||0) + (parseFloat(t.km)||0); });
-    const entries = Object.entries(byMonth).sort((a,b) => a[0].localeCompare(b[0]));
-    if (entries.length > 0) {
-      const avg = entries.reduce((s,[,v]) => s+v, 0) / entries.length;
+  if (trips.length > 0 && f && f.avgDailyPriv !== null) {
+    const actualMonths = getMonthlyData('48m').filter(d => !d.isFuture && d.privateKm !== null);
+    if (actualMonths.length > 0) {
+      const avg = actualMonths.reduce((s, d) => s + d.privateKm, 0) / actualMonths.length;
       insights.push({ icon: 'blue', text: T('insightAvg', Math.round(avg).toLocaleString(locale)) });
-      const busiest = entries.reduce((b,c) => c[1] > b[1] ? c : b, entries[0]);
-      const [bY, bM] = busiest[0].split('-');
+      const busiest = actualMonths.reduce((b, c) => c.privateKm > b.privateKm ? c : b, actualMonths[0]);
+      const [bY, bM] = busiest.key.split('-');
       const bName = new Date(+bY, +bM-1, 1).toLocaleDateString(locale, { month:'long', year:'numeric' });
-      insights.push({ icon: 'amber', text: T('insightBusiest', bName, Math.round(busiest[1]).toLocaleString(locale)) });
+      insights.push({ icon: 'amber', text: T('insightBusiest', bName, Math.round(busiest.privateKm).toLocaleString(locale)) });
     }
   }
 
