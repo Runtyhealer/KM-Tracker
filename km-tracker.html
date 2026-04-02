@@ -105,6 +105,23 @@
     padding: 3px 9px;
     letter-spacing: .3px;
   }
+  .btn-check-update {
+    background: none;
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 20px;
+    padding: 3px 9px;
+    font-size: 11px;
+    color: var(--text-dim);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: color .15s, border-color .15s;
+  }
+  .btn-check-update:hover { color: var(--accent); border-color: var(--accent); }
+  .btn-check-update svg { transition: transform .5s; }
+  .btn-check-update.spinning svg { animation: spin .7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
 
   /* Language switch */
   .lang-switch {
@@ -566,6 +583,12 @@
       <div class="header-date" id="headerDate"></div>
       <div class="header-actions">
         <span class="version-badge" id="versionBadge"></span>
+        <button class="btn-check-update" id="checkUpdateBtn" onclick="manualCheckUpdate()" title="Check for updates">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/>
+            <path d="M3.51 9a9 9 0 0114.13-3.36L23 10M1 14l5.36 4.36A9 9 0 0020.49 15"/>
+          </svg>
+        </button>
         <button class="lang-switch" id="langSwitch" onclick="toggleLang()">EN</button>
         <button class="info-btn" onclick="openInfo()" id="infoBtnTitle" title="Hoe werkt het?">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -867,7 +890,7 @@
 
 <script>
 /* ─── Storage ─── */
-const APP_VERSION   = '1.0.0';
+const APP_VERSION   = '1.2';
 const STORAGE_KEY   = 'km_tracker_v2';
 const DAILY_PRIVATE = 41;
 
@@ -1937,6 +1960,32 @@ function isNewer(remote, local) {
     if (rv < lv) return false;
   }
   return false;
+}
+
+async function manualCheckUpdate() {
+  const btn = document.getElementById('checkUpdateBtn');
+  btn.classList.add('spinning');
+  try {
+    const res = await fetch(RAW_URL + '?_=' + Date.now(), { cache: 'no-store' });
+    if (!res.ok) { showToast(lang === 'nl' ? 'Kan update niet controleren.' : 'Could not check for updates.', 'error'); return; }
+    const text = await res.text();
+    const match = text.match(/const APP_VERSION\s*=\s*'([^']+)'/);
+    if (!match) return;
+    const remoteVersion = match[1];
+    if (isNewer(remoteVersion, APP_VERSION)) {
+      // Clear dismiss so the banner shows
+      localStorage.removeItem(UPDATE_DISMISS_KEY);
+      const banner = document.getElementById('updateBanner');
+      document.getElementById('updateBannerTitle').textContent = T('updateTitle');
+      document.getElementById('updateBannerSub').textContent   = T('updateSub', remoteVersion);
+      document.getElementById('updateDownloadLabel').textContent = T('updateDownload');
+      banner._remoteVersion = remoteVersion;
+      banner.classList.add('visible');
+    } else {
+      showToast(lang === 'nl' ? `Je hebt de nieuwste versie (v${APP_VERSION}).` : `You have the latest version (v${APP_VERSION}).`, 'success');
+    }
+  } catch { showToast(lang === 'nl' ? 'Kan update niet controleren.' : 'Could not check for updates.', 'error'); }
+  finally { btn.classList.remove('spinning'); }
 }
 
 async function checkForUpdate() {
