@@ -15,6 +15,10 @@ CLAUDE.md
 - Branch: `main` (only branch)
 - Remote: `https://github.com/Runtyhealer/KM-Tracker.git`
 - Push: `git push origin main` — if 403, use PAT via credential helper
+- **Always bump `APP_VERSION` in km-tracker.html with every push:**
+  - Patch `x.x.1` — bug fixes, minor tweaks
+  - Minor `x.1` — new features or visible changes
+  - Major `1.x` — breaking changes or full redesigns
 
 ## Architecture — km-tracker.html
 

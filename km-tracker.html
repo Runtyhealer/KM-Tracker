@@ -694,11 +694,11 @@
       <div class="form-row">
         <div class="form-group">
           <label for="leaseStart" id="lblLeaseStart">Leasedatum start</label>
-          <input type="date" id="leaseStart" oninput="saveSettings(); render()">
+          <input type="date" lang="nl" id="leaseStart" oninput="saveSettings(); render()">
         </div>
         <div class="form-group">
           <label for="leaseEnd" id="lblLeaseEnd">Leasedatum einde</label>
-          <input type="date" id="leaseEnd" oninput="saveSettings(); render()">
+          <input type="date" lang="nl" id="leaseEnd" oninput="saveSettings(); render()">
         </div>
         <div class="form-group">
           <label for="totalKm" id="lblTotalKm">Huidige km-stand auto</label>
@@ -890,7 +890,7 @@
 
 <script>
 /* ─── Storage ─── */
-const APP_VERSION   = '1.3';
+const APP_VERSION   = '1.4';
 const STORAGE_KEY   = 'km_tracker_v2';
 const DAILY_PRIVATE = 41;
 
