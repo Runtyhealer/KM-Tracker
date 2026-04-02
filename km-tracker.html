@@ -890,7 +890,7 @@
 
 <script>
 /* ─── Storage ─── */
-const APP_VERSION   = '1.4';
+const APP_VERSION   = '1.5';
 const STORAGE_KEY   = 'km_tracker_v2';
 const DAILY_PRIVATE = 41;
 
@@ -1599,13 +1599,14 @@ function getMonthlyData(period) {
   }
 
   // Fill months
+  const todayKey = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`;
   const months = {};
   const cur = new Date(startDate);
   while (cur <= endDate) {
     const key = `${cur.getFullYear()}-${String(cur.getMonth() + 1).padStart(2, '0')}`;
     const daysInMonth = new Date(cur.getFullYear(), cur.getMonth() + 1, 0).getDate();
     const firstOfMonth = new Date(cur.getFullYear(), cur.getMonth(), 1);
-    months[key] = { business: 0, days: daysInMonth, isFuture: firstOfMonth > today };
+    months[key] = { business: 0, days: daysInMonth, isFuture: firstOfMonth > today, isCurrent: key === todayKey };
     cur.setMonth(cur.getMonth() + 1);
   }
 
@@ -1625,13 +1626,23 @@ function getMonthlyData(period) {
   const avgTotalPerDay = hasTotal ? rawTotal / elapsedD : null;
   const avgPrivPerDay  = hasTotal ? (rawTotal - totalBizKm) / elapsedD : null;
 
+  const elapsedThisMonth = today.getDate(); // days elapsed in current month incl. today
   return Object.entries(months)
     .sort((a, b) => a[0].localeCompare(b[0]))
-    .map(([key, { business, days, isFuture }]) => {
-      const budgetKm = DAILY_PRIVATE * days;
-      const privateKm    = (!isFuture && avgTotalPerDay !== null) ? Math.max(0, avgTotalPerDay * days - business) : null;
-      const projPrivateKm = (isFuture  && avgPrivPerDay  !== null) ? Math.max(0, avgPrivPerDay  * days)           : null;
-      return { key, business, days, budgetKm, privateKm, projPrivateKm, isFuture };
+    .map(([key, { business, days, isFuture, isCurrent }]) => {
+      const budgetKm      = DAILY_PRIVATE * days;
+      const privateKm     = (!isFuture && !isCurrent && avgTotalPerDay !== null)
+        ? Math.max(0, avgTotalPerDay * days - business)
+        : null;
+      // Current month: pro-rate by days elapsed so far, compare against pro-rated budget
+      const curBudgetKm   = DAILY_PRIVATE * elapsedThisMonth;
+      const curPrivateKm  = (isCurrent && avgTotalPerDay !== null)
+        ? Math.max(0, avgTotalPerDay * elapsedThisMonth - business)
+        : null;
+      const projPrivateKm = (isFuture && avgPrivPerDay !== null)
+        ? Math.max(0, avgPrivPerDay * days)
+        : null;
+      return { key, business, days, budgetKm, curBudgetKm, privateKm, curPrivateKm, projPrivateKm, isFuture, isCurrent };
     });
 }
 
@@ -1644,7 +1655,7 @@ function renderBarChart(data) {
   if (!n) { svg.innerHTML = `<text x="${W/2}" y="${H/2}" class="chart-empty" text-anchor="middle">${T('chartEmpty')}</text>`; return; }
 
   // Collect all values for zoomed y-axis scale
-  const allVals = data.map(d => d.isFuture ? d.projPrivateKm : d.privateKm).filter(v => v !== null);
+  const allVals = data.map(d => d.isFuture ? d.projPrivateKm : d.isCurrent ? d.curPrivateKm : d.privateKm).filter(v => v !== null);
   if (!allVals.length) { svg.innerHTML = `<text x="${W/2}" y="${H/2}" class="chart-empty" text-anchor="middle">${T('chartEmpty')}</text>`; return; }
 
   const avgBudgetPerMonth = DAILY_PRIVATE * 30.44;
@@ -1674,8 +1685,8 @@ function renderBarChart(data) {
 
   // Bars
   data.forEach((d, i) => {
-    const { key, budgetKm, privateKm, projPrivateKm, isFuture } = d;
-    const val = isFuture ? projPrivateKm : privateKm;
+    const { key, budgetKm, curBudgetKm, privateKm, curPrivateKm, projPrivateKm, isFuture, isCurrent } = d;
+    const val = isFuture ? projPrivateKm : isCurrent ? curPrivateKm : privateKm;
     if (val === null) return;
     const cx = ml + i * gap + gap / 2;
     const barH = Math.max(((val - yMin) / yRange) * dh, 2);
@@ -1683,8 +1694,9 @@ function renderBarChart(data) {
     const y = (mt + dh - barH).toFixed(1);
     const [yr, mo] = key.split('-');
     const moLbl = new Date(+yr, +mo - 1, 1).toLocaleDateString(T('locale'), { month: 'short' });
-    const fill    = isFuture ? '#5b9bd5' : (val > budgetKm ? 'var(--red)' : 'var(--green)');
-    const opacity = isFuture ? '.35' : '.8';
+    const effectiveBudget = isCurrent ? curBudgetKm : budgetKm;
+    const fill    = isFuture ? '#5b9bd5' : isCurrent ? (val > effectiveBudget ? 'var(--amber)' : 'var(--green)') : (val > budgetKm ? 'var(--red)' : 'var(--green)');
+    const opacity = (isFuture || isCurrent) ? '.5' : '.8';
     out += `<rect x="${x}" y="${y}" width="${barW.toFixed(1)}" height="${barH.toFixed(1)}" rx="3" fill="${fill}" opacity="${opacity}"/>`;
     if (barH > 18) out += `<text x="${cx.toFixed(1)}" y="${(mt+dh-barH-5).toFixed(1)}" text-anchor="middle" class="chart-val">${Math.round(val)}</text>`;
     out += `<text x="${cx.toFixed(1)}" y="${(mt+dh+16).toFixed(1)}" text-anchor="middle" class="chart-lbl">${moLbl}</text>`;
