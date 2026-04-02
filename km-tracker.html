@@ -568,6 +568,45 @@
     transition: color .15s;
   }
   .btn-update-dismiss:hover { color: var(--text); }
+
+  /* ═══════════════════════════════════════════════
+     READINGS SECTION
+     ═══════════════════════════════════════════════ */
+  .readings-form { display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap; margin-bottom: 20px; }
+  .readings-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .readings-table thead th { padding: 8px 12px; text-align: left; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .8px; color: var(--text-dim); border-bottom: 1px solid var(--glass-border); }
+  .readings-table tbody td { padding: 10px 12px; color: var(--text-dim); border-bottom: 1px solid rgba(255,255,255,.04); }
+  .readings-table tbody td.rd-km { font-weight: 700; color: var(--text-bright); font-variant-numeric: tabular-nums; }
+  .readings-table tbody tr:last-child td { border-bottom: none; }
+  .readings-empty { text-align: center; padding: 28px; color: rgba(255,255,255,.2); font-size: 13px; }
+
+  /* ═══════════════════════════════════════════════
+     READING REMINDER BANNER
+     ═══════════════════════════════════════════════ */
+  .reading-reminder {
+    display: none;
+    align-items: center;
+    gap: 12px;
+    background: linear-gradient(135deg, rgba(245,158,11,.15) 0%, rgba(251,191,36,.12) 100%);
+    border: 1px solid rgba(245,158,11,.35);
+    border-radius: var(--radius);
+    padding: 12px 16px;
+    margin: 0 auto 8px;
+    max-width: 860px;
+    width: calc(100% - 32px);
+    animation: fadeInDown .35s ease;
+  }
+  .reading-reminder.visible { display: flex; }
+  .reading-reminder-text { flex: 1; min-width: 0; }
+  .reading-reminder-text strong { color: var(--text-bright); font-size: 14px; }
+  .reading-reminder-text span   { color: var(--text-dim);   font-size: 12px; margin-left: 6px; }
+  .reading-reminder-actions { display: flex; gap: 8px; flex-shrink: 0; }
+  .btn-reading-enter {
+    padding: 7px 14px; border: none; border-radius: 8px;
+    background: var(--amber); color: #000;
+    font-size: 13px; font-weight: 600; cursor: pointer; transition: opacity .15s;
+  }
+  .btn-reading-enter:hover { opacity: .85; }
 </style>
 </head>
 <body>
@@ -660,6 +699,19 @@
   </div>
 </div>
 
+<!-- ═══ READING REMINDER BANNER ═══ -->
+<div class="reading-reminder" id="readingReminderBanner">
+  <div style="font-size:18px;flex-shrink:0">📍</div>
+  <div class="reading-reminder-text">
+    <strong id="readingReminderTitle">Kilometerstand invoeren</strong>
+    <span id="readingReminderSub">Het is bijna het einde van de maand — voer je km-stand in voor een nauwkeurig overzicht</span>
+  </div>
+  <div class="reading-reminder-actions">
+    <button class="btn-reading-enter" onclick="openReadingsSection()" id="readingReminderBtn">Invoeren</button>
+    <button class="btn-update-dismiss" onclick="dismissReadingReminder()">✕</button>
+  </div>
+</div>
+
 <!-- ═══ INFO MODAL ═══ -->
 <div class="modal-overlay" id="infoModal" onclick="closeInfoOnBg(event)">
   <div class="modal">
@@ -708,6 +760,37 @@
           <button class="btn btn-ghost btn-sm" onclick="clearAll()" id="btnClearAll">Alles wissen</button>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- ═══ KM-STAND LOG ═══ -->
+  <div class="section-label collapsed" onclick="toggleSection('sec-readings')">
+    <span id="lblReadings">Kilometerstand log</span>
+    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+  </div>
+  <div class="sec-body collapsed" id="sec-readings">
+    <div class="card">
+      <div class="readings-form">
+        <div class="form-group">
+          <label for="readingDate" id="lblReadingDate">Datum</label>
+          <input type="date" lang="nl" id="readingDate">
+        </div>
+        <div class="form-group">
+          <label for="readingKm" id="lblReadingKm">Kilometerstand</label>
+          <input type="number" id="readingKm" min="0" step="1" placeholder="bijv. 24500">
+        </div>
+        <div class="form-group" style="justify-content:flex-end">
+          <button class="btn btn-primary btn-sm" onclick="addReading()" id="btnAddReading">+ Toevoegen</button>
+        </div>
+      </div>
+      <table class="readings-table">
+        <thead><tr>
+          <th id="thReadingDate">Datum</th>
+          <th id="thReadingKm">Kilometerstand</th>
+          <th></th>
+        </tr></thead>
+        <tbody id="readingsTableBody"></tbody>
+      </table>
     </div>
   </div>
 
@@ -890,7 +973,7 @@
 
 <script>
 /* ─── Storage ─── */
-const APP_VERSION   = '1.5';
+const APP_VERSION   = '1.6';
 const STORAGE_KEY   = 'km_tracker_v2';
 const DAILY_PRIVATE = 41;
 
@@ -898,7 +981,7 @@ function load() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || 
 function save(d) { localStorage.setItem(STORAGE_KEY, JSON.stringify(d)); }
 function getData() {
   const d = load();
-  return { settings: d.settings || { leaseStart:'', leaseEnd:'', totalKm:'' }, trips: d.trips || [] };
+  return { settings: d.settings || { leaseStart:'', leaseEnd:'', totalKm:'' }, trips: d.trips || [], readings: d.readings || [] };
 }
 
 /* ─── Language ─── */
@@ -1035,6 +1118,22 @@ const TRANSLATIONS = {
     updateSub:       (v) => `versie ${v} is uitgebracht`,
     updateDownload:  'Downloaden',
     updateDismiss:   '✕',
+    // readings section
+    lblReadings:        'Kilometerstand log',
+    lblReadingDate:     'Datum',
+    lblReadingKm:       'Kilometerstand',
+    btnAddReading:      '+ Toevoegen',
+    thReadingDate:      'Datum',
+    thReadingKm:        'Kilometerstand',
+    readingsEmpty:      'Nog geen km-standen ingevoerd',
+    readingKmPlaceholder: 'bijv. 24500',
+    toastReadingAdded:  'Km-stand opgeslagen.',
+    toastReadingExists: 'Er bestaat al een invoer voor deze datum.',
+    toastReadingInvalid:'Vul een geldige datum en km-stand in.',
+    // reminder banner
+    readingReminderTitle: 'Kilometerstand invoeren',
+    readingReminderSub:   'Het is bijna het einde van de maand — voer je km-stand in voor een nauwkeurig overzicht',
+    readingReminderBtn:   'Invoeren',
   },
   en: {
     pageTitle:        'Mileage Tracker',
@@ -1165,6 +1264,22 @@ const TRANSLATIONS = {
     updateSub:       (v) => `version ${v} has been released`,
     updateDownload:  'Download',
     updateDismiss:   '✕',
+    // readings section
+    lblReadings:        'Odometer log',
+    lblReadingDate:     'Date',
+    lblReadingKm:       'Odometer reading',
+    btnAddReading:      '+ Add',
+    thReadingDate:      'Date',
+    thReadingKm:        'Odometer reading',
+    readingsEmpty:      'No readings entered yet',
+    readingKmPlaceholder: 'e.g. 24500',
+    toastReadingAdded:  'Reading saved.',
+    toastReadingExists: 'A reading for this date already exists.',
+    toastReadingInvalid:'Please enter a valid date and odometer reading.',
+    // reminder banner
+    readingReminderTitle: 'Enter odometer reading',
+    readingReminderSub:   'End of month is near — enter your odometer reading for an accurate overview',
+    readingReminderBtn:   'Enter',
   }
 };
 
@@ -1230,6 +1345,18 @@ function applyTranslations() {
   document.getElementById('btnPeriodAll').textContent = tx.periodAll;
   document.getElementById('lblForecast').textContent  = tx.lblForecast;
   document.getElementById('lblInsights').textContent  = tx.lblInsights;
+  // readings section
+  document.getElementById('lblReadings').textContent       = tx.lblReadings;
+  document.getElementById('lblReadingDate').textContent    = tx.lblReadingDate;
+  document.getElementById('lblReadingKm').textContent      = tx.lblReadingKm;
+  document.getElementById('btnAddReading').textContent     = tx.btnAddReading;
+  document.getElementById('thReadingDate').textContent     = tx.thReadingDate;
+  document.getElementById('thReadingKm').textContent       = tx.thReadingKm;
+  document.getElementById('readingKm').placeholder         = tx.readingKmPlaceholder;
+  // reminder banner
+  document.getElementById('readingReminderTitle').textContent = tx.readingReminderTitle;
+  document.getElementById('readingReminderSub').textContent   = tx.readingReminderSub;
+  document.getElementById('readingReminderBtn').textContent   = tx.readingReminderBtn;
 }
 
 function renderModalSteps() {
@@ -1312,7 +1439,7 @@ function calcStats() {
 }
 
 /* ─── Render ─── */
-function render() { renderHeader(); renderStats(); renderTable(); renderMonthly(); renderForecast(); renderInsights(); }
+function render() { renderHeader(); renderStats(); renderTable(); renderMonthly(); renderForecast(); renderInsights(); renderReadings(); }
 
 function renderHeader() {
   const locale = T('locale');
@@ -1575,8 +1702,27 @@ function setMonthlyPeriod(p) {
   renderMonthly();
 }
 
+/* Returns interpolated odometer reading for a given YYYY-MM-DD date string.
+   Uses linear interpolation between the two nearest readings.
+   Returns null if no readings available. */
+function interpolateKm(dateStr, readings) {
+  if (!readings.length) return null;
+  const sorted = [...readings].sort((a, b) => a.date.localeCompare(b.date));
+  const exact = sorted.find(r => r.date === dateStr);
+  if (exact) return exact.km;
+  const before = [...sorted].reverse().find(r => r.date < dateStr);
+  const after  = sorted.find(r => r.date > dateStr);
+  if (!before && !after) return null;
+  if (!before) return after.km;
+  if (!after)  return before.km;
+  const t0 = new Date(before.date).getTime();
+  const t1 = new Date(after.date).getTime();
+  const t  = new Date(dateStr).getTime();
+  return before.km + (after.km - before.km) * (t - t0) / (t1 - t0);
+}
+
 function getMonthlyData(period) {
-  const { trips, settings } = getData();
+  const { trips, settings, readings } = getData();
   const today = new Date(); today.setHours(0, 0, 0, 0);
   const leaseStartD = settings.leaseStart ? new Date(settings.leaseStart) : null;
 
@@ -1618,7 +1764,7 @@ function getMonthlyData(period) {
     if (key in months) months[key].business += parseFloat(t.km) || 0;
   });
 
-  // Rates
+  // Fallback rates (used when no bracketing readings available)
   const rawTotal = parseFloat(settings.totalKm);
   const hasTotal = !isNaN(rawTotal) && settings.totalKm !== '';
   const elapsedD = leaseStartD ? Math.max(1, Math.floor((today - leaseStartD) / 86400000) + 1) : 1;
@@ -1626,23 +1772,44 @@ function getMonthlyData(period) {
   const avgTotalPerDay = hasTotal ? rawTotal / elapsedD : null;
   const avgPrivPerDay  = hasTotal ? (rawTotal - totalBizKm) / elapsedD : null;
 
-  const elapsedThisMonth = today.getDate(); // days elapsed in current month incl. today
+  const elapsedThisMonth = today.getDate();
+  const todayStr = today.toISOString().slice(0, 10);
+
   return Object.entries(months)
     .sort((a, b) => a[0].localeCompare(b[0]))
     .map(([key, { business, days, isFuture, isCurrent }]) => {
-      const budgetKm      = DAILY_PRIVATE * days;
-      const privateKm     = (!isFuture && !isCurrent && avgTotalPerDay !== null)
-        ? Math.max(0, avgTotalPerDay * days - business)
-        : null;
-      // Current month: pro-rate by days elapsed so far, compare against pro-rated budget
-      const curBudgetKm   = DAILY_PRIVATE * elapsedThisMonth;
-      const curPrivateKm  = (isCurrent && avgTotalPerDay !== null)
-        ? Math.max(0, avgTotalPerDay * elapsedThisMonth - business)
-        : null;
-      const projPrivateKm = (isFuture && avgPrivPerDay !== null)
-        ? Math.max(0, avgPrivPerDay * days)
-        : null;
-      return { key, business, days, budgetKm, curBudgetKm, privateKm, curPrivateKm, projPrivateKm, isFuture, isCurrent };
+      const [yr, mo] = key.split('-').map(Number);
+      const monthStart = new Date(yr, mo - 1, 1).toISOString().slice(0, 10);
+      const monthEnd   = isCurrent ? todayStr : new Date(yr, mo, 0).toISOString().slice(0, 10);
+      const budgetKm   = DAILY_PRIVATE * days;
+
+      // Try exact calculation via odometer readings
+      const kmStart = interpolateKm(monthStart, readings);
+      const kmEnd   = interpolateKm(monthEnd,   readings);
+      const hasExact = kmStart !== null && kmEnd !== null && !isFuture;
+
+      let privateKm = null, curPrivateKm = null, projPrivateKm = null;
+      let curBudgetKm = DAILY_PRIVATE * elapsedThisMonth;
+
+      if (hasExact) {
+        const driven = Math.max(0, kmEnd - kmStart);
+        if (isCurrent) {
+          curPrivateKm = Math.max(0, driven - business);
+        } else {
+          privateKm = Math.max(0, driven - business);
+        }
+      } else {
+        // Fallback to average rate
+        if (!isFuture && !isCurrent && avgTotalPerDay !== null)
+          privateKm = Math.max(0, avgTotalPerDay * days - business);
+        if (isCurrent && avgTotalPerDay !== null)
+          curPrivateKm = Math.max(0, avgTotalPerDay * elapsedThisMonth - business);
+      }
+
+      if (isFuture && avgPrivPerDay !== null)
+        projPrivateKm = Math.max(0, avgPrivPerDay * days);
+
+      return { key, business, days, budgetKm, curBudgetKm, privateKm, curPrivateKm, projPrivateKm, isFuture, isCurrent, hasExact };
     });
 }
 
@@ -1947,12 +2114,88 @@ function handleJsonFile(file) {
     try {
       const data = JSON.parse(e.target.result);
       if (!data.settings || !Array.isArray(data.trips)) throw new Error(lang === 'nl' ? 'Ongeldig formaat' : 'Invalid format');
+      if (!Array.isArray(data.readings)) data.readings = [];
       save(data); loadSettings(); render();
       showToast(T('jsonImportOk', data.trips.length), 'success');
     } catch(err) { showToast(T('jsonImportErr', err.message), 'error'); }
   };
   r.readAsText(file, 'UTF-8');
   document.getElementById('jsonFileInput').value = '';
+}
+
+/* ─── Odometer readings ─── */
+function addReading() {
+  const dateEl = document.getElementById('readingDate');
+  const kmEl   = document.getElementById('readingKm');
+  const date   = dateEl.value;
+  const km     = parseFloat(kmEl.value);
+  if (!date || isNaN(km) || km <= 0) { showToast(T('toastReadingInvalid'), 'error'); return; }
+  const d = getData();
+  if (d.readings.some(r => r.date === date)) { showToast(T('toastReadingExists'), 'error'); return; }
+  d.readings.push({ id: genId(), date, km });
+  save(d);
+  dateEl.value = ''; kmEl.value = '';
+  renderReadings();
+  render();
+  showToast(T('toastReadingAdded'), 'success');
+}
+
+function deleteReading(id) {
+  const d = getData();
+  d.readings = d.readings.filter(r => r.id !== id);
+  save(d);
+  renderReadings();
+  render();
+}
+
+function renderReadings() {
+  const { readings } = getData();
+  const tbody = document.getElementById('readingsTableBody');
+  if (!readings.length) {
+    tbody.innerHTML = `<tr><td colspan="3" class="readings-empty">${T('readingsEmpty')}</td></tr>`;
+    return;
+  }
+  const sorted = [...readings].sort((a, b) => b.date.localeCompare(a.date));
+  tbody.innerHTML = sorted.map(r => `
+    <tr>
+      <td>${fmtDate(r.date)}</td>
+      <td class="rd-km">${r.km.toLocaleString(T('locale'))} km</td>
+      <td style="text-align:right"><button class="btn btn-danger-outline btn-sm" onclick="deleteReading('${r.id}')">${T('btnDelete')}</button></td>
+    </tr>`).join('');
+}
+
+/* ─── Reading reminder ─── */
+const READING_REMIND_KEY = 'km_reading_remind_dismiss';
+
+function checkReadingReminder() {
+  const today = new Date();
+  const daysInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
+  if (daysInMonth - today.getDate() > 3) return; // only last 3 days of month
+  const monthKey = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`;
+  const dismissed = localStorage.getItem(READING_REMIND_KEY);
+  if (dismissed === monthKey) return;
+  const { readings } = getData();
+  if (readings.some(r => r.date.startsWith(monthKey))) return; // already has a reading this month
+  document.getElementById('readingReminderBanner').classList.add('visible');
+}
+
+function dismissReadingReminder() {
+  const today = new Date();
+  const monthKey = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`;
+  localStorage.setItem(READING_REMIND_KEY, monthKey);
+  document.getElementById('readingReminderBanner').classList.remove('visible');
+}
+
+function openReadingsSection() {
+  dismissReadingReminder();
+  const body = document.getElementById('sec-readings');
+  const label = body.previousElementSibling;
+  if (body.classList.contains('collapsed')) {
+    body.classList.remove('collapsed');
+    label.classList.remove('collapsed');
+  }
+  body.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  document.getElementById('readingDate').focus();
 }
 
 /* ─── Update check ─── */
@@ -2049,10 +2292,24 @@ function dismissUpdate() {
 
 /* ─── Init ─── */
 document.getElementById('versionBadge').textContent = 'v' + APP_VERSION;
+
+// Migrate: seed readings from existing totalKm if no readings stored yet
+(function migrateReadings() {
+  const d = getData();
+  if (d.readings.length === 0 && d.settings.totalKm) {
+    const km = parseFloat(d.settings.totalKm);
+    if (!isNaN(km) && km > 0) {
+      d.readings.push({ id: genId(), date: new Date().toISOString().slice(0, 10), km });
+      save(d);
+    }
+  }
+})();
+
 applyTranslations();
 loadSettings();
 render();
 setInterval(renderHeader, 60000);
+checkReadingReminder();
 checkForUpdate();
 </script>
 </body>
