@@ -838,7 +838,7 @@
         <div class="stat-sub" id="statPrivateSub">totaal km - zakelijk</div>
       </div>
     </div>
-    <div class="stats-row three">
+    <div class="stats-row four">
       <div class="stat" id="statFiscalCard">
         <div class="indicator yellow"></div>
         <div class="stat-lbl" id="lblFiscal">Privé km resterend t/m 30 sep</div>
@@ -850,6 +850,12 @@
         <div class="stat-lbl" id="lblLeaseRem">Privé km resterend t/m einde lease</div>
         <div class="stat-val" id="statLeaseRem">—</div>
         <div class="stat-sub" id="statLeaseRemSub">einde leasecontract</div>
+      </div>
+      <div class="stat" id="statDailyAllowanceCard">
+        <div class="indicator"></div>
+        <div class="stat-lbl" id="lblDailyAllowance">Privé km/dag over</div>
+        <div class="stat-val" id="statDailyAllowance">—</div>
+        <div class="stat-sub" id="statDailyAllowanceSub">tot einde lease</div>
       </div>
       <div class="stat" id="statRemainCard">
         <div class="indicator"></div>
@@ -973,7 +979,7 @@
 
 <script>
 /* ─── Storage ─── */
-const APP_VERSION   = '1.6';
+const APP_VERSION   = '1.7';
 const STORAGE_KEY   = 'km_tracker_v2';
 const DAILY_PRIVATE = 41;
 
@@ -1025,6 +1031,7 @@ const TRANSLATIONS = {
     lblPrivate:   'Werkelijk privé km',
     lblFiscal:    'Privé km resterend t/m 30 sep',
     lblLeaseRem:  'Privé km resterend t/m einde lease',
+    lblDailyAllowance: 'Privé km/dag over',
     lblRemain:    'Resterende leasedagen',
     lblProgress:  'Werkelijk privé km t.o.v. budget',
     // hero
@@ -1046,6 +1053,11 @@ const TRANSLATIONS = {
     leaseRemAvail:  'beschikbaar t/m einde lease',
     leaseRemShort:  'km tekort t/m einde lease',
     leaseRemEmpty:  'stel einddatum in',
+    dailyAllowanceSub: 'tot einde lease',
+    dailyAllowanceEasy: 'ruimte boven dagbudget',
+    dailyAllowanceTight: 'minder dan dagbudget',
+    dailyAllowanceOver: (n) => `${n} km tekort nu`,
+    dailyAllowanceEmpty: 'stel einddatum en km-stand in',
     remainSub:      'tot einde lease',
     remainWarning:  'bijna afgelopen!',
     remainCaution:  'minder dan 3 maanden',
@@ -1171,6 +1183,7 @@ const TRANSLATIONS = {
     lblPrivate:   'Actual private km',
     lblFiscal:    'Private km remaining until 30 Sep',
     lblLeaseRem:  'Private km remaining until lease end',
+    lblDailyAllowance: 'Private km/day left',
     lblRemain:    'Remaining lease days',
     lblProgress:  'Actual private km vs. budget',
     // hero
@@ -1192,6 +1205,11 @@ const TRANSLATIONS = {
     leaseRemAvail:  'available until lease end',
     leaseRemShort:  'km deficit until lease end',
     leaseRemEmpty:  'set end date',
+    dailyAllowanceSub: 'until lease end',
+    dailyAllowanceEasy: 'room above daily budget',
+    dailyAllowanceTight: 'below daily budget',
+    dailyAllowanceOver: (n) => `${n} km deficit now`,
+    dailyAllowanceEmpty: 'set end date and odometer',
     remainSub:      'until lease end',
     remainWarning:  'almost up!',
     remainCaution:  'less than 3 months',
@@ -1327,6 +1345,7 @@ function applyTranslations() {
   document.getElementById('lblPrivate').textContent  = tx.lblPrivate;
   document.getElementById('lblFiscal').textContent   = tx.lblFiscal;
   document.getElementById('lblLeaseRem').textContent = tx.lblLeaseRem;
+  document.getElementById('lblDailyAllowance').textContent = tx.lblDailyAllowance;
   document.getElementById('lblRemain').textContent   = tx.lblRemain;
   document.getElementById('lblProgress').textContent = tx.lblProgress;
   // hero eyebrow
@@ -1398,7 +1417,7 @@ function calcStats() {
     privateBudget:null, businessKm:0, totalKm:null,
     actualPrivate:null, privateVsBudget:null, privateRatio:null,
     privateRemainingFiscal:null, privateRemainingLease:null,
-    daysToFiscalEnd:null, fiscalEndDisplay:null
+    privateAllowancePerDay:null, daysToFiscalEnd:null, fiscalEndDisplay:null
   };
 
   s.businessKm = trips.reduce((sum, t) => sum + (parseFloat(t.km) || 0), 0);
@@ -1433,7 +1452,10 @@ function calcStats() {
   s.fiscalEndDisplay = fmtDate(fe.toISOString().slice(0,10));
   if (s.privateVsBudget !== null) {
     s.privateRemainingFiscal = DAILY_PRIVATE * s.daysToFiscalEnd + s.privateVsBudget;
-    if (s.remainDays !== null) s.privateRemainingLease = DAILY_PRIVATE * s.remainDays + s.privateVsBudget;
+    if (s.remainDays !== null) {
+      s.privateRemainingLease = DAILY_PRIVATE * s.remainDays + s.privateVsBudget;
+      if (s.remainDays > 0) s.privateAllowancePerDay = s.privateRemainingLease / s.remainDays;
+    }
   }
   return s;
 }
@@ -1540,6 +1562,37 @@ function renderStats() {
     if (s.privateRemainingLease >= 0) { li.className='indicator yellow'; lv.className='stat-val'; ls.textContent=T('leaseRemAvail'); }
     else { li.className='indicator red'; lv.className='stat-val red'; ls.textContent=T('leaseRemShort'); }
   } else { lv.textContent='—'; lv.className='stat-val'; ls.textContent=T('leaseRemEmpty'); }
+
+  // Daily private allowance
+  const dac = document.getElementById('statDailyAllowanceCard');
+  const dav = document.getElementById('statDailyAllowance');
+  const das = document.getElementById('statDailyAllowanceSub');
+  const dai = dac.querySelector('.indicator');
+  if (s.privateAllowancePerDay !== null) {
+    if (s.privateAllowancePerDay < 0) {
+      dai.className = 'indicator red';
+      dav.className = 'stat-val red';
+      dav.textContent = '0';
+      das.textContent = T('dailyAllowanceOver', fmt(s.privateRemainingLease, true));
+    } else {
+      const roundedAllowance = Math.floor(s.privateAllowancePerDay);
+      dav.textContent = roundedAllowance.toLocaleString(T('locale'));
+      if (roundedAllowance >= DAILY_PRIVATE) {
+        dai.className = 'indicator green';
+        dav.className = 'stat-val green';
+        das.textContent = T('dailyAllowanceEasy');
+      } else {
+        dai.className = 'indicator amber';
+        dav.className = 'stat-val amber';
+        das.textContent = T('dailyAllowanceTight');
+      }
+    }
+  } else {
+    dai.className = 'indicator';
+    dav.className = 'stat-val';
+    dav.textContent = '—';
+    das.textContent = T('dailyAllowanceEmpty');
+  }
 
   // Remain days
   const rc = document.getElementById('statRemainCard');

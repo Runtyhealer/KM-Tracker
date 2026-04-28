@@ -5,7 +5,7 @@ A browser-based kilometer registration tool for tracking business and private mi
 ## Features
 
 - **Import trips** from CSV, XLSX, or XLS files (exported from IBS via Submit Expenses → KM & HW)
-- **Dashboard** showing total km, business km, actual private km, and budget progress
+- **Dashboard** showing total km, business km, actual private km, budget progress, and remaining private km/day
 - **Charts** — monthly private km bar chart and cumulative km vs budget line chart
 - **Export** your data as CSV or JSON
 - **EN/NL language toggle**
